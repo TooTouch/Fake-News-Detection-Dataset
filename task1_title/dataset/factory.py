@@ -7,6 +7,7 @@ from torch.utils.data import DataLoader
 
 from dataloader import FNDTokenizer, FNDDataset
 
+
 def extract_word_embedding(vocab_path, max_vocab_size=-1):
     word_embed = pd.read_csv(
         filepath_or_buffer = vocab_path, 
