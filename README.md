@@ -1,19 +1,6 @@
 # Fake-News-Detection-Dataset
 한국어 가짜 뉴스 탐지 데이터셋
 
-
-# Baseline Models
-
-- BTS
-- HAND
-- FNDNet
-- BERT
-- MuSeM
-
-**Code Reference**
-- HAN [ [github](https://github.com/uvipen/Hierarchical-attention-networks-pytorch) ]
-
-
 # Enviroments
 
 1. docker 
@@ -32,3 +19,19 @@ pip install -r requirements.txt
 
 - 한국어 임베딩 [ [github](https://github.com/ratsgo/embedding) ]
 - word-embeddings [ [download](https://drive.google.com/file/d/1FeGIbSz2E1A63JZP_XIxnGaSRt7AhXFf/view) ]
+
+# Task 1: 제목 - 본문 일치성
+
+## Baseline Models
+
+- HAN
+- FNDNet
+- BERT
+- MuSeM
+
+# Task 2: 본문 내 일치성
+
+## Baseline Models
+
+- BTS
+- KoBERTSeg
