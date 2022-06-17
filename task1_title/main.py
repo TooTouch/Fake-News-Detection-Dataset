@@ -99,8 +99,8 @@ def run(args):
         # Build datasets
         trainset = create_dataset(args, 'train', tokenizer)
         validset = create_dataset(args, 'valid', tokenizer)
-        trainloader = create_dataloader(args, trainset, 'train', True)
-        validloader = create_dataloader(args, validset, 'valid')
+        trainloader = create_dataloader(args, trainset, True)
+        validloader = create_dataloader(args, validset)
 
         # Set training
         criterion = torch.nn.CrossEntropyLoss()
