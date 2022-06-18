@@ -6,15 +6,19 @@ import os
 
 
 class FNDDataset(Dataset):
-    def __init__(self, modelname, datadir, split, tokenizer, max_word_len, max_sent_len):
+    def __init__(self, modelname, datadir, split, tokenizer, max_word_len, max_sent_len, use_saved_data=False):
         self.modelname = modelname
         self.split = split
         self.max_word_len = max_word_len
         self.max_sent_len = max_sent_len
-        
+
         # load data
-        self.data = json.load(open(os.path.join(datadir, f'{split}.json'),'r'))
-        self.data_info = pd.read_csv(os.path.join(datadir, f'{split}_info.csv'))
+        self.use_saved_data = use_saved_data
+        if self.use_saved_data:
+            self.data = torch.load(os.path.join(datadir, f'{modelname}_s{max_sent_len}_w{max_word_len}', f'{split}.pt'))
+        else:
+            self.data = json.load(open(os.path.join(datadir, f'{split}.json'),'r'))
+            self.data_info = pd.read_csv(os.path.join(datadir, f'{split}_info.csv'))
         
         # tokenizer
         self.tokenizer = tokenizer
@@ -47,46 +51,57 @@ class FNDDataset(Dataset):
 
 
     def __getitem__(self, i):
-        news_idx = self.data_info.iloc[i]
-        news_info = self.data[str(news_idx['id'])]
+
+        if self.use_saved_data:
+            doc = {'input_ids':self.data['doc'][i]}
+            label = self.data['label'][i]
+
+            return doc, label
         
-        # label
-        label = 1 if news_idx['label']=='fake' else 0
+        else:
+            news_idx = self.data_info.iloc[i]
+            news_info = self.data[str(news_idx['id'])]
+        
+            # label
+            label = 1 if news_idx['label']=='fake' else 0
 
-        if self.modelname != 'BERT':
-            # input
-            sent_list = [news_info['title']] + news_info['text']
-            
-            # HAN
-            if self.modelname == 'HAN':
-                doc = self.transform(sent_list)
-                doc = self.padding(doc)
-            elif self.modelname == 'FNDNet':
-                doc = self.transform_fndnet(sent_list)
-                doc = self.padding(sent_list)
+            if self.modelname != 'BERT':
+                # input
+                sent_list = [news_info['title']] + news_info['text']
+                
+                # HAN
+                if self.modelname == 'HAN':
+                    doc = self.transform(sent_list)
+                    doc = self.padding(doc)
+                elif self.modelname == 'FNDNet':
+                    doc = self.transform_fndnet(sent_list)
+                    doc = self.padding(sent_list)
 
-            doc = {'input_ids':torch.tensor(doc)}
+                doc = {'input_ids':torch.tensor(doc)}
 
-        elif self.modelname == 'BERT':
-            doc = self.tokenizer(
-                news_info['title'],
-                ' '.join(news_info['text']),
-                return_tensors='pt',
-                max_length = self.max_word_len,
-                padding='max_length',
-                truncation=True,
-                add_special_tokens=True
-            )
+            elif self.modelname == 'BERT':
+                doc = self.tokenizer(
+                    news_info['title'],
+                    ' '.join(news_info['text']),
+                    return_tensors='pt',
+                    max_length = self.max_word_len,
+                    padding='max_length',
+                    truncation=True,
+                    add_special_tokens=True
+                )
 
-            doc['input_ids'] = doc['input_ids'][0]
-            doc['attention_mask'] = doc['attention_mask'][0]
-            doc['token_type_ids'] = doc['token_type_ids'][0]
+                doc['input_ids'] = doc['input_ids'][0]
+                doc['attention_mask'] = doc['attention_mask'][0]
+                doc['token_type_ids'] = doc['token_type_ids'][0]
 
-        return doc, label
+            return doc, label
 
 
     def __len__(self):
-        return len(self.data)
+        if self.use_saved_data:
+            return len(self.data['doc'])
+        else:
+            return len(self.data)
     
     @property
     def num_classes(self):

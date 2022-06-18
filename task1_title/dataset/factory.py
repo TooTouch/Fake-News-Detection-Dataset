@@ -5,7 +5,7 @@ from konlpy.tag import Mecab
 from transformers import BertTokenizer
 from torch.utils.data import DataLoader
 
-from dataloader import FNDTokenizer, FNDDataset
+from .dataloader import FNDTokenizer, FNDDataset
 
 
 def extract_word_embedding(vocab_path, max_vocab_size=-1):
@@ -38,12 +38,13 @@ def create_tokenizer(args):
 
 def create_dataset(args, split, tokenizer):
     dataset = FNDDataset(
-        modelname    = args.modelname,
-        datadir      = args.data_path,
-        split        = split,  
-        tokenizer    = tokenizer, 
-        max_word_len = args.max_word_len, 
-        max_sent_len = args.max_sent_len
+        modelname      = args.modelname,
+        datadir        = args.data_path,
+        split          = split,  
+        tokenizer      = tokenizer, 
+        max_word_len   = args.max_word_len, 
+        max_sent_len   = args.max_sent_len,
+        use_saved_data = args.use_saved_data
     )
 
     return dataset
