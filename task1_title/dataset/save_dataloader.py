@@ -4,14 +4,14 @@ import torch
 import os 
 import argparse 
 
-from dataloader import create_tokenizer, create_dataset, create_dataloader
+from factory import create_tokenizer, create_dataset, create_dataloader
 
 def save(split, dataloader, savedir):
     
     doc_list = []
     label_list = []
-    for doc, label in tqdm(dataloader, desc=split):
-        doc_list.append(doc)
+    for i, (doc, label) in enumerate(tqdm(dataloader, desc=split)):
+        doc_list.append(doc['input_ids'])
         label_list.append(label)
 
     doc = torch.cat(doc_list, dim=0)

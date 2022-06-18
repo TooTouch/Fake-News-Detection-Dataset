@@ -78,8 +78,8 @@ def train(model, dataloader, criterion, optimizer, log_interval, accumulation_st
                              acc        = acc_m, 
                              lr         = optimizer.param_groups[0]['lr'],
                              batch_time = batch_time_m,
-                             rate       = inputs.size(0) / batch_time_m.val,
-                             rate_avg   = inputs.size(0) / batch_time_m.avg,
+                             rate       = inputs['input_ids'].size(0) / batch_time_m.val,
+                             rate_avg   = inputs['input_ids'].size(0) / batch_time_m.avg,
                              data_time  = data_time_m))
    
         end = time.time()
@@ -94,10 +94,10 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu'):
     model.eval()
     with torch.no_grad():
         for idx, (inputs, targets) in enumerate(dataloader):
-            inputs, targets = inputs.to(device), targets.to(device)
+            inputs, targets = convert_device(inputs, device), targets.to(device)
             
             # predict
-            outputs = model(inputs)
+            outputs = model(**inputs)
             
             # loss 
             loss = criterion(outputs, targets)
