@@ -34,7 +34,7 @@ def get_args(notebook=False):
     parser.add_argument("--accumulation_steps", type=int, default=1, help='number of accumulation steps')
 
     # optimizer
-    parser.add_argument("--lr", type=float, default=3e-3)
+    parser.add_argument("--lr", type=float, default=1e-1)
     parser.add_argument("--weight_decay", type=float, default=5e-4)
 
     # dataset

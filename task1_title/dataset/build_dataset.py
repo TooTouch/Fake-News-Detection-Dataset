@@ -75,7 +75,7 @@ class FNDDataset(Dataset):
                     doc = self.padding(doc)
                 elif self.modelname == 'FNDNet':
                     doc = self.transform_fndnet(sent_list)
-                    doc = self.padding(sent_list)
+                    doc = self.padding_fndnet(sent_list)
 
                 doc = {'input_ids':torch.tensor(doc)}
 
@@ -144,8 +144,9 @@ class FNDTokenizer:
 
     @property
     def vocab_size(self):
-        return len(self.vocab) + len(self.special_tokens)
+        return len(self.vocab)
 
     def add_tokens(self, name):
-        return self.special_tokens.update({name: self.vocab_size})
+        self.special_tokens.update({name: self.vocab_size})
+        self.vocab += [name]
 

@@ -5,7 +5,7 @@ from konlpy.tag import Mecab
 from transformers import BertTokenizer
 from torch.utils.data import DataLoader
 
-from .dataloader import FNDTokenizer, FNDDataset
+from .build_dataset import FNDTokenizer, FNDDataset
 
 
 def extract_word_embedding(vocab_path, max_vocab_size=-1):
@@ -16,7 +16,7 @@ def extract_word_embedding(vocab_path, max_vocab_size=-1):
         quoting            = csv.QUOTE_NONE
     ).values
 
-    word_embed = word_embed[:-max_vocab_size] if max_vocab_size != -1 else word_embed
+    word_embed = word_embed[:max_vocab_size] if max_vocab_size != -1 else word_embed
 
     vocab = list(word_embed[:,0])
     word_embed = word_embed[:,1:]
