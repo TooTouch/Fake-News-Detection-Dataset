@@ -14,5 +14,4 @@ python main.py \
 --max_vocab_size 50000 \
 --max_word_len 1000 \
 --dims 128 \
---log_interval 10 \
---use_wandb
+--log_interval 1
