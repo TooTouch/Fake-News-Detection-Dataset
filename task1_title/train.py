@@ -7,8 +7,10 @@ from collections import OrderedDict
 
 import torch
 from utils import convert_device
+import transformers
 
 _logger = logging.getLogger('train')
+transformers.logging.set_verbosity_error()
 
 class AverageMeter:
     """Computes and stores the average and current value"""
@@ -126,7 +128,8 @@ def training(
         train_metrics = train(model, trainloader, criterion, optimizer, log_interval, accumulation_steps, device)
         eval_metrics = evaluate(model, validloader, criterion, log_interval, device)
 
-        scheduler.step()
+        if scheduler:
+            scheduler.step()
 
         # wandb
         metrics = OrderedDict(epoch=epoch)
