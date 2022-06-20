@@ -7,6 +7,7 @@ import argparse
 
 from models import create_model 
 from dataset import create_dataset, create_dataloader, create_tokenizer
+from transformers import get_cosine_schedule_with_warmup
 from train import training
 
 from log import setup_default_logging
@@ -29,13 +30,15 @@ def get_args(notebook=False):
 
     # training
     parser.add_argument("--batch_size", type=int, default=64, help='batch size')
-    parser.add_argument("--epochs", type=int, default=1, help='number of epochs') 
+    parser.add_argument("--num_training_steps", type=int, default=1, help='number of training steps') 
     parser.add_argument("--log_interval", type=int, default=1, help='log interval')
+    parser.add_argument("--eval_interval", type=int, default=1000, help='eval interval')
     parser.add_argument("--accumulation_steps", type=int, default=1, help='number of accumulation steps')
 
     # optimizer
     parser.add_argument("--use_scheduler", action='store_true', help='use scheduler')
     parser.add_argument("--lr", type=float, default=1e-1)
+    parser.add_argument("--warmup_ratio", type=float, default=0.1, help='learning rate warmup ratio')
     parser.add_argument("--weight_decay", type=float, default=5e-4)
 
     # dataset
@@ -109,21 +112,26 @@ def run(args):
 
         # scheduler
         if args.use_scheduler:
-            scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs)
+            # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs)
+            scheduler = get_cosine_schedule_with_warmup(
+                optimizer, 
+                num_warmup_steps   = int(args.num_training_steps * args.warmup_ratio), 
+                num_training_steps = args.num_training_steps)
         else:
             scheduler = None
 
         # Fitting model
         training(
             model              = model, 
-            epochs             = args.epochs, 
+            num_training_steps = args.num_training_steps, 
             trainloader        = trainloader, 
             validloader        = validloader, 
             criterion          = criterion, 
             optimizer          = optimizer, 
             scheduler          = scheduler,
-            savedir            = savedir,
             log_interval       = args.log_interval,
+            eval_interval      = args.eval_interval,
+            savedir            = savedir,
             accumulation_steps = args.accumulation_steps,
             device             = device,
             use_wandb          = args.use_wandb
