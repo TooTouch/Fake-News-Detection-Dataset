@@ -5,29 +5,39 @@ import os
 import argparse 
 
 from dataset import create_tokenizer, create_dataset, create_dataloader
+import transformers
+
+transformers.logging.set_verbosity_error()
 
 def save(split, dataloader, savedir):
     
-    doc_list = []
+    doc_dict = {}
     label_list = []
     for i, (doc, label) in enumerate(tqdm(dataloader, desc=split)):
-        doc_list.append(doc['input_ids'])
+        if len(doc_dict) == 0:
+            for k in doc.keys():
+                doc_dict[k] = []
+            
+        for k in doc.keys():
+            doc_dict[k].append(doc[k])
         label_list.append(label)
 
-    doc = torch.cat(doc_list)
-    label = torch.cat(label_list)
+    for k in doc_dict.keys():
+        doc_dict[k] = torch.cat(doc_dict[k])
+    label_list = torch.cat(label_list)
 
-    torch.save({'doc':doc, 'label':label}, os.path.join(savedir,f'{split}.pt'))
+    torch.save({'doc':doc_dict, 'label':label_list}, os.path.join(savedir,f'{split}.pt'))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--modelname', type=str, default='HAN', choices=['HAN','FNDNet'])
+    parser.add_argument('--modelname', type=str, default='HAN', choices=['HAN','FNDNet','BTS'])
     parser.add_argument("--use_saved_data", action='store_true', help='use saved data')
+    parser.add_argument("--pretrained_name", type=str, default='klue/bert-base')
     parser.add_argument("--batch_size", type=int, default=64, help='batch size')
     parser.add_argument('--num_workers', default=12, type=int, help='number of workers')
     parser.add_argument("--data_path", type=str, default="../data/task1/")
     parser.add_argument('--savedir', type=str, default='../data/task1/')
-    parser.add_argument('--tokenizer', type=str, default='mecab')
+    parser.add_argument('--tokenizer', type=str, default='mecab', choices=['mecab','bert'])
     parser.add_argument("--vocab_path", type=str, default="../word-embeddings/glove/glove.txt")
     parser.add_argument('--max_vocab_size', type=int, default=-1, help='maximum vocab size')
     parser.add_argument('--max_word_len', type=int, default=64, help='maximum word length')
@@ -36,7 +46,7 @@ if __name__ == '__main__':
 
     if args.modelname == 'HAN':
         dataname = f'{args.modelname}_s{args.max_sent_len}_w{args.max_word_len}'
-    elif args.modelname == 'FNDNet':
+    elif args.modelname in ['FNDNet','BTS']:
         dataname = f'{args.modelname}_w{args.max_word_len}'
 
     args.savedir = os.path.join(args.savedir, dataname)

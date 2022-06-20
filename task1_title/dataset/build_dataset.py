@@ -17,7 +17,7 @@ class FNDDataset(Dataset):
         if self.use_saved_data:
             if self.modelname == 'HAN':
                 dataname = f'{modelname}_s{max_sent_len}_w{max_word_len}'
-            else:
+            elif self.modelname in ['FNDNet','BTS']:
                 dataname = f'{modelname}_w{max_word_len}'
             self.data = torch.load(os.path.join(datadir, dataname, f'{split}.pt'))
         else:
@@ -62,7 +62,10 @@ class FNDDataset(Dataset):
     def __getitem__(self, i):
 
         if self.use_saved_data:
-            doc = {'input_ids':self.data['doc'][i]}
+            doc = {}
+            for k in self.data['doc'].keys():
+                doc[k] = self.data['doc'][k][i]
+
             label = self.data['label'][i]
 
             return doc, label
@@ -104,7 +107,7 @@ class FNDDataset(Dataset):
 
     def __len__(self):
         if self.use_saved_data:
-            return len(self.data['doc'])
+            return len(self.data['doc']['input_ids'])
         else:
             return len(self.data)
     
