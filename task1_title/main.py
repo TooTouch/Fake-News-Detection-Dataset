@@ -19,7 +19,7 @@ def get_args(notebook=False):
     parser = argparse.ArgumentParser(description='Fake News Detection - Task1')
 
     parser.add_argument('--exp_name', type=str, help='experiment name')
-    parser.add_argument('--modelname', type=str, default='HAN', choices=['HAN','FNDNet'],help='model name')
+    parser.add_argument('--modelname', type=str, default='HAN', choices=['HAN','FNDNet','BTS'],help='model name')
     parser.add_argument('--seed', type=int, default=223, help='seed')
 
     parser.add_argument('--do_train', action='store_true', help='training mode')
@@ -34,12 +34,13 @@ def get_args(notebook=False):
     parser.add_argument("--accumulation_steps", type=int, default=1, help='number of accumulation steps')
 
     # optimizer
+    parser.add_argument("--use_scheduler", action='store_true', help='use scheduler')
     parser.add_argument("--lr", type=float, default=1e-1)
     parser.add_argument("--weight_decay", type=float, default=5e-4)
 
     # dataset
     parser.add_argument("--use_saved_data", action='store_true', help='use saved data')
-    parser.add_argument("--tokenizer", type=str, default='mecab', choices=['mecab','BERT'], help='tokenizer name')
+    parser.add_argument("--tokenizer", type=str, default='mecab', choices=['mecab','bert'], help='tokenizer name')
     parser.add_argument("--vocab_path", type=str, default="../word-embeddings/glove/glove.txt")
     parser.add_argument("--data_path", type=str, default="../data/task1/")
     parser.add_argument("--num_classes", type=int, default=2, help='number of class')
@@ -51,9 +52,9 @@ def get_args(notebook=False):
 
     # models
     parser.add_argument("--pretrained_name", type=str, default='klue/bert-base')
-    parser.add_argument("--dim", type=int, default=256, help='embedding dimension')
-    parser.add_argument("--word_dim", type=int, default=32)
-    parser.add_argument("--sent_dim", type=int, default=64)
+    parser.add_argument("--dims", type=int, default=128, help='embedding dimension')
+    parser.add_argument("--word_dims", type=int, default=32)
+    parser.add_argument("--sent_dims", type=int, default=64)
     parser.add_argument("--use_pretrained_word_embed", action='store_true', help='use pretrained word embedding')
     parser.add_argument("--freeze_word_embed", action='store_true', help='freeze pretrained word embedding')
 
@@ -107,7 +108,10 @@ def run(args):
         optimizer = torch.optim.AdamW(params=filter(lambda p: p.requires_grad, model.parameters()), lr=args.lr, weight_decay=args.weight_decay)
 
         # scheduler
-        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs)
+        if args.use_scheduler:
+            scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs)
+        else:
+            scheduler = None
 
         # Fitting model
         training(
