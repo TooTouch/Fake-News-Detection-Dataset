@@ -1,5 +1,5 @@
 from models import HierAttNet, FNDNet, BTS
-from transformers import AutoConfig
+from transformers import AutoConfig, AutoModelForSequenceClassification
 
 import logging
 
@@ -19,7 +19,11 @@ def create_model(args, word_embed, tokenizer):
         )
     elif args.modelname == 'BTS':
         model_config = AutoConfig.from_pretrained(args.pretrained_name)
-        model = BTS.from_pretrained(args.pretrained_name, config=model_config)
+        model = BTS(
+            pretrained_name = args.pretrained_name, 
+            config          = model_config,
+            num_classes     = args.num_classes
+        )
 
     if args.use_pretrained_word_embed:
         _logger.info('load pretrained word embedding')

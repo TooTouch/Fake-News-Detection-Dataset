@@ -3,15 +3,14 @@ import torch.nn as nn
 
 
 class BTS(BertPreTrainedModel):
-    def __init__(self, config):
+    def __init__(self, pretrained_name, config, num_classes):
         super().__init__(config)
-        self.num_labels = config.num_labels
 
-        self.bert = BertModel(config)
+        self.bert = BertModel.from_pretrained(pretrained_name, config=config)
+        
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
-        self.classifier = nn.Linear(config.hidden_size, config.num_labels)
+        self.classifier = nn.Linear(config.hidden_size, num_classes)
 
-        self.init_weights()
 
     def forward(
         self,
