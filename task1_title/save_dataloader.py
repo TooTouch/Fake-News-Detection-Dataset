@@ -21,7 +21,7 @@ def save(split, dataloader, savedir):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--modelname', type=str, default='HAN')
+    parser.add_argument('--modelname', type=str, default='HAN', choices=['HAN','FNDNet'])
     parser.add_argument("--use_saved_data", action='store_true', help='use saved data')
     parser.add_argument("--batch_size", type=int, default=64, help='batch size')
     parser.add_argument('--num_workers', default=12, type=int, help='number of workers')
@@ -34,7 +34,12 @@ if __name__ == '__main__':
     parser.add_argument('--max_sent_len', type=int, default=16, help='maximum sent length')
     args = parser.parse_args()
 
-    args.savedir = os.path.join(args.savedir, f'{args.modelname}_s{args.max_sent_len}_w{args.max_word_len}')
+    if args.modelname == 'HAN':
+        dataname = f'{args.modelname}_s{args.max_sent_len}_w{args.max_word_len}'
+    elif args.modelname == 'FNDNet':
+        dataname = f'{args.modelname}_w{args.max_word_len}'
+
+    args.savedir = os.path.join(args.savedir, dataname)
 
     os.makedirs(args.savedir, exist_ok=True)
 
