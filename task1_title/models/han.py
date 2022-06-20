@@ -8,30 +8,30 @@ import csv
 from einops import rearrange
 
 class HierAttNet(nn.Module):
-    def __init__(self, word_dim=64, sent_dim=128, dropout=0.1, num_classes=2, 
-                 vocab_len=358043, embed_dim=100):
+    def __init__(self, word_dims=64, sent_dims=128, dropout=0.1, num_classes=2, 
+                 vocab_len=358043, embed_dims=100):
         super(HierAttNet, self).__init__()
 
         # word to embeding
-        self.w2e = nn.Embedding(num_embeddings=vocab_len, embedding_dim=embed_dim)
+        self.w2e = nn.Embedding(num_embeddings=vocab_len, embedding_dim=embed_dims)
 
         # word attention
         self.word_attention = WordAttnNet(
-            vocab_len = vocab_len, 
-            embed_dim = embed_dim,
-            word_dim  = word_dim,
-            dropout   = dropout
+            vocab_len  = vocab_len, 
+            embed_dims = embed_dims,
+            word_dims  = word_dims,
+            dropout    = dropout
         )
 
         # sentence attention
         self.sent_attention = SentAttnNet(
-            word_dim = word_dim, 
-            sent_dim = sent_dim, 
-            dropout  = dropout
+            word_dims = word_dims, 
+            sent_dims = sent_dims, 
+            dropout   = dropout
         )
 
         # classifier
-        self.fc = nn.Linear(2 * sent_dim, num_classes)
+        self.fc = nn.Linear(2 * sent_dims, num_classes)
 
     def init_w2e(self, weights, nb_special_tokens=0):
         assert isinstance(weights, np.ndarray)
@@ -64,17 +64,17 @@ class HierAttNet(nn.Module):
 
 
 class WordAttnNet(nn.Module):
-    def __init__(self, vocab_len, embed_dim, word_dim, dropout):
+    def __init__(self, vocab_len, embed_dims, word_dims, dropout):
         super(WordAttnNet, self).__init__()
         # word to embeding
-        self.w2e = nn.Embedding(num_embeddings=vocab_len, embedding_dim=embed_dim)
+        self.w2e = nn.Embedding(num_embeddings=vocab_len, embedding_dim=embed_dims)
 
         # word attention
-        self.gru = nn.GRU(embed_dim, word_dim, bidirectional=True, dropout=dropout)
-        self.attention = Attention(2 * word_dim, word_dim)
+        self.gru = nn.GRU(embed_dims, word_dims, bidirectional=True, dropout=dropout)
+        self.attention = Attention(2 * word_dims, word_dims)
 
         # layer norm and dropout
-        self.layer_norm = nn.LayerNorm(2 * word_dim)
+        self.layer_norm = nn.LayerNorm(2 * word_dims)
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, input_ids):
@@ -99,14 +99,14 @@ class WordAttnNet(nn.Module):
 
 
 class SentAttnNet(nn.Module):
-    def __init__(self, word_dim, sent_dim, dropout):
+    def __init__(self, word_dims, sent_dims, dropout):
         super(SentAttnNet, self).__init__()
         # sentence attention
-        self.gru = nn.GRU(2 * word_dim, sent_dim, bidirectional=True, dropout=dropout)
-        self.attention = Attention(2 * sent_dim, sent_dim)
+        self.gru = nn.GRU(2 * word_dims, sent_dims, bidirectional=True, dropout=dropout)
+        self.attention = Attention(2 * sent_dims, sent_dims)
 
         # layer norm and dropout
-        self.layer_norm = nn.LayerNorm(2 * sent_dim)
+        self.layer_norm = nn.LayerNorm(2 * sent_dims)
 
     def forward(self, words_embed):
         # sentence attention
