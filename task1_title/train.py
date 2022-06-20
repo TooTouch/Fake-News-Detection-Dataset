@@ -31,62 +31,117 @@ class AverageMeter:
 
 
 
-def train(model, dataloader, criterion, optimizer, log_interval, accumulation_steps=1, device='cpu'):   
+def training(model, num_training_steps, trainloader, validloader, criterion, optimizer, scheduler,
+             log_interval, eval_interval, savedir, use_wandb, accumulation_steps=1, device='cpu'):   
     batch_time_m = AverageMeter()
     data_time_m = AverageMeter()
     acc_m = AverageMeter()
     losses_m = AverageMeter()
+    best_acc = 0
     
     end = time.time()
     
     model.train()
     optimizer.zero_grad()
-    for idx, (inputs, targets) in enumerate(dataloader):
-        data_time_m.update(time.time() - end)
 
-        # optimizer condition
-        opt_cond = (idx + 1) % accumulation_steps == 0
+    step = 0
+    train_mode = True
+    while train_mode:
+        for inputs, targets in trainloader:
+            _logger.info('step: {}'.format(step))
+            # batch
+            inputs, targets = convert_device(inputs, device), targets.to(device)
 
-        inputs, targets = convert_device(inputs, device), targets.to(device)
+            data_time_m.update(time.time() - end)
 
-        # predict
-        outputs = model(**inputs)
-        loss = criterion(outputs, targets)
-        # loss for accumulation steps
-        loss /= accumulation_steps        
-        loss.backward()
+            # optimizer condition
+            opt_cond = (step + 1) % accumulation_steps == 0
 
-        if opt_cond:
-            # loss update
-            optimizer.step()
-            optimizer.zero_grad()
+            # predict
+            outputs = model(**inputs)
+            loss = criterion(outputs, targets)
+            # loss for accumulation steps
+            loss /= accumulation_steps        
+            loss.backward()
 
-            losses_m.update(loss.item()*accumulation_steps)
+            if opt_cond:
+                # loss update
+                optimizer.step()
+                optimizer.zero_grad()
 
-            # accuracy
-            preds = outputs.argmax(dim=1) 
-            acc_m.update(targets.eq(preds).sum().item()/targets.size(0), n=targets.size(0))
+                if scheduler:
+                    scheduler.step()
+
+                losses_m.update(loss.item()*accumulation_steps)
+
+                # accuracy
+                preds = outputs.argmax(dim=1) 
+                acc_m.update(targets.eq(preds).sum().item()/targets.size(0), n=targets.size(0))
+                
+                batch_time_m.update(time.time() - end)
+
+                # wandb
+                if use_wandb:
+                    wandb.log({
+                        'train_acc':acc_m.val,
+                        'train_loss':losses_m.val
+                    },
+                    step=step)
+                
+                if ((step+1) // accumulation_steps) % log_interval == 0 or step == 0: 
+                    _logger.info('TRAIN [{:>4d}/{}] Loss: {loss.val:>6.4f} ({loss.avg:>6.4f}) '
+                                'Acc: {acc.avg:.3%} '
+                                'LR: {lr:.3e} '
+                                'Time: {batch_time.val:.3f}s, {rate:>7.2f}/s ({batch_time.avg:.3f}s, {rate_avg:>7.2f}/s) '
+                                'Data: {data_time.val:.3f} ({data_time.avg:.3f})'.format(
+                                (step+1)//accumulation_steps, num_training_steps, 
+                                loss       = losses_m, 
+                                acc        = acc_m, 
+                                lr         = optimizer.param_groups[0]['lr'],
+                                batch_time = batch_time_m,
+                                rate       = inputs['input_ids'].size(0) / batch_time_m.val,
+                                rate_avg   = inputs['input_ids'].size(0) / batch_time_m.avg,
+                                data_time  = data_time_m))
+
+
+                if ((step+1) // accumulation_steps) % eval_interval == 0 or step == 0: 
+                    eval_metrics = evaluate(model, validloader, criterion, log_interval, device)
+                    model.train()
+                    # wandb
+                    if use_wandb:
+                        wandb.log({
+                            'eval_acc':eval_metrics['acc'],
+                            'eval_loss':eval_metrics['loss']
+                        },
+                        step=step)
+
+                    # checkpoint
+                    if best_acc < eval_metrics['acc']:
+                        # save best score
+                        state = {'best_step':step, 'best_acc':eval_metrics['acc']}
+                        json.dump(state, open(os.path.join(savedir, 'best_score.json'),'w'), indent=4)
+
+                        # save best model
+                        torch.save(model.state_dict(), os.path.join(savedir, f'best_model.pt'))
+                        
+                        _logger.info('Best Accuracy {0:.3%} to {1:.3%}'.format(best_acc, eval_metrics['acc']))
+
+                        best_acc = eval_metrics['acc']
+
+            end = time.time()
+
+            step += 1
+
+            if (step // accumulation_steps) >= num_training_steps:
+                break
             
-            batch_time_m.update(time.time() - end)
-        
-            if (idx // accumulation_steps) % log_interval == 0 or idx == 0: 
-                _logger.info('TRAIN [{:>4d}/{}] Loss: {loss.val:>6.4f} ({loss.avg:>6.4f}) '
-                             'Acc: {acc.avg:.3%} '
-                             'LR: {lr:.3e} '
-                             'Time: {batch_time.val:.3f}s, {rate:>7.2f}/s ({batch_time.avg:.3f}s, {rate_avg:>7.2f}/s) '
-                             'Data: {data_time.val:.3f} ({data_time.avg:.3f})'.format(
-                             (idx+1)//accumulation_steps, len(dataloader)//accumulation_steps, 
-                             loss       = losses_m, 
-                             acc        = acc_m, 
-                             lr         = optimizer.param_groups[0]['lr'],
-                             batch_time = batch_time_m,
-                             rate       = inputs['input_ids'].size(0) / batch_time_m.val,
-                             rate_avg   = inputs['input_ids'].size(0) / batch_time_m.avg,
-                             data_time  = data_time_m))
-   
-        end = time.time()
+        train_mode = False
+
+    # save best model
+    torch.save(model.state_dict(), os.path.join(savedir, f'latest_model.pt'))
+
+    _logger.info('Best Metric: {0:.3%} (step {1:})'.format(state['best_acc'], state['best_step']))
     
-    return OrderedDict([('acc',acc_m.avg), ('loss',losses_m.avg)])
         
 def evaluate(model, dataloader, criterion, log_interval, device='cpu'):
     correct = 0
@@ -115,43 +170,4 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu'):
                             (idx+1, len(dataloader), total_loss/(idx+1), 100.*correct/total, correct, total))
                 
     return OrderedDict([('acc',correct/total), ('loss',total_loss/len(dataloader))])
-                
-def training(
-    model, epochs, trainloader, validloader, criterion, optimizer, scheduler, 
-    savedir, log_interval, accumulation_steps=1, device='cpu', use_wandb=False
-):
-    
-    best_acc = 0
-
-    for epoch in range(epochs):
-        _logger.info(f'\nEpoch: {epoch+1}/{epochs}')
-        train_metrics = train(model, trainloader, criterion, optimizer, log_interval, accumulation_steps, device)
-        eval_metrics = evaluate(model, validloader, criterion, log_interval, device)
-
-        if scheduler:
-            scheduler.step()
-
-        # wandb
-        metrics = OrderedDict(epoch=epoch)
-        metrics.update([('train_' + k, v) for k, v in train_metrics.items()])
-        metrics.update([('eval_' + k, v) for k, v in eval_metrics.items()])
-        if use_wandb:
-            wandb.log(metrics)
-    
-        # checkpoint
-        if best_acc < eval_metrics['acc']:
-            # save best score
-            state = {'best_epoch':epoch, 'best_acc':eval_metrics['acc']}
-            json.dump(state, open(os.path.join(savedir, 'best_score.json'),'w'), indent=4)
-
-            # save best model
-            torch.save(model.state_dict(), os.path.join(savedir, f'best_model.pt'))
-            
-            _logger.info('Best Accuracy {0:.3%} to {1:.3%}'.format(best_acc, eval_metrics['acc']))
-
-            best_acc = eval_metrics['acc']
-
-    # save best model
-    torch.save(model.state_dict(), os.path.join(savedir, f'latest_model.pt'))
-
-    _logger.info('Best Metric: {0:.3%} (epoch {1:})'.format(state['best_acc'], state['best_epoch']))
+        
