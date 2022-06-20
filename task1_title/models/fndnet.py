@@ -42,10 +42,10 @@ class FNDNet(nn.Module):
                 np.random.randn(nb_special_tokens, weights.shape[1])
             ]).astype(np.float)
         )
-        self.word_attention.w2e = self.word_attention.w2e.from_pretrained(weights)
+        self.w2e = self.w2e.from_pretrained(weights)
 
     def freeze_w2e(self):
-        self.word_attention.w2e.weight.requires_grad = False
+        self.w2e.weight.requires_grad = False
 
 
     def forward(self, input_ids):
@@ -53,13 +53,13 @@ class FNDNet(nn.Module):
         inputs_embed = self.w2e(input_ids)
 
         # B x words x dims -> B x dims x words
-        inputs_embed = inputs_embed.permute(0,2,1)
+        inputs_embed = inputs_embed.float().permute(0,2,1)
 
         # feature extraction
         out1 = self.max_pool1(self.conv1_1(inputs_embed))
         out2 = self.max_pool1(self.conv1_2(inputs_embed))
         out3 = self.max_pool1(self.conv1_3(inputs_embed))
-        out = torch.cat([out1, out2, out3], dim=1)
+        out = torch.cat([out1, out2, out3], dim=-1)
 
         out = self.max_pool1(self.conv2(out))
         out = self.max_pool2(self.conv3(out))
