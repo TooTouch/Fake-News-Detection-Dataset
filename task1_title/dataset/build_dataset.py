@@ -15,7 +15,11 @@ class FNDDataset(Dataset):
         # load data
         self.use_saved_data = use_saved_data
         if self.use_saved_data:
-            self.data = torch.load(os.path.join(datadir, f'{modelname}_s{max_sent_len}_w{max_word_len}', f'{split}.pt'))
+            if self.modelname == 'HAN':
+                dataname = f'{modelname}_s{max_sent_len}_w{max_word_len}'
+            else:
+                dataname = f'{modelname}_w{max_word_len}'
+            self.data = torch.load(os.path.join(datadir, dataname, f'{split}.pt'))
         else:
             self.data = json.load(open(os.path.join(datadir, f'{split}.json'),'r'))
             self.data_info = pd.read_csv(os.path.join(datadir, f'{split}_info.csv'))
@@ -23,13 +27,13 @@ class FNDDataset(Dataset):
         # tokenizer
         self.tokenizer = tokenizer
 
-    def transform(self, sent_list):
+    def transform_han(self, sent_list):
         sent_list = sent_list[:self.max_sent_len]
         doc = [self.tokenizer.encode(sent)[:self.max_word_len] for sent in sent_list] 
         
         return doc
     
-    def padding(self, doc):
+    def padding_han(self, doc):
         num_pad_doc = self.max_sent_len - len(doc)
         num_pad_sent = [max(0, self.max_word_len - len(sent)) for sent in doc]
 
@@ -49,6 +53,11 @@ class FNDDataset(Dataset):
 
         return doc
 
+    def transform(self, sent_list):
+        return getattr(self, f'transform_{self.modelname.lower()}')(sent_list)
+
+    def padding(self, doc):
+        return getattr(self, f'padding_{self.modelname.lower()}')(doc)
 
     def __getitem__(self, i):
 
@@ -65,21 +74,17 @@ class FNDDataset(Dataset):
             # label
             label = 1 if news_idx['label']=='fake' else 0
 
-            if self.modelname != 'BERT':
+            if self.modelname != 'BTS':
                 # input
                 sent_list = [news_info['title']] + news_info['text']
                 
-                # HAN
-                if self.modelname == 'HAN':
-                    doc = self.transform(sent_list)
-                    doc = self.padding(doc)
-                elif self.modelname == 'FNDNet':
-                    doc = self.transform_fndnet(sent_list)
-                    doc = self.padding_fndnet(sent_list)
+                # transform and padding
+                doc = self.transform(sent_list)
+                doc = self.padding(doc)
 
                 doc = {'input_ids':torch.tensor(doc)}
 
-            elif self.modelname == 'BERT':
+            elif self.modelname == 'BTS':
                 doc = self.tokenizer(
                     news_info['title'],
                     ' '.join(news_info['text']),
