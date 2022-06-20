@@ -1,0 +1,2 @@
+bash fndnet_w_freeze_w2e.sh
+bash fndnet_wo_freeze_w2e.sh
