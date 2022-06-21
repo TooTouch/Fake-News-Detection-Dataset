@@ -7,7 +7,7 @@ python main.py \
 --num_training_steps 30000 \
 --batch_size 256 \
 --use_scheduler \
---lr 3e-5 \
+--lr 3e-3 \
 --use_pretrained_word_embed \
 --max_vocab_size 50000 \
 --max_sent_len 16 \
