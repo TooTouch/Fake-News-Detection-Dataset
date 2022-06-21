@@ -12,6 +12,9 @@ from train import training
 
 from log import setup_default_logging
 from utils import torch_seed
+from train import evaluate 
+
+import pandas as pd
 
 _logger = logging.getLogger('train')
 
@@ -27,6 +30,7 @@ def get_args(notebook=False):
     parser.add_argument('--do_test', action='store_true', help='testing mode')
 
     parser.add_argument('--savedir', type=str, default='./saved_model', help='save directory')
+    parser.add_argument('--result_path', type=str, default='./results.csv', help='result file')
 
     # training
     parser.add_argument("--batch_size", type=int, default=64, help='batch size')
@@ -55,6 +59,7 @@ def get_args(notebook=False):
 
     # models
     parser.add_argument("--pretrained_name", type=str, default='klue/bert-base')
+    parser.add_argument("--pretrained_path", type=str, default=None, help='pretrained model path')
     parser.add_argument("--dims", type=int, default=128, help='embedding dimension')
     parser.add_argument("--word_dims", type=int, default=32)
     parser.add_argument("--sent_dims", type=int, default=64)
@@ -138,7 +143,41 @@ def run(args):
         )
 
     elif args.do_test:
-        pass
+        trainset = create_dataset(args, 'train', tokenizer)
+        validset = create_dataset(args, 'valid', tokenizer)
+        testset = create_dataset(args, 'test', tokenizer)
+
+        trainloader = create_dataloader(args, trainset)
+        validloader = create_dataloader(args, validset)
+        testloader = create_dataloader(args, testset)
+
+        criterion = torch.nn.CrossEntropyLoss()
+
+        # Build Model
+        model = create_model(args, word_embed, tokenizer, args.pretrained_path)
+        model.to(device)
+
+        # result path
+        if os.path.isfile(args.result_path):
+            df = pd.read_csv(args.result_path)
+        else:
+            df = pd.DataFrame()
+
+        total_metrics = {}
+        for split, dataloader in {'train':trainloader, 'valid':validloader, 'test':testloader}.items():
+            metrics = evaluate(
+                model        = model, 
+                dataloader   = dataloader, 
+                criterion    = criterion,
+                log_interval = args.log_interval,
+                device       = device
+            )
+
+            for k, v in metrics.items():
+                total_metrics[f'{split}_{k}'] = v
+
+        df = df.append(total_metrics, ignore_index=True)
+
 
 if __name__=='__main__':
     args = get_args()

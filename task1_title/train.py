@@ -48,7 +48,6 @@ def training(model, num_training_steps, trainloader, validloader, criterion, opt
     train_mode = True
     while train_mode:
         for inputs, targets in trainloader:
-            _logger.info('step: {}'.format(step))
             # batch
             inputs, targets = convert_device(inputs, device), targets.to(device)
 
@@ -133,9 +132,8 @@ def training(model, num_training_steps, trainloader, validloader, criterion, opt
             step += 1
 
             if (step // accumulation_steps) >= num_training_steps:
+                train_mode = False
                 break
-            
-        train_mode = False
 
     # save best model
     torch.save(model.state_dict(), os.path.join(savedir, f'latest_model.pt'))
