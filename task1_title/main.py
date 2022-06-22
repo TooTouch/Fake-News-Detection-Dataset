@@ -8,11 +8,10 @@ import argparse
 from models import create_model 
 from dataset import create_dataset, create_dataloader, create_tokenizer
 from transformers import get_cosine_schedule_with_warmup
-from train import training
+from train import training, evaluate
 
 from log import setup_default_logging
 from utils import torch_seed
-from train import evaluate 
 
 import pandas as pd
 
@@ -154,7 +153,8 @@ def run(args):
         criterion = torch.nn.CrossEntropyLoss()
 
         # Build Model
-        model = create_model(args, word_embed, tokenizer, args.pretrained_path)
+        pretrained_path = os.path.join(args.savedir, args.exp_name, 'best_model.pt')
+        model = create_model(args, word_embed, tokenizer, pretrained_path)
         model.to(device)
 
         # result path
@@ -176,7 +176,10 @@ def run(args):
             for k, v in metrics.items():
                 total_metrics[f'{split}_{k}'] = v
 
+        total_metrics['exp_name'] = args.exp_name
         df = df.append(total_metrics, ignore_index=True)
+        df.to_csv(args.result_path, index=False)
+        
 
 
 if __name__=='__main__':

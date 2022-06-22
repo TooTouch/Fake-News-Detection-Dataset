@@ -4,7 +4,7 @@ exp_name=$1
 
 python main.py \
 --do_test \
---pretrained_path ./saved_model/$exp_name/best_model.pt \
+--exp_name $exp_name \
 --modelname FNDNet \
 --batch_size 256 \
 --use_pretrained_word_embed \

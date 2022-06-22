@@ -4,8 +4,8 @@ exp_name=$1
 
 python main.py \
 --do_test \
+--exp_name $exp_name \
 --modelname HAN \
---pretrained_path ./saved_model/$exp_name/best_model.pt \
 --batch_size 256 \
 --use_pretrained_word_embed \
 --max_vocab_size 50000 \
