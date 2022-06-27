@@ -2,6 +2,9 @@ import torch
 import torch.nn as nn
 import numpy as np
 
+from .registry import register_model
+from .utils import download_weights
+
 class FNDNet(nn.Module):
     def __init__(self, dims=128, num_classes=2, dropout=0.2,
                  vocab_len=58043, embed_dim=100):
@@ -72,6 +75,54 @@ class FNDNet(nn.Module):
 
         return out
 
-        
 
-        
+@register_model
+def fndnet(**kwargs):
+    args = kwargs['args']
+    model = FNDNet(
+        dims        = args.dims,
+        num_classes = args.num_classes, 
+    )
+
+    return model
+
+@register_model
+def fndnet_w_freeze_w2e_task1(pretrained=False, **kwargs):
+    # pretrained weights
+    url = 'https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/weights/FNDNet_w_freeze_w2e_task1.pt'
+    
+    model = FNDNet(
+        dims        = 128,
+        num_classes = 2, 
+        dropout     = 0.2,
+        vocab_len   = 50002,
+        embed_dim   = 100
+    )
+
+    if pretrained:
+        weights = download_weights(url)
+        model.load_state_dict(weights)
+    
+    return model
+
+@register_model        
+def fndnet_wo_freeze_w2e_task1(pretrained=False, **kwargs):
+    # pretrained weights
+    url = 'https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/weights/FNDNet_wo_freeze_w2e_task1.pt'
+    
+    model = FNDNet(
+        dims        = 128,
+        num_classes = 2, 
+        dropout     = 0.2,
+        vocab_len   = 50002,
+        embed_dim   = 100
+    )
+
+    if pretrained:
+        weights = download_weights(url)
+        model.load_state_dict(weights)
+    
+    return model
+
+
+    

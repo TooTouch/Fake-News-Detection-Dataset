@@ -5,15 +5,14 @@ import pandas as pd
 import numpy as np
 import csv
 
+from .utils import download_weights
+from .registry import register_model
 from einops import rearrange
 
 class HierAttNet(nn.Module):
     def __init__(self, word_dims=64, sent_dims=128, dropout=0.1, num_classes=2, 
                  vocab_len=358043, embed_dims=100):
         super(HierAttNet, self).__init__()
-
-        # word to embeding
-        self.w2e = nn.Embedding(num_embeddings=vocab_len, embedding_dim=embed_dims)
 
         # word attention
         self.word_attention = WordAttnNet(
@@ -133,3 +132,55 @@ class Attention(nn.Module):
 
         return out, attn_score
 
+
+
+@register_model
+def han(**kwargs):
+    args = kwargs['args']
+    model = HierAttNet(
+        word_dims   = args.word_dims, 
+        sent_dims   = args.sent_dims, 
+        num_classes = args.num_classes, 
+    )
+
+    return model
+
+@register_model
+def han_w_freeze_w2e_task1(pretrained=False, **kwargs):
+    # pretrained weights
+    url = 'https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/weights/HAN_w_freeze_w2e_task1.pt'
+    
+    model = HierAttNet(
+        word_dims   = 32, 
+        sent_dims   = 64, 
+        dropout     = 0.1,
+        num_classes = 2, 
+        vocab_len   = 50002, 
+        embed_dims  = 100
+    )
+
+    if pretrained:
+        weights = download_weights(url)
+        model.load_state_dict(weights)
+    
+    return model
+
+@register_model  
+def han_wo_freeze_w2e_task1(pretrained=False, **kwargs):
+    # pretrained weights
+    url = 'https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/weights/HAN_wo_freeze_w2e_task1.pt'
+    
+    model = HierAttNet(
+        word_dims   = 32, 
+        sent_dims   = 64, 
+        dropout     = 0.1,
+        num_classes = 2, 
+        vocab_len   = 50002, 
+        embed_dims  = 100
+    )
+
+    if pretrained:
+        weights = download_weights(url)
+        model.load_state_dict(weights)
+    
+    return model

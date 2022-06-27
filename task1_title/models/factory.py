@@ -1,41 +1,44 @@
-from models import HierAttNet, FNDNet, BTS
-from transformers import AutoConfig, AutoModelForSequenceClassification
-
 import logging
 import torch
 
+from .registry import is_model, model_entrypoint
+
 _logger = logging.getLogger('train')
 
-def create_model(args, word_embed, tokenizer, pretrained_path=None):
-    if args.modelname == 'HAN':
-        model = HierAttNet(
-            word_dims   = args.word_dims, 
-            sent_dims   = args.sent_dims, 
-            num_classes = args.num_classes, 
-        )
-    elif args.modelname == 'FNDNet':
-        model = FNDNet(
-            dims        = args.dims,
-            num_classes = args.num_classes, 
-        )
-    elif args.modelname == 'BTS':
-        model_config = AutoConfig.from_pretrained(args.pretrained_name)
-        model = BTS(
-            pretrained_name = args.pretrained_name, 
-            config          = model_config,
-            num_classes     = args.num_classes
-        )
+def create_model(
+        modelname,
+        pretrained = False,
+        word_embed = None,
+        tokenizer = None,
+        args = None, 
+    ):
+ 
+    if not is_model(modelname):
+        raise RuntimeError('Unknown model (%s)' % modelname)
 
-    if args.use_pretrained_word_embed:
+    create_fn = model_entrypoint(modelname)
+    
+    model = create_fn(
+        pretrained = pretrained, 
+        args = args
+    )
+
+    # word embedding
+    use_pretrained_word_embed = args.use_pretrained_word_embed if args else None
+    if use_pretrained_word_embed:
         _logger.info('load pretrained word embedding')
         model.init_w2e(word_embed, len(tokenizer.special_tokens))
         
-    if args.freeze_word_embed:
+    # freeze word embedding
+    freeze_word_embed = args.freeze_word_embed if args else None    
+    if freeze_word_embed:
         _logger.info('freeze pretrained word embedding')
         model.freeze_w2e()
 
-    if pretrained_path:
-        _logger.info('load a trained model weights from {}'.format(pretrained_path))
-        model.load_state_dict(torch.load(pretrained_path))
+    # load checkpoint weights
+    checkpoint_path = args.checkpoint_path if args else None
+    if checkpoint_path:
+        _logger.info('load a trained model weights from {}'.format(args.checkpoint_path))
+        model.load_state_dict(torch.load(args.checkpoint_path))
 
     return model

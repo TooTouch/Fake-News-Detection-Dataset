@@ -1,6 +1,8 @@
-from transformers import BertModel, BertPreTrainedModel
+from transformers import AutoConfig, BertModel, BertPreTrainedModel
 import torch.nn as nn
 
+from .registry import register_model
+from .utils import download_weights
 
 class BTS(BertPreTrainedModel):
     def __init__(self, pretrained_name, config, num_classes):
@@ -44,3 +46,34 @@ class BTS(BertPreTrainedModel):
             return logits, outputs[-1]
         else:
             return logits
+
+@register_model
+def bts(**kwargs):
+    args = kwargs['args']
+    model_config = AutoConfig.from_pretrained(args.pretrained_name)
+    model = BTS(
+            pretrained_name = args.pretrained_name, 
+            config          = model_config,
+            num_classes     = args.num_classes
+    )
+
+    return model
+
+@register_model
+def bts_task1(pretrained=False, **kwargs):
+    # pretrained weights
+    url = 'https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/weights/BTS_task1.pt'
+    
+    model_config = AutoConfig.from_pretrained('klue/bert-base')
+    model = BTS(
+            pretrained_name = 'klue/bert-base', 
+            config          = model_config,
+            num_classes     = 2
+    )
+
+    if pretrained:
+        weights = download_weights(url)
+        model.load_state_dict(weights)
+    
+    return model
+

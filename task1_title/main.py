@@ -58,7 +58,8 @@ def get_args(notebook=False):
 
     # models
     parser.add_argument("--pretrained_name", type=str, default='klue/bert-base')
-    parser.add_argument("--pretrained_path", type=str, default=None, help='pretrained model path')
+    parser.add_argument("--checkpoint_path", type=str, default=None, help='use checkpoint path')
+    parser.add_argument("--pretrained", action='store_true', help='download pretrained model')
     parser.add_argument("--dims", type=int, default=128, help='embedding dimension')
     parser.add_argument("--word_dims", type=int, default=32)
     parser.add_argument("--sent_dims", type=int, default=64)
@@ -153,8 +154,7 @@ def run(args):
         criterion = torch.nn.CrossEntropyLoss()
 
         # Build Model
-        pretrained_path = os.path.join(args.savedir, args.exp_name, 'best_model.pt')
-        model = create_model(args, word_embed, tokenizer, pretrained_path)
+        model = create_model(args.modelname, args.pretarined, args, word_embed, tokenizer)
         model.to(device)
 
         # result path
