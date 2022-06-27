@@ -5,7 +5,8 @@ exp_name=$1
 python main.py \
 --do_test \
 --exp_name $exp_name \
---modelname BTS \
+--modelname $exp_name \
+--pretrained \
 --pretrained_name 'klue/bert-base' \
 --tokenizer 'bert' \
 --use_saved_data \

@@ -22,7 +22,7 @@ def get_args(notebook=False):
     parser = argparse.ArgumentParser(description='Fake News Detection - Task1')
 
     parser.add_argument('--exp_name', type=str, help='experiment name')
-    parser.add_argument('--modelname', type=str, default='HAN', choices=['HAN','FNDNet','BTS'],help='model name')
+    parser.add_argument('--modelname', type=str, default='han', help='model name')
     parser.add_argument('--seed', type=int, default=223, help='seed')
 
     parser.add_argument('--do_train', action='store_true', help='training mode')

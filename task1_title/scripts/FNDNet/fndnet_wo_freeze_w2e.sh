@@ -3,7 +3,7 @@ cd ../../
 python main.py \
 --do_train \
 --exp_name FNDNet_wo_freeze_w2e \
---modelname FNDNet \
+--modelname fndnet \
 --num_training_steps 100000 \
 --batch_size 256 \
 --use_scheduler \

@@ -77,9 +77,37 @@ python main.py \
 --eval_interval 5
 ```
 
+# Load Pretrained Model
+
+**model list**
+
+`bts`, `fndnet`, `han` 이라고 적힌 모델은 학습된 모델이 아닙니다.
+
+```python
+from models import list_models
+
+list_models('*')
+
+['bts',
+ 'bts_task1',
+ 'fndnet',
+ 'fndnet_w_freeze_w2e_task1',
+ 'fndnet_wo_freeze_w2e_task1',
+ 'han',
+ 'han_w_freeze_w2e_task1',
+ 'han_wo_freeze_w2e_task1']
+```
+
+**load pretrained model**
+
+```python
+from models import create_model
+
+model = create_model('bts_task1', pretrained=True)
+```
+
 
 ## Result
-
 
        
  Model |  Test Acc |  Test Loss |  Train Acc |  Train Loss |  Valid Acc |  Valid Loss 

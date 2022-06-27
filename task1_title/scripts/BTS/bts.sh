@@ -3,7 +3,7 @@ cd ../../
 python main.py \
 --do_train \
 --exp_name BTS \
---modelname BTS \
+--modelname bts \
 --pretrained_name 'klue/bert-base' \
 --tokenizer 'bert' \
 --num_training_steps 20 \

@@ -3,7 +3,7 @@ cd ../../
 python main.py \
 --do_train \
 --exp_name HAN_wo_freeze_w2e \
---modelname HAN \
+--modelname han \
 --num_training_steps 30000 \
 --batch_size 256 \
 --use_scheduler \
