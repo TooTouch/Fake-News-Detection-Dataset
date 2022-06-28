@@ -91,7 +91,7 @@ def run(args):
     tokenizer, word_embed = create_tokenizer(args)
     
     # Build Model
-    model = create_model(args, word_embed, tokenizer)
+    model = create_model(args.modelname, args.pretrained, word_embed, tokenizer, args)
     model.to(device)
 
     _logger.info('# of trainable params: {}'.format(np.sum([p.numel() if p.requires_grad else 0 for p in model.parameters()])))
@@ -154,7 +154,7 @@ def run(args):
         criterion = torch.nn.CrossEntropyLoss()
 
         # Build Model
-        model = create_model(args.modelname, args.pretarined, args, word_embed, tokenizer)
+        model = create_model(args.modelname, args.pretrained, word_embed, tokenizer, args)
         model.to(device)
 
         # result path
