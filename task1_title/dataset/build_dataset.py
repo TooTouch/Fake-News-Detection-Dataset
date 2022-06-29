@@ -12,6 +12,8 @@ class FNDDataset(Dataset):
         self.max_word_len = max_word_len
         self.max_sent_len = max_sent_len
 
+        self._transform = 'han' if 'han' in self.modelname else 'fndnet'
+
         # load data
         self.use_saved_data = use_saved_data
         if self.use_saved_data:
@@ -54,10 +56,10 @@ class FNDDataset(Dataset):
         return doc
 
     def transform(self, sent_list):
-        return getattr(self, f'transform_{self.modelname.lower()}')(sent_list)
+        return getattr(self, f'transform_{self._transform}')(sent_list)
 
     def padding(self, doc):
-        return getattr(self, f'padding_{self.modelname.lower()}')(doc)
+        return getattr(self, f'padding_{self._transform}')(doc)
 
     def __getitem__(self, i):
 
