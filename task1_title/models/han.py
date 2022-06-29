@@ -125,7 +125,7 @@ class Attention(nn.Module):
 
     def forward(self, x):
         attn = torch.tanh(self.attention(x))
-        attn = self.context(attn).squeeze()
+        attn = self.context(attn).squeeze(2)
         attn_score = torch.softmax(attn, dim=1)
 
         out = torch.einsum('b n d, b n -> b d', x, attn_score) 
