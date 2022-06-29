@@ -15,9 +15,9 @@ class FNDDataset(Dataset):
         # load data
         self.use_saved_data = use_saved_data
         if self.use_saved_data:
-            if self.modelname == 'HAN':
+            if 'han' in self.modelname:
                 dataname = f'{modelname}_s{max_sent_len}_w{max_word_len}'
-            elif self.modelname in ['FNDNet','BTS']:
+            elif 'fndnet' in self.modelname or 'bts' in self.modelname:
                 dataname = f'{modelname}_w{max_word_len}'
             self.data = torch.load(os.path.join(datadir, dataname, f'{split}.pt'))
         else:
@@ -77,7 +77,7 @@ class FNDDataset(Dataset):
             # label
             label = 1 if news_idx['label']=='fake' else 0
 
-            if self.modelname != 'BTS':
+            if 'bts' not in self.modelname:
                 # input
                 sent_list = [news_info['title']] + news_info['text']
                 
@@ -87,7 +87,7 @@ class FNDDataset(Dataset):
 
                 doc = {'input_ids':torch.tensor(doc)}
 
-            elif self.modelname == 'BTS':
+            elif 'bts' in self.modelname:
                 doc = self.tokenizer(
                     news_info['title'],
                     ' '.join(news_info['text']),
