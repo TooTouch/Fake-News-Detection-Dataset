@@ -18,9 +18,11 @@ class FNDDataset(Dataset):
         self.use_saved_data = use_saved_data
         if self.use_saved_data:
             if 'han' in self.modelname:
-                dataname = f'{modelname}_s{max_sent_len}_w{max_word_len}'
-            elif 'fndnet' in self.modelname or 'bts' in self.modelname:
-                dataname = f'{modelname}_w{max_word_len}'
+                dataname = f'HAN_s{max_sent_len}_w{max_word_len}'
+            elif 'fndnet' in self.modelname:
+                dataname = f'FNDNet_w{max_word_len}'
+            elif 'bts' in self.modelname:
+                dataname = f'BTS_w{max_word_len}'
             self.data = torch.load(os.path.join(datadir, dataname, f'{split}.pt'))
         else:
             self.data = json.load(open(os.path.join(datadir, f'{split}.json'),'r'))
