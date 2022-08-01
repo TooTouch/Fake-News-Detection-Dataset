@@ -6,7 +6,7 @@ python main.py \
 --do_test \
 --exp_name $exp_name \
 --modelname $exp_name \
---pretarined \
+--pretrained \
 --batch_size 256 \
 --max_vocab_size 50000 \
 --max_sent_len 16 \

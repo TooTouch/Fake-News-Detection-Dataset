@@ -12,13 +12,17 @@ class FNDDataset(Dataset):
         self.max_word_len = max_word_len
         self.max_sent_len = max_sent_len
 
+        self._transform = 'han' if 'han' in self.modelname else 'fndnet'
+
         # load data
         self.use_saved_data = use_saved_data
         if self.use_saved_data:
-            if self.modelname == 'HAN':
-                dataname = f'{modelname}_s{max_sent_len}_w{max_word_len}'
-            elif self.modelname in ['FNDNet','BTS']:
-                dataname = f'{modelname}_w{max_word_len}'
+            if 'han' in self.modelname:
+                dataname = f'HAN_s{max_sent_len}_w{max_word_len}'
+            elif 'fndnet' in self.modelname:
+                dataname = f'FNDNet_w{max_word_len}'
+            elif 'bts' in self.modelname:
+                dataname = f'BTS_w{max_word_len}'
             self.data = torch.load(os.path.join(datadir, dataname, f'{split}.pt'))
         else:
             self.data = json.load(open(os.path.join(datadir, f'{split}.json'),'r'))
@@ -54,10 +58,10 @@ class FNDDataset(Dataset):
         return doc
 
     def transform(self, sent_list):
-        return getattr(self, f'transform_{self.modelname.lower()}')(sent_list)
+        return getattr(self, f'transform_{self._transform}')(sent_list)
 
     def padding(self, doc):
-        return getattr(self, f'padding_{self.modelname.lower()}')(doc)
+        return getattr(self, f'padding_{self._transform}')(doc)
 
     def __getitem__(self, i):
 
@@ -77,7 +81,7 @@ class FNDDataset(Dataset):
             # label
             label = 1 if news_idx['label']=='fake' else 0
 
-            if self.modelname != 'BTS':
+            if 'bts' not in self.modelname:
                 # input
                 sent_list = [news_info['title']] + news_info['text']
                 
@@ -87,7 +91,7 @@ class FNDDataset(Dataset):
 
                 doc = {'input_ids':torch.tensor(doc)}
 
-            elif self.modelname == 'BTS':
+            elif 'bts' in self.modelname:
                 doc = self.tokenizer(
                     news_info['title'],
                     ' '.join(news_info['text']),
