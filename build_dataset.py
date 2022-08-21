@@ -58,8 +58,8 @@ def remove_reportor_email_in_text(articles):
 
 
 def _change_article_title(article1, article2):
-    title1 = article1['title']
-    title2 = article2['title']
+    title1 = article1['title'].copy()
+    title2 = article2['title'].copy()
     
     article1['title'] = title2
     article2['title'] = title1
@@ -72,6 +72,24 @@ def change_article_title(articles, fake_id):
 
     return articles
 
+
+def _change_article_text(article1, article2, min=2, max=5):
+    select_len = np.random.randint(low=min, high=max, size=1)[0]
+
+    text1 = article1['text'].copy()
+    text2 = article2['text'].copy()
+    
+    article1['text'][-select_len:] = text2[-select_len:]
+    article2['text'][-select_len:] = text1[-select_len:]
+
+    return article1, article2
+
+def change_article_text(articles, fake_id, min=2, max=5):
+    paired_fake_id = list(zip(fake_id[::2], fake_id[1::2]))
+    for fake1, fake2 in paired_fake_id:
+        articles[fake1], articles[fake2] = _change_article_text(articles[fake1], articles[fake2], min=min, max=max)
+
+    return articles
 
 
 def define_real_fake_articles(articles):
@@ -94,7 +112,7 @@ def define_real_fake_articles(articles):
 
 
 
-def preprocesing(articles):
+def preprocessing(articles):
     
     articles = remove_reportor_email_in_text(articles)
 
@@ -126,13 +144,16 @@ def make_dataset(args):
     articles = extract_article_info(data)
 
     # preprocessing
-    articles = preprocesing(articles)
+    articles = preprocessing(articles)
     
     # define real and fake articles
     real_fake_df = define_real_fake_articles(articles)
     
     # make fake articles
-    articles = change_article_title(articles, real_fake_df[real_fake_df['label']=='fake']['id'])
+    if args.target == 'title':
+        articles = change_article_title(articles, real_fake_df[real_fake_df['label']=='fake']['id'])
+    elif args.target == 'text':
+        articles = change_article_text(articles, real_fake_df[real_fake_df['label']=='fake']['id'])
 
     if args.data == 'train':
         # split train and validation
@@ -152,6 +173,7 @@ def get_args(notebook=False):
     parser.add_argument('--savedir',type=str,default='./data/task1/',help='save directory')
 
     parser.add_argument('--train_ratio',type=float,default=0.8,help='train ratio')
+    parser.add_argument('--target',type=str,default='title',choices=['title','text'],help='select target')
 
     if notebook:
         args = parser.parse_args(args=[])
