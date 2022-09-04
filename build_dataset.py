@@ -56,6 +56,24 @@ def remove_reportor_email_in_text(articles):
     return articles
 
 
+def define_real_fake_articles(articles):
+    np.random.seed(42)
+    fake_size = len(articles)//2
+
+    fake_id = np.random.choice(
+        list(articles.keys()), 
+        size    = fake_size - 1 if fake_size % 2 else fake_size, 
+        replace = False
+    )
+    real_id = list(set(articles.keys()) - set(fake_id))
+
+    real_fake_df = pd.concat([
+        pd.DataFrame({'id':fake_id,'label':['fake']*len(fake_id)}),
+        pd.DataFrame({'id':real_id,'label':['real']*len(real_id)})
+    ], axis=0)
+
+    return real_fake_df
+
 
 def _change_article_title(article1, article2):
     title1 = article1['title'].copy()
@@ -79,37 +97,27 @@ def _change_article_text(article1, article2, min=2, max=5):
     text1 = article1['text'].copy()
     text2 = article2['text'].copy()
     
+    # change
     article1['text'][-select_len:] = text2[-select_len:]
     article2['text'][-select_len:] = text1[-select_len:]
 
-    return article1, article2
+    # changed indices
+    article1_len = len(article1['text'])
+    article2_len = len(article2['text'])
+    fake_idx1 = list(range(article1_len-select_len, article1_len))
+    fake_idx2 = list(range(article2_len-select_len, article2_len))
 
-def change_article_text(articles, fake_id, min=2, max=5):
+    return article1, article2, fake_idx1, fake_idx2
+
+
+def change_article_text(articles, fake_id, min=1, max=5):
     paired_fake_id = list(zip(fake_id[::2], fake_id[1::2]))
+    fake_idx = []
     for fake1, fake2 in paired_fake_id:
-        articles[fake1], articles[fake2] = _change_article_text(articles[fake1], articles[fake2], min=min, max=max)
+        articles[fake1], articles[fake2], fake_idx1, fake_idx2 = _change_article_text(articles[fake1], articles[fake2], min=min, max=max)
+        fake_idx.extend([fake_idx1, fake_idx2])
 
-    return articles
-
-
-def define_real_fake_articles(articles):
-    np.random.seed(42)
-    fake_size = len(articles)//2
-
-    fake_id = np.random.choice(
-        list(articles.keys()), 
-        size    = fake_size - 1 if fake_size % 2 else fake_size, 
-        replace = False
-    )
-    real_id = list(set(articles.keys()) - set(fake_id))
-
-    real_fake_df = pd.concat([
-        pd.DataFrame({'id':fake_id,'label':['fake']*len(fake_id)}),
-        pd.DataFrame({'id':real_id,'label':['real']*len(real_id)})
-    ], axis=0)
-
-    return real_fake_df
-
+    return articles, fake_idx
 
 
 def preprocessing(articles):
@@ -153,7 +161,9 @@ def make_dataset(args):
     if args.target == 'title':
         articles = change_article_title(articles, real_fake_df[real_fake_df['label']=='fake']['id'])
     elif args.target == 'text':
-        articles = change_article_text(articles, real_fake_df[real_fake_df['label']=='fake']['id'])
+        articles, fake_idx = change_article_text(articles, real_fake_df[real_fake_df['label']=='fake']['id'])
+        real_fake_df['fake_idx'] = None
+        real_fake_df.loc[real_fake_df['label']=='fake', 'fake_idx'] = fake_idx
 
     if args.data == 'train':
         # split train and validation
