@@ -54,7 +54,6 @@ def get_args(notebook=False):
     parser.add_argument("--max_sent_len", type=int, default=128, help='maximum number of sentences in a document')
     parser.add_argument('--max_word_len', type=int, default=128, help='maximum number of words in a sentence')
     parser.add_argument('--num_workers', default=12, type=int, help='number of workers')
-    parser.add_argument('--use_pin_memory', action='store_true', help='use pin memory')
 
     # models
     parser.add_argument("--pretrained_name", type=str, default='klue/bert-base')
