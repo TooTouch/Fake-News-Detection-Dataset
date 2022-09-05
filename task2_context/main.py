@@ -100,9 +100,6 @@ def run(args):
         args       = args
     )
     model.to(device)
-    
-    # kyoosung
-    args.checkpoint = None
 
     _logger.info('# of trainable params: {}'.format(np.sum([p.numel() if p.requires_grad else 0 for p in model.parameters()])))
 
@@ -179,18 +176,16 @@ def run(args):
         )
 
     elif args.do_test:
-        trainset = create_dataset(args, 'train', tokenizer)
-        validset = create_dataset(args, 'valid', tokenizer)
-        testset = create_dataset(args, 'test', tokenizer)
-
-        trainloader = create_dataloader(args, trainset)
-        validloader = create_dataloader(args, validset)
-        testloader = create_dataloader(args, testset)
 
         criterion = torch.nn.CrossEntropyLoss()
 
         # Build Model
-        model = create_model(args.modelname, args.pretrained, word_embed, tokenizer, args)
+        model = create_model(
+            modelname  = args.modelname, 
+            pretrained = args.pretrained, 
+            tokenizer  = tokenizer, 
+            args       = args
+        )
         model.to(device)
 
         # result path
@@ -200,7 +195,24 @@ def run(args):
             df = pd.DataFrame()
 
         total_metrics = {}
-        for split, dataloader in {'train':trainloader, 'valid':validloader, 'test':testloader}.items():
+    
+        for split in ['train','valid','test']:
+            dataset = create_dataset(
+                data_path       = args.data_path, 
+                window_size     = args.window_size, 
+                max_word_len    = args.max_word_len, 
+                saved_data_path = args.saved_data_path, 
+                split           = split, 
+                tokenizer       = tokenizer, 
+                vocab           = vocab
+            )
+            dataloader = create_dataloader(
+                dataset     = dataset, 
+                batch_size  = args.batch_size,
+                num_workers = args.num_workers,
+                shuffle     = True
+            )
+
             metrics = evaluate(
                 model        = model, 
                 dataloader   = dataloader, 

@@ -89,8 +89,8 @@ def training(model, num_training_steps, trainloader, validloader, criterion, opt
                 # wandb
                 if use_wandb:
                     wandb.log({
-                        'train_acc':acc_m.val,
-                        'train_loss':losses_m.val
+                        'train_acc':acc_m.avg,
+                        'train_loss':losses_m.avg
                     },
                     step=step)
                 
