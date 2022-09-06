@@ -29,7 +29,6 @@ def get_args(notebook=False):
     parser.add_argument('--do_test', action='store_true', help='testing mode')
 
     parser.add_argument('--savedir', type=str, default='./saved_model', help='save directory')
-    parser.add_argument('--result_path', type=str, default='./results.csv', help='result file')
 
     # training
     parser.add_argument("--batch_size", type=int, default=64, help='batch size')
@@ -184,11 +183,6 @@ def run(args):
         model = create_model(args.modelname, args.pretrained, word_embed, tokenizer, args)
         model.to(device)
 
-        # result path
-        if os.path.isfile(args.result_path):
-            df = pd.read_csv(args.result_path)
-        else:
-            df = pd.DataFrame()
 
         total_metrics = {}
         for split in ['train','valid','test']:
