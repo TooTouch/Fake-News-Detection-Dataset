@@ -86,8 +86,17 @@ def run(args):
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
     _logger.info('Device: {}'.format(device))
 
+    # savedir
+    savedir = os.path.join(args.savedir, args.exp_name)
+    os.makedirs(savedir, exist_ok=True)
+
     # tokenizer
-    tokenizer, word_embed = create_tokenizer(args)
+    tokenizer, word_embed = create_tokenizer(
+        tokenizer       = args.tokenizer, 
+        vocab_path      = args.vocab_path, 
+        max_vocab_size  = args.max_vocab_size, 
+        pretrained_name = args.pretrained_name
+    )
     
     # Build Model
     model = create_model(args.modelname, args.pretrained, word_embed, tokenizer, args)
@@ -100,14 +109,33 @@ def run(args):
         if args.use_wandb:
             wandb.init(name=args.exp_name, project='Fake New Detection - Task1', config=args)
 
-        # savedir
-        savedir = os.path.join(args.savedir, args.exp_name)
-        os.makedirs(savedir, exist_ok=True)
-
         # Build datasets
-        trainset = create_dataset(args, 'train', tokenizer)
-        validset = create_dataset(args, 'valid', tokenizer)
-        trainloader = create_dataloader(args, trainset, True)
+        trainset = create_dataset(
+            modelname      = args.modelname, 
+            data_path      = args.data_path, 
+            split          = 'train', 
+            tokenizer      = tokenizer, 
+            max_word_len   = args.max_word_len, 
+            max_sent_len   = args.max_sent_len, 
+            use_saved_data = args.use_saved_data
+        )
+
+        validset = create_dataset(
+            modelname      = args.modelname, 
+            data_path      = args.data_path, 
+            split          = 'valid', 
+            tokenizer      = tokenizer, 
+            max_word_len   = args.max_word_len, 
+            max_sent_len   = args.max_sent_len, 
+            use_saved_data = args.use_saved_data
+        )
+        
+        trainloader = create_dataloader(
+            dataset     = trainset, 
+            batch_size  = batch_size, 
+            num_workers = num_workers
+            shuffle     = True
+        )
         validloader = create_dataloader(args, validset)
 
         # Set training
@@ -142,11 +170,11 @@ def run(args):
         )
 
     elif args.do_test:
-        trainset = create_dataset(args, 'train', tokenizer)
+        
         validset = create_dataset(args, 'valid', tokenizer)
         testset = create_dataset(args, 'test', tokenizer)
 
-        trainloader = create_dataloader(args, trainset)
+        
         validloader = create_dataloader(args, validset)
         testloader = create_dataloader(args, testset)
 
@@ -163,7 +191,10 @@ def run(args):
             df = pd.DataFrame()
 
         total_metrics = {}
-        for split, dataloader in {'train':trainloader, 'valid':validloader, 'test':testloader}.items():
+        for split in ['train','valid','test']:
+            dataset = create_dataset(args, split, tokenizer)
+            dataloader = create_dataloader(args, dataset)
+
             metrics = evaluate(
                 model        = model, 
                 dataloader   = dataloader, 
@@ -175,9 +206,7 @@ def run(args):
             for k, v in metrics.items():
                 total_metrics[f'{split}_{k}'] = v
 
-        total_metrics['exp_name'] = args.exp_name
-        df = df.append(total_metrics, ignore_index=True)
-        df.to_csv(args.result_path, index=False)
+        json.dump(total_metrics, open(os.path.join(savedir, 'test_results.json'),'w'), indent=4)
         
 
 
