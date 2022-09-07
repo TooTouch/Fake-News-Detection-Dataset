@@ -1,0 +1,33 @@
+EXP_NAME: KoBERTSeg
+SEED: 223
+
+MODE:
+    do_train: False
+    do_test: True
+    
+DATASET:
+    name: KoBERTSeg
+    data_path: ../data/task2/
+    PARAMETERS:
+        max_word_len: 512
+        window_size: 3
+
+MODEL:
+    modelname: kobertseg
+    PARAMETERS:
+        window_size: 3
+        finetune_bert: True
+    CHECKPOINT:
+        pretrained: False
+        checkpoint_path: ./saved_model/KoBERTSeg/best_model.pt
+
+TRAIN:
+    batch_size: 8
+    num_workers: 12
+
+LOG:
+    log_interval: 1
+
+RESULT:
+    savedir: './saved_model'
+    result_name: test_results
