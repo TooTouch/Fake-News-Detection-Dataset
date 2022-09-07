@@ -107,22 +107,18 @@ def training(model, num_training_steps, trainloader, validloader, criterion, opt
                 if ((step+1) // accumulation_steps) % eval_interval == 0 and step != 0:
                     eval_metrics = evaluate(model, validloader, criterion, log_interval, device)
                     model.train()
+
+                    eval_log = dict([(f'eval_{k}', v) for k, v in eval_metrics.items()])
+
                     # wandb
-                    if use_wandb:
-                        wandb.log({
-                            'eval_acc':eval_metrics['acc'],
-                            'eval_auroc':eval_metrics['auroc'],
-                            'eval_f1-score':eval_metrics['f1'],
-                            'eval_recall':eval_metrics['recall'],
-                            'eval_precision':eval_metrics['precision'],
-                            'eval_loss':eval_metrics['loss']
-                        },
-                        step=step)
+                    if use_wandb:    
+                        wandb.log(eval_log, step=step)
 
                     # checkpoint
                     if best_acc < eval_metrics['acc']:
                         # save best score
-                        state = {'best_step':step, 'best_acc':eval_metrics['acc']}
+                        state = {'best_step':step}
+                        state.update(eval_log)
                         json.dump(state, open(os.path.join(savedir, 'best_score.json'),'w'), indent=4)
 
                         # save best model
@@ -138,13 +134,11 @@ def training(model, num_training_steps, trainloader, validloader, criterion, opt
             if (step // accumulation_steps) >= num_training_steps:
                 train_mode = False
                 break
-        # reset dataset
-        
         
     # save best model
     torch.save(model.state_dict(), os.path.join(savedir, f'latest_model.pt'))
 
-    _logger.info('Best Metric: {0:.3%} (step {1:})'.format(state['best_acc'], state['best_step']))
+    _logger.info('Best Metric: {0:.3%} (step {1:})'.format(best_acc, state['best_step']))
     
         
 def evaluate(model, dataloader, criterion, log_interval, device='cpu'):
