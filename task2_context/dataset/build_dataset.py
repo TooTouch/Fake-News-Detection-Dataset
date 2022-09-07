@@ -8,13 +8,10 @@ import random
 
 from tqdm.auto import tqdm
 
-class SegData(Dataset):
-    def __init__(self, datadir, split, window_size, tokenizer, vocab, max_word_len=512, saved_data_path=None):
+class FakeDataset(Dataset):
+    def __init__(self, datadir, split, tokenizer, vocab, window_size, max_word_len=512):
         
         self.split = split
-
-        # use saved data
-        self.saved_data_path = saved_data_path
 
         # load data and infomation
         self.data = json.load(open(os.path.join(datadir, f'{self.split}.json'),'r'))
@@ -32,11 +29,6 @@ class SegData(Dataset):
         self.pad_idx = self.vocab[self.vocab.padding_token]
         self.cls_idx = self.vocab[self.vocab.cls_token]
         
-        if self.saved_data_path:
-            self.datasets = torch.load(self.saved_data_path)
-        else:
-            # generate
-            self.preprocessor()
         
     def preprocessor(self):
         datasets = []
@@ -117,25 +109,7 @@ class SegData(Dataset):
         return datasets, targets, docs, fake_labels
     
     def tokenize(self, src):
-        # length
-        src = self.length_processing(src)
-
-        src_subtokens = [[self.vocab.cls_token] + sent + [self.vocab.sep_token] for sent in src]
-        src_token_ids = [self.tokenizer.convert_tokens_to_ids(s) for s in src_subtokens]
-        
-        segments_ids = self.get_token_type_ids(src_token_ids)
-        segments_ids = sum(segments_ids,[])
-        
-        src_token_ids = [x for sublist in src_token_ids for x in sublist]
-        cls_ids = self.get_cls_index(src_token_ids)
-        
-        src_token_ids, segments_ids, cls_ids, mask_src, mask_cls = self.padding_bert(
-            src_token_ids = src_token_ids,
-            segments_ids  = segments_ids,
-            cls_ids       = cls_ids
-        )
-        
-        return src_token_ids, segments_ids, cls_ids, mask_src, mask_cls
+        raise NotImplementedError
     
     def length_processing(self, src):
         # 문장별 최대 길이
@@ -178,40 +152,7 @@ class SegData(Dataset):
         return cls_index
     
     def __getitem__(self, i):
-        if self.saved_data_path:
-            data_dict = {
-                'src': self.datasets['src'][i], 
-                'segs': self.datasets['segs'][i], 
-                'clss': self.datasets['clss'][i], 
-                'mask_src': self.datasets['mask_src'][i], 
-                'mask_cls': self.datasets['mask_cls'][i], 
-                'seg_label': self.datasets['seg_label'][i], 
-                'src_txt': self.datasets['src_txt'][i], 
-                'src_fake_label': self.datasets['src_fake_label'][i]
-            }
-        else:
-            doc, label = self.datasets[i], self.targets[i]
-            doc_txt = doc
-            
-            # tokenizer
-            src_subtoken_idxs, segments_ids, cls_ids, mask_src, mask_cls = self.tokenize(doc_txt)
-
-            data_dict = {
-                'src': src_subtoken_idxs,
-                'segs': segments_ids,
-                'clss': cls_ids,
-                'mask_src': mask_src,
-                'mask_cls': mask_cls,
-                'seg_label': label,
-                'src_txt': self.docs[i],
-                'src_fake_label': self.fake_labels[i]
-            }
-
-        
-        return data_dict
+        raise NotImplementedError
     
     def __len__(self):
-        if self.saved_data_path:
-            return len(self.datasets['src'])
-        else:
-            return len(self.datasets)
+        raise NotImplementedError

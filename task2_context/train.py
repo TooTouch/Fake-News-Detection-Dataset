@@ -7,6 +7,7 @@ from collections import OrderedDict
 
 import torch
 from utils import convert_device
+from sklearn.metrics import roc_auc_score, f1_score, recall_score, precision_score
 import transformers
 
 _logger = logging.getLogger('train')
@@ -47,15 +48,9 @@ def training(model, num_training_steps, trainloader, validloader, criterion, opt
     train_mode = True
     while train_mode:
         for batch in trainloader:
+            inputs, targets = batch
             # batch
-            batch = convert_device(batch, device)
-            src       = batch['src']
-            segs      = batch['segs']
-            clss      = batch['clss']
-            mask_src  = batch['mask_src']
-            mask_cls  = batch['mask_cls']
-            src_txt   = batch['src_txt']
-            targets   = batch['seg_label']
+            inputs, targets = convert_device(inputs, device), targets.to(device)
 
             data_time_m.update(time.time() - end)
 
@@ -63,7 +58,7 @@ def training(model, num_training_steps, trainloader, validloader, criterion, opt
             opt_cond = (step + 1) % accumulation_steps == 0
 
             # predict
-            outputs = model(src, segs, clss, mask_src, mask_cls)
+            outputs = model(**inputs)
             loss = criterion(outputs, targets)
 
             # loss for accumulation steps
@@ -105,17 +100,21 @@ def training(model, num_training_steps, trainloader, validloader, criterion, opt
                                 acc        = acc_m, 
                                 lr         = optimizer.param_groups[0]['lr'],
                                 batch_time = batch_time_m,
-                                rate       = src.size(0) / batch_time_m.val,
-                                rate_avg   = src.size(0) / batch_time_m.avg,
+                                rate       = targets.size(0) / batch_time_m.val,
+                                rate_avg   = targets.size(0) / batch_time_m.avg,
                                 data_time  = data_time_m))
 
-                if ((step+1) // accumulation_steps) % eval_interval == 0 and step != 0: 
+                if ((step+1) // accumulation_steps) % eval_interval == 0 and step != 0:
                     eval_metrics = evaluate(model, validloader, criterion, log_interval, device)
                     model.train()
                     # wandb
                     if use_wandb:
                         wandb.log({
                             'eval_acc':eval_metrics['acc'],
+                            'eval_auroc':eval_metrics['auroc'],
+                            'eval_f1-score':eval_metrics['f1'],
+                            'eval_recall':eval_metrics['recall'],
+                            'eval_precision':eval_metrics['precision'],
                             'eval_loss':eval_metrics['loss']
                         },
                         step=step)
@@ -152,22 +151,19 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu'):
     correct = 0
     total = 0
     total_loss = 0
+    total_score = []
+    total_preds = []
+    total_targets = []
     
     model.eval()
     with torch.no_grad():
         for idx, batch in enumerate(dataloader):
-            batch = convert_device(batch, device)
-            src       = batch['src']
-            segs      = batch['segs']
-            clss      = batch['clss']
-            mask_src  = batch['mask_src']
-            mask_cls  = batch['mask_cls']
-            src_txt   = batch['src_txt']
-            targets   = batch['seg_label']
-            #inputs, targets = convert_device(inputs, device), targets.to(device)
+            inputs, targets = batch
+            # batch
+            inputs, targets = convert_device(inputs, device), targets.to(device)
 
             # predict
-            outputs = model(src, segs, clss, mask_src, mask_cls)
+            outputs = model(**inputs)
             
             # loss 
             loss = criterion(outputs, targets)
@@ -175,13 +171,40 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu'):
             # total loss and acc
             total_loss += loss.item()
             preds = outputs.argmax(dim=1)
-            
             correct += targets.eq(preds).sum().item()
             total += targets.size(0)
+
+            total_score.extend(outputs[:,1].cpu().tolist())
+            total_preds.extend(preds.cpu().tolist())
+            total_targets.extend(targets.cpu().tolist())
             
             if idx % log_interval == 0 and idx != 0: 
                 _logger.info('TEST [%d/%d]: Loss: %.3f | Acc: %.3f%% [%d/%d]' % 
                             (idx+1, len(dataloader), total_loss/(idx+1), 100.*correct/total, correct, total))
                 
-    return OrderedDict([('acc',correct/total), ('loss',total_loss/len(dataloader))])
+    metrics = calc_metrics(
+        y_true  = total_targets,
+        y_score = total_score,
+        y_pred  = total_preds
+    )
+    
+    metrics.update([('acc',correct/total), ('loss',total_loss/len(dataloader))])
+
+    _logger.info('TEST: Loss: %.3f | Acc: %.3f%% | AUROC: %.3f%% | F1-Score: %.3f%% | Recall: %.3f%% | Precision: %.3f%%' % 
+                (metrics['loss'], 100.*metrics['acc'], 100.*metrics['auroc'], 100.*metrics['f1'], 100.*metrics['recall'], 100.*metrics['precision']))
+
+    return metrics
         
+
+def calc_metrics(y_true, y_score, y_pred):
+    auroc = roc_auc_score(y_true, y_score)
+    f1 = f1_score(y_true, y_pred)
+    recall = recall_score(y_true, y_pred)
+    precision = precision_score(y_true, y_pred)
+
+    return {
+        'auroc':auroc, 
+        'f1':f1, 
+        'recall':recall, 
+        'precision':precision
+    }

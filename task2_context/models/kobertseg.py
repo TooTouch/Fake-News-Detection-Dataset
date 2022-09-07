@@ -13,19 +13,20 @@ from .registry import register_model
 _logger = logging.getLogger('train')
 
 class Bert(nn.Module):
-    def __init__(self, finetune_bert=False, do_train=True):
+    def __init__(self, finetune_bert=False):
         super(Bert, self).__init__()
         self.model, vocab = get_pytorch_kobert_model(cachedir=".cache")
         # add [BOS], [EOS]
         self.model.resize_token_embeddings(len(vocab)) 
 
         # whether finetune the backbone (bert or bertsum)
-        self.finetune = True if (finetune_bert and do_train) else False
-        if do_train:
-            if self.finetune:
-                _logger.info(f"Finetuning BERT backbone")
-            else:
-                _logger.info(f"Not finetuning BERT backbone")
+        self.finetune = finetune_bert
+        if self.finetune:
+            _logger.info(f"Finetuning BERT backbone")
+        else:
+            for p in self.model.parameters():
+                p.requires_grad = False
+            _logger.info(f"Not finetuning BERT backbone")
 
     def forward(self, x, segs, mask):
         if self.finetune:
@@ -37,10 +38,10 @@ class Bert(nn.Module):
         return top_vec
 
 class KoBERTSEG(nn.Module):
-    def __init__(self, finetune_bert=False, do_train=True, window_size=3):
+    def __init__(self, finetune_bert=False, window_size=3):
         super(KoBERTSEG, self).__init__()
 
-        self.bert = Bert(finetune_bert=finetune_bert, do_train=do_train)
+        self.bert = Bert(finetune_bert=finetune_bert)
         self.classifier = Classifier(window_size=window_size)
 
     def forward(self, src, segs, clss, mask_src, mask_cls):
@@ -81,11 +82,9 @@ class Classifier(nn.Module):
     
     
 @register_model
-def kobertseg(**kwargs):
-    args = kwargs['args']
+def kobertseg(hparams, **kwargs):
     model = KoBERTSEG(
-        finetune_bert = args.finetune_bert, 
-        do_train      = args.do_train, 
-        window_size   = args.window_size
+        finetune_bert = hparams['finetune_bert'], 
+        window_size   = hparams['window_size']
     )
     return model

@@ -7,9 +7,11 @@ _logger = logging.getLogger('train')
 
 def create_model(
         modelname,
+        hparams,
         pretrained = False,
         tokenizer = None,
-        args = None, 
+        checkpoint_path = None,
+        **kwargs
     ):
 
     if not is_model(modelname):
@@ -18,15 +20,13 @@ def create_model(
     create_fn = model_entrypoint(modelname)
     
     model = create_fn(
+        hparams    = hparams,
         pretrained = pretrained, 
-        args = args
     )
 
-
     # load checkpoint weights
-    checkpoint_path = args.checkpoint_path if args else None
     if checkpoint_path:
-        _logger.info('load a trained model weights from {}'.format(args.checkpoint_path))
-        model.load_state_dict(torch.load(args.checkpoint_path))
+        _logger.info('load a trained model weights from {}'.format(checkpoint_path))
+        model.load_state_dict(torch.load(checkpoint_path))
 
     return model
