@@ -151,7 +151,8 @@ cython_debug/
 # results
 data
 *.ipynb
+*.pt
+best*
 notebook/
 wandb/
-saved_model/
 word-embeddings/
