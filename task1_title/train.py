@@ -111,6 +111,10 @@ def training(model, num_training_steps, trainloader, validloader, criterion, opt
                     if use_wandb:
                         wandb.log({
                             'eval_acc':eval_metrics['acc'],
+                            'eval_auroc':eval_metrics['auroc'],
+                            'eval_f1-score':eval_metrics['f1'],
+                            'eval_recall':eval_metrics['recall'],
+                            'eval_precision':eval_metrics['precision'],
                             'eval_loss':eval_metrics['loss']
                         },
                         step=step)
@@ -183,6 +187,9 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu'):
     )
     
     metrics.update([('acc',correct/total), ('loss',total_loss/len(dataloader))])
+
+    _logger.info('TEST: Loss: %.3f | Acc: %.3f%% | AUROC: %.3f%% | F1-Score: %.3f%% | Recall: %.3f%% | Precision: %.3f%%' % 
+                (metrics['loss'], 100.*metrics['acc'], 100.*metrics['auroc'], 100.*metrics['f1'], 100.*metrics['recall'], 100.*metrics['precision']))
 
     return metrics
         

@@ -20,7 +20,7 @@ import pandas as pd
 _logger = logging.getLogger('train')
 
 
-def run(args):
+def run(cfg):
 
     # setting seed and device
     setup_default_logging()
