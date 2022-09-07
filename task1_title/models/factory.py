@@ -23,7 +23,7 @@ def create_model(
     create_fn = model_entrypoint(modelname)
     
     model = create_fn(
-        hparams = hparams,
+        hparams    = hparams,
         pretrained = pretrained
     )
 
