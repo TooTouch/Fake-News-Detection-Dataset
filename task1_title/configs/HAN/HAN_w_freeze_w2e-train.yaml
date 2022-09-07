@@ -38,7 +38,7 @@ TRAIN:
     num_training_steps: 30000
     accumulation_steps: 1
     num_workers: 12
-    use_wandb: False
+    use_wandb: True
 
 LOG:
     log_interval: 10
