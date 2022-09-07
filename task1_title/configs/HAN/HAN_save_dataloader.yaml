@@ -1,0 +1,20 @@
+EXP_NAME: HAN_w_freeze_w2e
+SEED: 223
+DATADIR: ../data/task1/
+    
+DATASET:
+    max_sent_len: 16
+    max_word_len: 64
+
+TOKENIZER: 
+    tokenizer: mecab
+    vocab_path: ../word-embeddings/glove/glove.txt
+    max_vocab_size: 50000  
+
+TRAIN:
+    batch_size: 256
+    num_workers: 12
+
+RESULT:
+    savedir: './saved_model'
+    dataname: 'HAN_s16_w64'

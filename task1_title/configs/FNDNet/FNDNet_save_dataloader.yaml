@@ -1,0 +1,21 @@
+EXP_NAME: FNDNet_w_freeze_w2e
+SEED: 223
+DATADIR: ../data/task1/
+    
+DATASET:
+    saved_data_path: ../data/task1/FNDNet_w1000
+    max_word_len: 1000
+
+TOKENIZER: 
+    tokenizer: mecab
+    vocab_path: ../word-embeddings/glove/glove.txt
+    max_vocab_size: 50000  
+    
+TRAIN:
+    batch_size: 256
+    num_workers: 12
+    use_wandb: True
+
+RESULT:
+    savedir: './saved_model'
+    dataname: 'FNDNet_w1000'
