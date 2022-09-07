@@ -28,13 +28,13 @@ class BTS(BertPreTrainedModel):
 
         outputs = self.bert(
             input_ids,
-            attention_mask=attention_mask,
-            token_type_ids=token_type_ids,
-            position_ids=position_ids,
-            head_mask=head_mask,
-            inputs_embeds=inputs_embeds,
-            output_attentions=output_attentions,
-            output_hidden_states=output_hidden_states,
+            attention_mask       = attention_mask,
+            token_type_ids       = token_type_ids,
+            position_ids         = position_ids,
+            head_mask            = head_mask,
+            inputs_embeds        = inputs_embeds,
+            output_attentions    = output_attentions,
+            output_hidden_states = output_hidden_states,
         )
 
         pooled_output = outputs[1]
@@ -48,13 +48,12 @@ class BTS(BertPreTrainedModel):
             return logits
 
 @register_model
-def bts(**kwargs):
-    args = kwargs['args']
-    model_config = AutoConfig.from_pretrained(args.pretrained_name)
+def bts(hparams, **kwargs):
+    model_config = AutoConfig.from_pretrained(hparams['pretrained_name'])
     model = BTS(
-            pretrained_name = args.pretrained_name, 
-            config          = model_config,
-            num_classes     = args.num_classes
+        pretrained_name = hparams['pretrained_name'], 
+        config          = model_config,
+        num_classes     = hparams['num_classes']
     )
 
     return model

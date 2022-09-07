@@ -135,12 +135,14 @@ class Attention(nn.Module):
 
 
 @register_model
-def han(**kwargs):
-    args = kwargs['args']
+def han(hparams, **kwargs):
     model = HierAttNet(
-        word_dims   = args.word_dims, 
-        sent_dims   = args.sent_dims, 
-        num_classes = args.num_classes, 
+        word_dims   = hparams['word_dims'], 
+        sent_dims   = hparams['sent_dims'],
+        embed_dims  = hparams['embed_dims'],
+        num_classes = hparams['num_classes'], 
+        dropout     = hparams['dropout'],
+        vocab_len   = hparams['vocab_len']
     )
 
     return model

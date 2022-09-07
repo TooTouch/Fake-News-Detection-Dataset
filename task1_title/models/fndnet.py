@@ -7,16 +7,16 @@ from .utils import download_weights
 
 class FNDNet(nn.Module):
     def __init__(self, dims=128, num_classes=2, dropout=0.2,
-                 vocab_len=58043, embed_dim=100):
+                 vocab_len=58043, embed_dims=100):
         super(FNDNet, self).__init__()
 
         # word to embeding
-        self.w2e = nn.Embedding(num_embeddings=vocab_len, embedding_dim=embed_dim)
+        self.w2e = nn.Embedding(num_embeddings=vocab_len, embedding_dim=embed_dims)
 
         # Conv 1D
-        self.conv1_1 = nn.Conv1d(embed_dim, dims, 3)
-        self.conv1_2 = nn.Conv1d(embed_dim, dims, 4)
-        self.conv1_3 = nn.Conv1d(embed_dim, dims, 5)
+        self.conv1_1 = nn.Conv1d(embed_dims, dims, 3)
+        self.conv1_2 = nn.Conv1d(embed_dims, dims, 4)
+        self.conv1_3 = nn.Conv1d(embed_dims, dims, 5)
         self.conv2 = nn.Conv1d(dims, dims, 5)
         self.conv3 = nn.Conv1d(dims, dims, 5)
 
@@ -77,11 +77,13 @@ class FNDNet(nn.Module):
 
 
 @register_model
-def fndnet(**kwargs):
-    args = kwargs['args']
+def fndnet(hparams, **kwargs):
     model = FNDNet(
-        dims        = args.dims,
-        num_classes = args.num_classes, 
+        dims        = hparams['dims'],
+        embed_dims  = hparams['embed_dims'],
+        dropout     = hparams['dropout'],
+        vocab_len   = hparams['vocab_len'],
+        num_classes = hparams['num_classes'], 
     )
 
     return model
@@ -95,8 +97,8 @@ def fndnet_w_freeze_w2e_task1(pretrained=False, **kwargs):
         dims        = 128,
         num_classes = 2, 
         dropout     = 0.2,
-        vocab_len   = 50002,
-        embed_dim   = 100
+        vocab_len   = 50002, # max_vocab_size + [UNK] + [PAD]
+        embed_dims  = 100
     )
 
     if pretrained:
@@ -114,8 +116,8 @@ def fndnet_wo_freeze_w2e_task1(pretrained=False, **kwargs):
         dims        = 128,
         num_classes = 2, 
         dropout     = 0.2,
-        vocab_len   = 50002,
-        embed_dim   = 100
+        vocab_len   = 50002, # max_vocab_size + [UNK] + [PAD]
+        embed_dims  = 100
     )
 
     if pretrained:

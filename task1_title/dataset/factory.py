@@ -5,7 +5,8 @@ from konlpy.tag import Mecab
 from transformers import BertTokenizer
 from torch.utils.data import DataLoader
 
-from .build_dataset import FNDTokenizer, FNDDataset
+from .build_dataset import *
+from .tokenizer import FNDTokenizer
 
 
 def extract_word_embedding(vocab_path, max_vocab_size=-1):
@@ -25,28 +26,24 @@ def extract_word_embedding(vocab_path, max_vocab_size=-1):
 
 
 
-def create_tokenizer(tokenizer, vocab_path, max_vocab_size, pretrained_name):
-    if tokenizer == 'mecab':
+def create_tokenizer(name, vocab_path, max_vocab_size, pretrained_name):
+    if name == 'mecab':
         vocab, word_embed = extract_word_embedding(vocab_path = vocab_path, max_vocab_size = max_vocab_size)
         tokenizer = FNDTokenizer(vocab = vocab, tokenizer = Mecab())
-    elif tokenizer == 'bert':
+    elif name == 'bert':
         word_embed = None
         tokenizer = BertTokenizer.from_pretrained(pretrained_name)
 
     return tokenizer, word_embed 
 
 
-def create_dataset(modelname, data_path, split, tokenizer, max_word_len, max_sent_len, use_saved_data):
-    dataset = FNDDataset(
-        modelname      = modelname,
-        datadir        = data_path,
-        split          = split,  
-        tokenizer      = tokenizer, 
-        max_word_len   = max_word_len, 
-        max_sent_len   = max_sent_len,
-        use_saved_data = use_saved_data
+def create_dataset(name, data_path, split, tokenizer, **kwargs):
+    dataset = __import__('dataset').__dict__[f'{name}Dataset'](
+        datadir   = data_path,
+        split     = split,
+        tokenizer = tokenizer,
+        **kwargs
     )
-
     return dataset
 
 
