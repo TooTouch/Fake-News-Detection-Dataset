@@ -23,14 +23,14 @@ MODEL:
 
 TRAIN:
     batch_size: 8
-    num_training_steps: 10
+    num_training_steps: 15000
     accumulation_steps: 1
     num_workers: 12
-    use_wandb: False
+    use_wandb: True
 
 LOG:
     log_interval: 1
-    eval_interval: 5
+    eval_interval: 2500
 
 OPTIMIZER:
     lr: 0.00001
