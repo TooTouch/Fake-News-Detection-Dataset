@@ -38,8 +38,6 @@ class FakeDataset(Dataset):
         news_ids = []
 
         for idx in tqdm(range(self.data_info.shape[0])):
-            if idx == 100:
-                break
             # extract news info
             news_idx = self.data_info.iloc[idx]
             news_label = news_idx['label']
