@@ -9,9 +9,9 @@ import random
 
 from tqdm.auto import tqdm
 
-class KoBERTSegDataset(FakeDataset):
+class BTSDataset(FakeDataset):
     def __init__(self, datadir, split, window_size, tokenizer, vocab, max_word_len=512):
-        super(KoBERTSegDataset, self).__init__(
+        super(BTSDataset, self).__init__(
             datadir      = datadir, 
             split        = split, 
             tokenizer    = tokenizer, 
@@ -27,7 +27,7 @@ class KoBERTSegDataset(FakeDataset):
         # length
         src = self.length_processing(src)
 
-        src_subtokens = [[self.vocab.cls_token] + sent + [self.vocab.sep_token] for sent in src]
+        src_subtokens = [[self.vocab.cls_token] + src[0] + [self.vocab.sep_token] + src[1]]
         src_token_ids = [self.tokenizer.convert_tokens_to_ids(s) for s in src_subtokens]
         
         segments_ids = self.get_token_type_ids(src_token_ids)
@@ -48,17 +48,14 @@ class KoBERTSegDataset(FakeDataset):
     def __getitem__(self, i, return_txt=False, return_fake_label=False):
         
         doc, target, news_id = self.datasets[i], self.targets[i], self.news_ids[i]
-        doc_txt = doc
         
         # tokenizer
-        src_subtoken_idxs, segments_ids, cls_ids, mask_src, mask_cls = self.tokenize(doc_txt)
+        src_subtoken_idxs, segments_ids, _, mask_src, _ = self.tokenize(doc)
 
         inputs = {
             'src': src_subtoken_idxs,
             'segs': segments_ids,
-            'clss': cls_ids,
             'mask_src': mask_src,
-            'mask_cls': mask_cls,
         }
 
         return_values = (inputs, target, news_id)

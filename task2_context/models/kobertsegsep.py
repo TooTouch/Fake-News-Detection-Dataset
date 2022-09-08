@@ -38,12 +38,12 @@ class Bert(nn.Module):
         return top_vec
 
 
-class KoBERTSeg(nn.Module):
-    def __init__(self, finetune_bert=False, window_size=3):
-        super(KoBERTSeg, self).__init__()
+class KoBERTSegSep(nn.Module):
+    def __init__(self, finetune_bert=False):
+        super(KoBERTSegSep, self).__init__()
 
         self.bert = Bert(finetune_bert=finetune_bert)
-        self.classifier = Classifier(window_size=window_size)
+        self.classifier = nn.Linear(768, 2)
 
     def forward(self, src, segs, clss, mask_src, mask_cls):
         top_vec = self.bert(src, segs, mask_src)
@@ -53,39 +53,9 @@ class KoBERTSeg(nn.Module):
         return classified
     
     
-class Classifier(nn.Module):
-    def __init__(self, window_size):
-        super(Classifier, self).__init__()
-        if window_size == 1:
-            conv_kernel_size = 2
-            flat_size = 256
-        else:
-            conv_kernel_size = window_size*2-2
-            flat_size = 256 * 3
-
-        ln_size = 1 if window_size == 1 else 3
-        self.block1 = nn.Sequential(
-            nn.Conv1d(in_channels=768, out_channels=256, kernel_size=conv_kernel_size),
-            nn.LayerNorm([256, ln_size]),
-            nn.ReLU(),
-        )
-        
-        self.block2 = nn.Sequential(nn.Linear(flat_size, 2))
-        
-    def forward(self, x):
-        batch_size = x.size(0)
-        
-        x = x.transpose(1, 2).contiguous() # B * N * C --> B * C * N
-        out = self.block1(x)
-        out = out.view(batch_size, -1)
-        out = self.block2(out)
-        return out
-    
-    
 @register_model
-def kobertseg(hparams, **kwargs):
-    model = KoBERTSeg(
-        finetune_bert = hparams['finetune_bert'], 
-        window_size   = hparams['window_size']
+def kobertsegsep(hparams, **kwargs):
+    model = KoBERTSegSep(
+        finetune_bert = hparams['finetune_bert']
     )
     return model

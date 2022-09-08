@@ -9,9 +9,9 @@ import random
 
 from tqdm.auto import tqdm
 
-class KoBERTSegDataset(FakeDataset):
+class KoBERTSegSepDataset(FakeDataset):
     def __init__(self, datadir, split, window_size, tokenizer, vocab, max_word_len=512):
-        super(KoBERTSegDataset, self).__init__(
+        super(KoBERTSegSepDataset, self).__init__(
             datadir      = datadir, 
             split        = split, 
             tokenizer    = tokenizer, 
@@ -47,11 +47,10 @@ class KoBERTSegDataset(FakeDataset):
     
     def __getitem__(self, i, return_txt=False, return_fake_label=False):
         
-        doc, target, news_id = self.datasets[i], self.targets[i], self.news_ids[i]
-        doc_txt = doc
+        doc, target, news_id = self.datasets[i], self.fake_labels[i], self.news_ids[i]
         
         # tokenizer
-        src_subtoken_idxs, segments_ids, cls_ids, mask_src, mask_cls = self.tokenize(doc_txt)
+        src_subtoken_idxs, segments_ids, cls_ids, mask_src, mask_cls = self.tokenize(doc)
 
         inputs = {
             'src': src_subtoken_idxs,
@@ -67,10 +66,6 @@ class KoBERTSegDataset(FakeDataset):
             src_txt = self.docs[i]
             return_values = return_values + (src_txt,)
 
-        if return_fake_label:
-            src_fake_label = self.fake_labels[i]
-            return_values = return_values + (src_fake_label,)
-        
         return return_values
     
     def __len__(self):

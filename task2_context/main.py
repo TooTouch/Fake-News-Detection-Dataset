@@ -90,7 +90,10 @@ def run(cfg):
         )
 
         # Set training
-        criterion = torch.nn.CrossEntropyLoss()
+        if cfg['DATASET']['name'] == 'KoBERTSegSep':
+            criterion = torch.nn.MultiLabelSoftMarginLoss()
+        else:
+            criterion = torch.nn.CrossEntropyLoss()
         optimizer = torch.optim.AdamW(
             params       = filter(lambda p: p.requires_grad, model.parameters()), 
             lr           = cfg['OPTIMIZER']['lr'], 

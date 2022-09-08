@@ -31,12 +31,15 @@ class FakeDataset(Dataset):
         
         
     def preprocessor(self):
-        datasets = []
+        datasets = [] 
         targets = []
         docs = []
         fake_labels = []
+        news_ids = []
 
         for idx in tqdm(range(self.data_info.shape[0])):
+            if idx == 100:
+                break
             # extract news info
             news_idx = self.data_info.iloc[idx]
             news_label = news_idx['label']
@@ -74,11 +77,13 @@ class FakeDataset(Dataset):
             targets.extend(target_i)
             docs.extend(doc_i)
             fake_labels.extend(fake_label_i)
+            news_ids.append(str(news_idx['id']))
 
         setattr(self, 'datasets', datasets)
         setattr(self, 'targets', targets)
         setattr(self, 'docs', docs)
         setattr(self, 'fake_labels', fake_labels)
+        setattr(self, 'news_ids', news_ids*len(datasets))
 
     def split_doc_into_sents(self, doc, src, fake_label, window_size):
         datasets = []

@@ -4,6 +4,7 @@ import os
 import wandb
 import logging
 from collections import OrderedDict
+import numpy as np
 
 import torch
 from utils import convert_device
@@ -37,7 +38,7 @@ def training(model, num_training_steps, trainloader, validloader, criterion, opt
     data_time_m = AverageMeter()
     acc_m = AverageMeter()
     losses_m = AverageMeter()
-    best_acc = 0
+    best_f1 = 0
     
     end = time.time()
     
@@ -48,7 +49,7 @@ def training(model, num_training_steps, trainloader, validloader, criterion, opt
     train_mode = True
     while train_mode:
         for batch in trainloader:
-            inputs, targets = batch
+            inputs, targets, _ = batch
             # batch
             inputs, targets = convert_device(inputs, device), targets.to(device)
 
@@ -59,7 +60,10 @@ def training(model, num_training_steps, trainloader, validloader, criterion, opt
 
             # predict
             outputs = model(**inputs)
-            loss = criterion(outputs, targets)
+            if 'KoBERTSegSep' in str(type(model)):
+                loss = criterion(outputs[..., 1], targets)
+            else:    
+                loss = criterion(outputs, targets)
 
             # loss for accumulation steps
             loss /= accumulation_steps        
@@ -76,9 +80,15 @@ def training(model, num_training_steps, trainloader, validloader, criterion, opt
                 losses_m.update(loss.item()*accumulation_steps)
 
                 # accuracy
-                preds = outputs.argmax(dim=1)
+                preds = outputs.argmax(dim=-1)
 
-                acc_m.update(targets.eq(preds).sum().item()/targets.size(0), n=targets.size(0))
+                if 'KoBERTSegSep' in str(type(model)):
+                    correct = targets.eq(preds)
+                    correct = (correct.sum(dim=1) / correct.size(1)).sum().item()
+                else:
+                    correct = targets.eq(preds).sum().item()
+
+                acc_m.update(correct/targets.size(0), n=targets.size(0))
                 batch_time_m.update(time.time() - end)
 
                 # wandb
@@ -115,7 +125,7 @@ def training(model, num_training_steps, trainloader, validloader, criterion, opt
                         wandb.log(eval_log, step=step)
 
                     # checkpoint
-                    if best_acc < eval_metrics['acc']:
+                    if best_f1 < eval_metrics['f1']:
                         # save best score
                         state = {'best_step':step}
                         state.update(eval_log)
@@ -124,9 +134,9 @@ def training(model, num_training_steps, trainloader, validloader, criterion, opt
                         # save best model
                         torch.save(model.state_dict(), os.path.join(savedir, f'best_model.pt'))
                         
-                        _logger.info('Best Accuracy {0:.3%} to {1:.3%}'.format(best_acc, eval_metrics['acc']))
+                        _logger.info('Best F1-score {0:.3%} to {1:.3%}'.format(best_f1, eval_metrics['f1']))
 
-                        best_acc = eval_metrics['acc']
+                        best_f1 = eval_metrics['f1']
 
             end = time.time()
             step += 1
@@ -138,21 +148,21 @@ def training(model, num_training_steps, trainloader, validloader, criterion, opt
     # save best model
     torch.save(model.state_dict(), os.path.join(savedir, f'latest_model.pt'))
 
-    _logger.info('Best Metric: {0:.3%} (step {1:})'.format(best_acc, state['best_step']))
+    _logger.info('Best Metric: {0:.3%} (step {1:})'.format(best_f1, state['best_step']))
     
         
 def evaluate(model, dataloader, criterion, log_interval, device='cpu'):
     correct = 0
     total = 0
     total_loss = 0
-    total_score = []
-    total_preds = []
-    total_targets = []
+    total_score = {}
+    total_preds = {}
+    total_targets = {}
     
     model.eval()
     with torch.no_grad():
         for idx, batch in enumerate(dataloader):
-            inputs, targets = batch
+            inputs, targets, news_ids = batch
             # batch
             inputs, targets = convert_device(inputs, device), targets.to(device)
 
@@ -160,41 +170,93 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu'):
             outputs = model(**inputs)
             
             # loss 
-            loss = criterion(outputs, targets)
+            if 'KoBERTSegSep' in str(type(model)):
+                loss = criterion(outputs[..., 1], targets)
+            else:    
+                loss = criterion(outputs, targets)
             
             # total loss and acc
             total_loss += loss.item()
-            preds = outputs.argmax(dim=1)
-            correct += targets.eq(preds).sum().item()
+            preds = outputs.argmax(dim=-1)
+
+            if 'KoBERTSegSep' in str(type(model)):
+                correct_i = targets.eq(preds)
+                correct += (correct_i.sum(dim=1) / correct_i.size(1)).sum().item()
+            else:
+                correct += targets.eq(preds).sum().item()
             total += targets.size(0)
 
-            total_score.extend(outputs[:,1].cpu().tolist())
-            total_preds.extend(preds.cpu().tolist())
-            total_targets.extend(targets.cpu().tolist())
-            
+            # TODO
+            total_score, total_preds, total_targets = stack_outputs(
+                news_ids      = news_ids, 
+                total_score   = total_score, 
+                score         = outputs[..., 1], 
+                total_preds   = total_preds, 
+                preds         = preds, 
+                total_targets = total_targets, 
+                targets       = targets
+            )
+
             if idx % log_interval == 0 and idx != 0: 
                 _logger.info('TEST [%d/%d]: Loss: %.3f | Acc: %.3f%% [%d/%d]' % 
                             (idx+1, len(dataloader), total_loss/(idx+1), 100.*correct/total, correct, total))
-                
+
+
     metrics = calc_metrics(
-        y_true  = total_targets,
-        y_score = total_score,
-        y_pred  = total_preds
+        y_true  = np.concatenate(list(total_targets.values())),
+        y_score = np.concatenate(list(total_score.values())),
+        y_pred  = np.concatenate(list(total_preds.values()))
     )
     
     metrics.update([('acc',correct/total), ('loss',total_loss/len(dataloader))])
 
-    _logger.info('TEST: Loss: %.3f | Acc: %.3f%% | AUROC: %.3f%% | F1-Score: %.3f%% | Recall: %.3f%% | Precision: %.3f%%' % 
-                (metrics['loss'], 100.*metrics['acc'], 100.*metrics['auroc'], 100.*metrics['f1'], 100.*metrics['recall'], 100.*metrics['precision']))
+    acc_per_article = calc_acc_per_article(
+        y_true = total_targets,
+        y_pred = total_preds
+    )
+
+    metrics.update([('acc_per_article', acc_per_article)])
+
+    _logger.info('TEST: Loss: %.3f | Acc: %.3f%% | Acc Article: %.3f%% | AUROC: %.3f%% | F1-Score: %.3f%% | Recall: %.3f%% | Precision: %.3f%%' % 
+                (metrics['loss'], 
+                100.*metrics['acc'], 100.*metrics['acc_per_article'], 
+                100.*metrics['auroc'], 100.*metrics['f1'], 
+                100.*metrics['recall'], 100.*metrics['precision']))
 
     return metrics
         
+def stack_outputs(news_ids, total_score, score, total_preds, preds, total_targets, targets):
+    for i, news_id in enumerate(news_ids):
+        if news_id not in total_score.keys():
+            total_score[news_id] = []
+        if news_id not in total_preds.keys():
+            total_preds[news_id] = []
+        if news_id not in total_targets.keys():
+            total_targets[news_id] = []
+
+        total_score[news_id].append(score[i].cpu().tolist())
+        total_preds[news_id].append(preds[i].cpu().tolist())
+        total_targets[news_id].append(targets[i].cpu().tolist())
+
+    return total_score, total_preds, total_targets
+
+def calc_acc_per_article(y_true, y_pred):
+    correct = 0
+    for news_id in y_true.keys():
+        correct_i = torch.tensor(y_true[news_id]).eq(torch.tensor(y_pred[news_id])).sum().item()
+        acc_news_id = correct_i / len(y_true[news_id])
+        
+        if acc_news_id == 1:
+            correct += 1
+
+    acc_per_article = correct / len(y_true.keys())
+    return acc_per_article
 
 def calc_metrics(y_true, y_score, y_pred):
-    auroc = roc_auc_score(y_true, y_score)
-    f1 = f1_score(y_true, y_pred)
-    recall = recall_score(y_true, y_pred)
-    precision = precision_score(y_true, y_pred)
+    auroc = roc_auc_score(y_true, y_score, average='macro')
+    f1 = f1_score(y_true, y_pred, average='macro')
+    recall = recall_score(y_true, y_pred, average='macro')
+    precision = precision_score(y_true, y_pred, average='macro')
 
     return {
         'auroc':auroc, 
