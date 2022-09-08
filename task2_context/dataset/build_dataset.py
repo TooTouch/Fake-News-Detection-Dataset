@@ -75,13 +75,13 @@ class FakeDataset(Dataset):
             targets.extend(target_i)
             docs.extend(doc_i)
             fake_labels.extend(fake_label_i)
-            news_ids.append(str(news_idx['id']))
+            news_ids.extend([str(news_idx['id'])]*len(dataset_i))
 
         setattr(self, 'datasets', datasets)
         setattr(self, 'targets', targets)
         setattr(self, 'docs', docs)
         setattr(self, 'fake_labels', fake_labels)
-        setattr(self, 'news_ids', news_ids*len(datasets))
+        setattr(self, 'news_ids', news_ids)
 
     def split_doc_into_sents(self, doc, src, fake_label, window_size):
         datasets = []
