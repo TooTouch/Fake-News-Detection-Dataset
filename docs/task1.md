@@ -16,65 +16,15 @@ description: 제목과 본문 간 일치 여부에 따라 가짜 뉴스를 탐�
 
 ## 실행
 
-**HAN**
-
 ```bash
-python main.py \
---do_train \
---exp_name HAN_wo_freeze_w2e \
---modelname HAN \
---num_training_steps 30000 \
---batch_size 256 \
---use_scheduler \
---lr 3e-3 \
---use_pretrained_word_embed \
---max_vocab_size 50000 \
---max_sent_len 16 \
---max_word_len 64 \
---use_saved_data \
---log_interval 10 \
---eval_interval 1000
-```
+# HAN
+python main.py --yaml_configs ./configs/HAN/HAN_w_freeze_w2e-train.yaml
 
+# FNDNet
+python main.py --yaml_configs ./configs/FNDNet/FNDNet_w_freeze_w2e-train.yaml
 
-**FNDNet**
-
-```bash
-python main.py \
---do_train \
---exp_name FNDNet_wo_freeze_w2e \
---modelname FNDNet \
---num_training_steps 100000 \
---batch_size 256 \
---use_scheduler \
---lr 3e-5 \
---use_pretrained_word_embed \
---use_saved_data \
---max_vocab_size 50000 \
---max_word_len 1000 \
---dims 128 \
---log_interval 10 \
---eval_interval 1000
-```
-
-
-**BTS**
-
-```bash
-python main.py \
---do_train \
---exp_name BTS \
---modelname BTS \
---pretrained_name 'klue/bert-base' \
---tokenizer 'bert' \
---num_training_steps 20 \
---use_saved_data \
---batch_size 8 \
---use_scheduler \
---lr 1e-5 \
---max_word_len 512 \
---log_interval 1 \
---eval_interval 5
+# BTS
+python main.py --yaml_configs ./configs/BTS/BTS-train.yaml
 ```
 
 # Load Pretrained Model
@@ -109,9 +59,122 @@ model = create_model('bts_task1', pretrained=True)
 
 ## Result
 
-       
- Model |  Test Acc |  Test Loss |  Train Acc |  Train Loss |  Valid Acc |  Valid Loss 
-:---|---|---|---|---|---|---
-BTS |    0.9982 |     0.1871 |     0.9986 |      0.1879 |     0.9986 |      0.1882 
-FNDNet |    0.8484 |     0.3981 |     0.9562 |      0.1264 |     0.8717 |      0.3393 
-HAN |    0.8805 |     0.2915 |     0.9215 |      0.1961 |     0.9052 |      0.2334 
+<table>
+  <thead>
+    <tr>
+      <th rowspan="2">Method</th>
+      <th colspan="5" halign="left">TRAIN</th>
+      <th colspan="5" halign="left">VALID</th>
+      <th colspan="5" halign="left">TEST</th>
+    </tr>
+    <tr>
+      <th>AUROC</th>
+      <th>F1</th>
+      <th>RECALL</th>
+      <th>PRECISION</th>
+      <th>ACC</th>
+      <th>AUROC</th>
+      <th>F1</th>
+      <th>RECALL</th>
+      <th>PRECISION</th>
+      <th>ACC</th>
+      <th>AUROC</th>
+      <th>F1</th>
+      <th>RECALL</th>
+      <th>PRECISION</th>
+      <th>ACC</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>FNDNet_wo_freeze_w2e</th>
+      <td>0.990</td>
+      <td>0.955</td>
+      <td>0.938</td>
+      <td>0.973</td>
+      <td>0.956</td>
+      <td>0.941</td>
+      <td>0.868</td>
+      <td>0.847</td>
+      <td>0.891</td>
+      <td>0.872</td>
+      <td>0.924</td>
+      <td>0.842</td>
+      <td>0.807</td>
+      <td>0.880</td>
+      <td>0.848</td>
+    </tr>
+    <tr>
+      <th>FNDNet_w_freeze_w2e</th>
+      <td>0.990</td>
+      <td>0.955</td>
+      <td>0.938</td>
+      <td>0.973</td>
+      <td>0.956</td>
+      <td>0.941</td>
+      <td>0.868</td>
+      <td>0.847</td>
+      <td>0.891</td>
+      <td>0.872</td>
+      <td>0.924</td>
+      <td>0.842</td>
+      <td>0.807</td>
+      <td>0.880</td>
+      <td>0.848</td>
+    </tr>
+    <tr>
+      <th>HAN_wo_freeze_w2e</th>
+      <td>0.975</td>
+      <td>0.919</td>
+      <td>0.886</td>
+      <td>0.954</td>
+      <td>0.922</td>
+      <td>0.965</td>
+      <td>0.902</td>
+      <td>0.868</td>
+      <td>0.937</td>
+      <td>0.905</td>
+      <td>0.951</td>
+      <td>0.872</td>
+      <td>0.817</td>
+      <td>0.936</td>
+      <td>0.880</td>
+    </tr>
+    <tr>
+      <th>HAN_w_freeze_w2e</th>
+      <td>0.978</td>
+      <td>0.921</td>
+      <td>0.887</td>
+      <td>0.958</td>
+      <td>0.924</td>
+      <td>0.968</td>
+      <td>0.905</td>
+      <td>0.870</td>
+      <td>0.943</td>
+      <td>0.909</td>
+      <td>0.954</td>
+      <td>0.874</td>
+      <td>0.821</td>
+      <td>0.935</td>
+      <td>0.882</td>
+    </tr>
+    <tr>
+      <th>BTS</th>
+      <td>1.000</td>
+      <td>0.999</td>
+      <td>0.998</td>
+      <td>0.999</td>
+      <td>0.999</td>
+      <td>1.000</td>
+      <td>0.999</td>
+      <td>0.998</td>
+      <td>0.999</td>
+      <td>0.999</td>
+      <td>1.000</td>
+      <td>0.998</td>
+      <td>0.997</td>
+      <td>1.000</td>
+      <td>0.998</td>
+    </tr>
+  </tbody>
+</table>
