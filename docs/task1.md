@@ -64,7 +64,7 @@ model = create_model('bts_task1', pretrained=True)
     <tr>
       <th rowspan="2">Method</th>
       <th colspan="5" halign="left">TRAIN</th>
-      <th colspan="5" halign="left">VALID</th>
+      <th colspan="5" halign="left">VALIDATION</th>
       <th colspan="5" halign="left">TEST</th>
     </tr>
     <tr>
