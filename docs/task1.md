@@ -62,22 +62,7 @@ model = create_model('bts_task1', pretrained=True)
 <table>
   <thead>
     <tr>
-      <th rowspan="2">Method</th>
-      <th colspan="5" halign="left">TRAIN</th>
-      <th colspan="5" halign="left">VALIDATION</th>
-      <th colspan="5" halign="left">TEST</th>
-    </tr>
-    <tr>
-      <th>AUROC</th>
-      <th>F1</th>
-      <th>RECALL</th>
-      <th>PRECISION</th>
-      <th>ACC</th>
-      <th>AUROC</th>
-      <th>F1</th>
-      <th>RECALL</th>
-      <th>PRECISION</th>
-      <th>ACC</th>
+      <th>Method</th>
       <th>AUROC</th>
       <th>F1</th>
       <th>RECALL</th>
@@ -88,16 +73,6 @@ model = create_model('bts_task1', pretrained=True)
   <tbody>
     <tr>
       <th>FNDNet_wo_freeze_w2e</th>
-      <td>0.990</td>
-      <td>0.955</td>
-      <td>0.938</td>
-      <td>0.973</td>
-      <td>0.956</td>
-      <td>0.941</td>
-      <td>0.868</td>
-      <td>0.847</td>
-      <td>0.891</td>
-      <td>0.872</td>
       <td>0.924</td>
       <td>0.842</td>
       <td>0.807</td>
@@ -106,16 +81,6 @@ model = create_model('bts_task1', pretrained=True)
     </tr>
     <tr>
       <th>FNDNet_w_freeze_w2e</th>
-      <td>0.990</td>
-      <td>0.955</td>
-      <td>0.938</td>
-      <td>0.973</td>
-      <td>0.956</td>
-      <td>0.941</td>
-      <td>0.868</td>
-      <td>0.847</td>
-      <td>0.891</td>
-      <td>0.872</td>
       <td>0.924</td>
       <td>0.842</td>
       <td>0.807</td>
@@ -124,16 +89,6 @@ model = create_model('bts_task1', pretrained=True)
     </tr>
     <tr>
       <th>HAN_wo_freeze_w2e</th>
-      <td>0.975</td>
-      <td>0.919</td>
-      <td>0.886</td>
-      <td>0.954</td>
-      <td>0.922</td>
-      <td>0.965</td>
-      <td>0.902</td>
-      <td>0.868</td>
-      <td>0.937</td>
-      <td>0.905</td>
       <td>0.951</td>
       <td>0.872</td>
       <td>0.817</td>
@@ -142,16 +97,6 @@ model = create_model('bts_task1', pretrained=True)
     </tr>
     <tr>
       <th>HAN_w_freeze_w2e</th>
-      <td>0.978</td>
-      <td>0.921</td>
-      <td>0.887</td>
-      <td>0.958</td>
-      <td>0.924</td>
-      <td>0.968</td>
-      <td>0.905</td>
-      <td>0.870</td>
-      <td>0.943</td>
-      <td>0.909</td>
       <td>0.954</td>
       <td>0.874</td>
       <td>0.821</td>
@@ -160,16 +105,6 @@ model = create_model('bts_task1', pretrained=True)
     </tr>
     <tr>
       <th>BTS</th>
-      <td>1.000</td>
-      <td>0.999</td>
-      <td>0.998</td>
-      <td>0.999</td>
-      <td>0.999</td>
-      <td>1.000</td>
-      <td>0.999</td>
-      <td>0.998</td>
-      <td>0.999</td>
-      <td>0.999</td>
       <td>1.000</td>
       <td>0.998</td>
       <td>0.997</td>
