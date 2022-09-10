@@ -39,7 +39,7 @@ python main.py --yaml_configs ./configs/KoBERTSeg/KoBERTSeg-train.yaml
   </thead>
   <tbody>
     <tr>
-      <th>BTS</th>
+      <th align='left'>BTS</th>
       <td>0.992</td>
       <td>0.923</td>
       <td>0.897</td>
@@ -48,7 +48,7 @@ python main.py --yaml_configs ./configs/KoBERTSeg/KoBERTSeg-train.yaml
       <td>0.867</td>
     </tr>
     <tr>
-      <th>KoBERTSeg</th>
+      <th align='left'>KoBERTSeg</th>
       <td>0.994</td>
       <td>0.929</td>
       <td>0.911</td>
