@@ -59,6 +59,8 @@ model = create_model('bts_task1', pretrained=True)
 
 ## Result
 
+- `freeze`는 word embedding weight 학습 여부입니다.
+
 <table>
   <thead>
     <tr>
@@ -72,7 +74,7 @@ model = create_model('bts_task1', pretrained=True)
   </thead>
   <tbody>
     <tr>
-      <th align='left'>FNDNet_wo_freeze_w2e</th>
+      <th align='left'>FNDNet - freeze</th>
       <td>0.924</td>
       <td>0.842</td>
       <td>0.807</td>
@@ -80,7 +82,7 @@ model = create_model('bts_task1', pretrained=True)
       <td>0.848</td>
     </tr>
     <tr>
-      <th align='left'>FNDNet_w_freeze_w2e</th>
+      <th align='left'>FNDNet + freeze</th>
       <td>0.924</td>
       <td>0.842</td>
       <td>0.807</td>
@@ -88,7 +90,7 @@ model = create_model('bts_task1', pretrained=True)
       <td>0.848</td>
     </tr>
     <tr>
-      <th align='left'>HAN_wo_freeze_w2e</th>
+      <th align='left'>HAN - freeze</th>
       <td>0.951</td>
       <td>0.872</td>
       <td>0.817</td>
@@ -96,7 +98,7 @@ model = create_model('bts_task1', pretrained=True)
       <td>0.880</td>
     </tr>
     <tr>
-      <th align='left'>HAN_w_freeze_w2e</th>
+      <th align='left'>HAN + freeze</th>
       <td>0.954</td>
       <td>0.874</td>
       <td>0.821</td>
