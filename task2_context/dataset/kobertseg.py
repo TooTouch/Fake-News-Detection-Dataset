@@ -1,28 +1,41 @@
 from .build_dataset import FakeDataset
-
-import json 
-import pandas as pd
-import numpy as np
 import torch
-import os
-import random
-
-from tqdm.auto import tqdm
 
 class KoBERTSegDataset(FakeDataset):
-    def __init__(self, datadir, split, window_size, tokenizer, vocab, max_word_len=512):
+    def __init__(self, window_size, tokenizer, vocab, max_word_len=512):
         super(KoBERTSegDataset, self).__init__(
-            datadir      = datadir, 
-            split        = split, 
             tokenizer    = tokenizer, 
             vocab        = vocab, 
             window_size  = window_size,
             max_word_len = max_word_len
         )
-
-        self.preprocessor()
-        
     
+    def single_preprocessor(self, doc):
+        datasets = self._single_preprocessor(doc)
+
+        inputs = {
+            'src': [],
+            'segs': [],
+            'clss': [],
+            'mask_src': [],
+            'mask_cls': [],
+        }
+
+        # tokenizer
+        for dataset in datasets:
+            src_subtoken_idxs, segments_ids, cls_ids, mask_src, mask_cls = self.tokenize(dataset)
+
+            inputs['src'].append(src_subtoken_idxs)
+            inputs['segs'].append(segments_ids)
+            inputs['clss'].append(cls_ids)
+            inputs['mask_src'].append(mask_src)
+            inputs['mask_cls'].append(mask_cls)
+
+        for k, v in inputs.items():
+            inputs[k] = torch.stack(v)
+        
+        return inputs
+
     def tokenize(self, src):
         # length
         src = self.length_processing(src)
