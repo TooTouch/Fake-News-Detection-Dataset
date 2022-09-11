@@ -244,7 +244,7 @@ def calc_acc_per_article(y_true, y_pred):
     correct = 0
     for news_id in y_true.keys():
         correct_i = torch.tensor(y_true[news_id]).eq(torch.tensor(y_pred[news_id])).sum().item()
-        acc_news_id = correct_i / len(y_true[news_id])
+        acc_news_id = correct_i / torch.tensor(y_true[news_id]).size().numel()
         
         if acc_news_id == 1:
             correct += 1

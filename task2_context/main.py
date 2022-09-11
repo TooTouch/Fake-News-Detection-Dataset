@@ -54,6 +54,12 @@ def run(cfg):
 
     _logger.info('# of trainable params: {}'.format(np.sum([p.numel() if p.requires_grad else 0 for p in model.parameters()])))
     
+    # Objective function
+    if cfg['DATASET']['name'] == 'KoBERTSegSep':
+        criterion = torch.nn.MultiLabelSoftMarginLoss()
+    else:
+        criterion = torch.nn.CrossEntropyLoss()
+
     if cfg['MODE']['do_train']:
         # wandb
         if cfg['TRAIN']['use_wandb']:
@@ -90,10 +96,7 @@ def run(cfg):
         )
 
         # Set training
-        if cfg['DATASET']['name'] == 'KoBERTSegSep':
-            criterion = torch.nn.MultiLabelSoftMarginLoss()
-        else:
-            criterion = torch.nn.CrossEntropyLoss()
+        
         optimizer = torch.optim.AdamW(
             params       = filter(lambda p: p.requires_grad, model.parameters()), 
             lr           = cfg['OPTIMIZER']['lr'], 
@@ -127,8 +130,6 @@ def run(cfg):
         )
 
     elif cfg['MODE']['do_test']:
-
-        criterion = torch.nn.CrossEntropyLoss()
 
         # test
         total_metrics = {}
