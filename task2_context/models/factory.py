@@ -9,7 +9,6 @@ def create_model(
         modelname,
         hparams,
         pretrained = False,
-        tokenizer = None,
         checkpoint_path = None,
         **kwargs
     ):

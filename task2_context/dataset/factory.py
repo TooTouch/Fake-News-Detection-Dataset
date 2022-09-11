@@ -1,18 +1,15 @@
-import pandas as pd
-import csv
-
-from konlpy.tag import Mecab
-from transformers import BertTokenizer
 from torch.utils.data import DataLoader
 
 def create_dataset(name, data_path, split, tokenizer, vocab, **kwargs):
     dataset = __import__('dataset').__dict__[f'{name}Dataset'](
-        datadir         = data_path,
-        split           = split,
         tokenizer       = tokenizer,
         vocab           = vocab,
         **kwargs
     )
+
+    dataset.load_dataset(datadir=data_path, split=split)
+    dataset.preprocessor()
+
     return dataset
 
 

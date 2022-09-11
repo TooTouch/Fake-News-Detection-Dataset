@@ -4,19 +4,12 @@ import pandas as pd
 import numpy as np
 import torch
 import os
-import random
 
 from tqdm.auto import tqdm
 
 class FakeDataset(Dataset):
-    def __init__(self, datadir, split, tokenizer, vocab, window_size, max_word_len=512):
+    def __init__(self, tokenizer, vocab, window_size, max_word_len=512):
         
-        self.split = split
-
-        # load data and infomation
-        self.data = json.load(open(os.path.join(datadir, f'{self.split}.json'),'r'))
-        self.data_info = pd.read_csv(os.path.join(datadir,f'{self.split}_info.csv'))
-
         # data parameters
         self.window_size = window_size
         self.max_word_len = max_word_len
@@ -29,7 +22,33 @@ class FakeDataset(Dataset):
         self.pad_idx = self.vocab[self.vocab.padding_token]
         self.cls_idx = self.vocab[self.vocab.cls_token]
         
-        
+    def load_dataset(self, datadir, split):
+        # load data and infomation
+        setattr(self, 'data', json.load(open(os.path.join(datadir, f'{split}.json'),'r')))
+        setattr(self, 'data_info', pd.read_csv(os.path.join(datadir,f'{split}_info.csv')))
+    
+    def _single_preprocessor(self, doc):
+        # tokenizing
+        src = [self.tokenizer(d_i) for d_i in doc]
+        pad_sents = [[self.vocab.padding_token]] * (self.window_size-1)
+        src = pad_sents + src + pad_sents
+
+        return self._split_doc_into_sents(src, self.window_size)
+
+    def _split_doc_into_sents(self, src, window_size):
+        datasets = []
+
+        for i in range(0, len(src)-(window_size*2)+1):
+            # slicing source sentences and label by total window size
+            total_window = window_size*2
+
+            src_i = src[i:i+total_window]
+
+            # inputs
+            datasets.append(src_i)
+            
+        return datasets
+
     def preprocessor(self):
         datasets = [] 
         targets = []

@@ -21,8 +21,6 @@ from train import training, evaluate
 from log import setup_default_logging
 from utils import torch_seed
 
-import pandas as pd
-
 _logger = logging.getLogger('train')
 
 
@@ -47,7 +45,6 @@ def run(cfg):
         modelname  = cfg['MODEL']['modelname'], 
         hparams    = cfg['MODEL']['PARAMETERS'],
         pretrained = cfg['MODEL']['CHECKPOINT']['pretrained'], 
-        tokenizer  = tokenizer, 
         checkpoint_path = cfg['MODEL']['CHECKPOINT']['checkpoint_path']
     )
     model.to(device)

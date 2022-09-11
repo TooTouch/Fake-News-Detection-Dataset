@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 
-from kobert.utils import get_tokenizer
 from kobert.pytorch_kobert import get_pytorch_kobert_model
 
 from log import logging
