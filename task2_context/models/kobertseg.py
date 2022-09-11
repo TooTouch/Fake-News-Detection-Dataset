@@ -6,7 +6,7 @@ from kobert.pytorch_kobert import get_pytorch_kobert_model
 from log import logging
 from .registry import register_model
 
-#from .utils import download_weights
+from .utils import download_weights
 
 _logger = logging.getLogger('train')
 
@@ -86,4 +86,19 @@ def kobertseg(hparams, **kwargs):
         finetune_bert = hparams['finetune_bert'], 
         window_size   = hparams['window_size']
     )
+    return model
+
+@register_model
+def kobertseg_task2(pretrained, **kwargs):
+    url = 'https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/task2/KoBERTSeg_task2.pt'
+
+    model = KoBERTSeg(
+        finetune_bert = True, 
+        window_size   = 3
+    )
+
+    if pretrained:
+        weights = download_weights(url)
+        model.load_state_dict(weights)
+
     return model

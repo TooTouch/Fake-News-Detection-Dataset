@@ -6,7 +6,7 @@ from kobert.pytorch_kobert import get_pytorch_kobert_model
 from log import logging
 from .registry import register_model
 
-#from .utils import download_weights
+from .utils import download_weights
 
 _logger = logging.getLogger('train')
 
@@ -49,4 +49,20 @@ def bts(hparams, **kwargs):
     model = BTS(
         finetune_bert = hparams['finetune_bert']
     )
+    return model
+
+
+@register_model
+def bts_task2(pretrained, **kwargs):
+    # pretrained weights
+    url = 'https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/task2/BTS_task2.pt'
+
+    model = BTS(
+        finetune_bert = True
+    )
+
+    if pretrained:
+        weights = download_weights(url)
+        model.load_state_dict(weights)
+
     return model
