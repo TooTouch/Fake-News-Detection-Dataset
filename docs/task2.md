@@ -22,6 +22,31 @@ python main.py --yaml_configs ./configs/BTS/BTS-train.yaml
 python main.py --yaml_configs ./configs/KoBERTSeg/KoBERTSeg-train.yaml
 ```
 
+# Load Pretrained Model
+
+**model list**
+
+`bts`, `kobertseg` 라고 적힌 모델은 학습된 모델이 아닙니다.
+
+```python
+from models import list_models
+
+list_models('*')
+
+['bts',
+ 'bts_task2',
+ 'kobertseg',
+ 'kobertseg_task2']
+```
+
+**load pretrained model**
+
+```python
+from models import create_model
+
+model = create_model('kobertseg_task2', pretrained=True)
+```
+
 
 ## Result
 

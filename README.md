@@ -27,7 +27,6 @@ pip install -r requirements.txt
 - HAN
 - FNDNet
 - BERT
-- MuSeM
 
 # Task 2: 본문 내 일치성
 
