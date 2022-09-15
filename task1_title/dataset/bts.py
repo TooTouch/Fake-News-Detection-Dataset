@@ -5,15 +5,13 @@ import os
 
 
 class BTSDataset(FakeDataset):
-    def __init__(self, datadir, split, tokenizer, max_word_len, saved_data_path=False):
-        super(BTSDataset, self).__init__(datadir=datadir, split=split, tokenizer=tokenizer)
+    def __init__(self, tokenizer, max_word_len, saved_data_path=False):
+        super(BTSDataset, self).__init__(tokenizer=tokenizer)
 
         self.max_word_len = max_word_len
 
         # load data
         self.saved_data_path = saved_data_path
-        if self.saved_data_path:
-            self.data = torch.load(os.path.join(saved_data_path, f'{split}.pt'))
 
     def transform(self, title, text):
         doc = self.tokenizer(

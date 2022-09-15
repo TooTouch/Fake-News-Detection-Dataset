@@ -6,16 +6,19 @@ import os
 
 
 class FakeDataset(Dataset):
-    def __init__(self, datadir, split, tokenizer):
-
-        self.split = split
-
-        # load data
-        self.data = json.load(open(os.path.join(datadir, f'{split}.json'),'r'))
-        self.data_info = pd.read_csv(os.path.join(datadir, f'{split}_info.csv'))
-        
+    def __init__(self, tokenizer):
         # tokenizer
         self.tokenizer = tokenizer
+
+    def load_dataset(self, datadir, split, saved_data_path=False):
+        if self.saved_data_path:
+            self.data = torch.load(os.path.join(saved_data_path, f'{split}.pt'))
+        else:
+            data = json.load(open(os.path.join(datadir, f'{split}.json'),'r'))
+            data_info = pd.read_csv(os.path.join(datadir, f'{split}_info.csv'))
+
+            setattr(self, 'data_info', data_info)
+        setattr(self, 'data', data)
 
     def transform(self, sent_list):
         raise NotImplementedError

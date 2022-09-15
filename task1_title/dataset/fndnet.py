@@ -5,17 +5,21 @@ import os
 
 
 class FNDNetDataset(FakeDataset):
-    def __init__(self, datadir, split, tokenizer, max_word_len, saved_data_path=False):
-        super(FNDNetDataset, self).__init__(datadir=datadir, split=split, tokenizer=tokenizer)
+    def __init__(self, tokenizer, max_word_len, saved_data_path=False):
+        super(FNDNetDataset, self).__init__(tokenizer=tokenizer)
         self.max_word_len = max_word_len
 
         # load data
         self.saved_data_path = saved_data_path
-        if self.saved_data_path:
-            self.data = torch.load(os.path.join(saved_data_path, f'{split}.pt'))
 
-    def transform(self, sent_list):
+    def transform(self, title, text):
+        sent_list = [title] + text
+
         doc = sum([self.tokenizer.encode(sent) for sent in sent_list], [])[:self.max_word_len]
+
+        doc = self.padding(doc)
+
+        doc = {'input_ids':torch.tensor(doc)}
 
         return doc 
 
@@ -42,16 +46,14 @@ class FNDNetDataset(FakeDataset):
         
             # label
             label = 1 if news_idx['label']=='fake' else 0
-
-            # input
-            sent_list = [news_info['title']] + news_info['text']
             
             # transform and padding
-            doc = self.transform(sent_list)
-            doc = self.padding(doc)
+            doc = self.transform(
+                title = news_info['title'], 
+                text  = news_info['text']
+            )
 
-            doc = {'input_ids':torch.tensor(doc)}
-
+            
             return doc, label
 
 
