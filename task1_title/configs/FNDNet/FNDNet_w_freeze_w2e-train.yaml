@@ -8,8 +8,8 @@ MODE:
 DATASET:
     name: FNDNet
     data_path: ../data/task1/
+    saved_data_path: ../data/task1/FNDNet_w1000
     PARAMETERS:
-        saved_data_path: ../data/task1/FNDNet_w1000
         max_word_len: 1000
 
 TOKENIZER: 

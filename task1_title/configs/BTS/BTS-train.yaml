@@ -8,8 +8,8 @@ MODE:
 DATASET:
     name: BTS
     data_path: ../data/task1/
+    saved_data_path: ../data/task1/BTS_w512
     PARAMETERS:
-        saved_data_path: ../data/task1/BTS_w512
         max_word_len: 512
 
 TOKENIZER:

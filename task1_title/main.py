@@ -67,6 +67,7 @@ def run(cfg):
             data_path      = cfg['DATASET']['data_path'], 
             split          = 'train', 
             tokenizer      = tokenizer, 
+            saved_data_path = cfg['DATASET']['saved_data_path'],
             **cfg['DATASET']['PARAMETERS']
         )
 
@@ -75,6 +76,7 @@ def run(cfg):
             data_path      = cfg['DATASET']['data_path'], 
             split          = 'valid', 
             tokenizer      = tokenizer, 
+            saved_data_path = cfg['DATASET']['saved_data_path'],
             **cfg['DATASET']['PARAMETERS']
         )
         
