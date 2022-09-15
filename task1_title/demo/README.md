@@ -14,4 +14,4 @@ voila inference.ipynb --template gridstack --VoilaConfiguration.resources='{"gri
 
 # Demo
 
-![](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/task2_context/demo/demo.gif)
+![](https://user-images.githubusercontent.com/37654013/190441703-4949da62-260d-49f6-b41a-0145b00dc988.png)
