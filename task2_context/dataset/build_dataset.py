@@ -24,8 +24,16 @@ class FakeDataset(Dataset):
         
     def load_dataset(self, datadir, split):
         # load data and infomation
-        setattr(self, 'data', json.load(open(os.path.join(datadir, f'{split}.json'),'r')))
-        setattr(self, 'data_info', pd.read_csv(os.path.join(datadir,f'{split}_info.csv')))
+        data_info = pd.read_csv(os.path.join(datadir,f'{split}_info.csv'))
+
+        data = {}
+        for filename in data_info.filename:
+            f = json.load(open(os.path.join(datadir,filename),'r'))
+            data[filename] = f
+
+        setattr(self, 'data', data)
+        setattr(self, 'data_info', data_info)
+
     
     def _single_preprocessor(self, doc):
         # tokenizing
@@ -63,8 +71,8 @@ class FakeDataset(Dataset):
             fake_idx = news_idx['fake_idx']
 
             # extract news contents
-            news_info = self.data[str(news_idx['id'])]
-            doc = news_info['text']
+            news_info = self.data[news_idx['filename']]
+            doc = news_info['sourceDataInfo']['newsContent'].split('\n')
 
             # define fake label
             fake_label = np.zeros(len(doc) + (self.window_size-1)*2)
@@ -94,7 +102,7 @@ class FakeDataset(Dataset):
             targets.extend(target_i)
             docs.extend(doc_i)
             fake_labels.extend(fake_label_i)
-            news_ids.extend([str(news_idx['id'])]*len(dataset_i))
+            news_ids.extend([news_idx['filename']]*len(dataset_i))
 
         setattr(self, 'datasets', datasets)
         setattr(self, 'targets', targets)
