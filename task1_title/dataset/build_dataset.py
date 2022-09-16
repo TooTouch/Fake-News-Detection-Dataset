@@ -5,6 +5,7 @@ import torch
 import os
 
 
+
 class FakeDataset(Dataset):
     def __init__(self, tokenizer):
         # tokenizer
@@ -14,8 +15,12 @@ class FakeDataset(Dataset):
         if self.saved_data_path:
             self.data = torch.load(os.path.join(saved_data_path, f'{split}.pt'))
         else:
-            data = json.load(open(os.path.join(datadir, f'{split}.json'),'r'))
             data_info = pd.read_csv(os.path.join(datadir, f'{split}_info.csv'))
+            
+            data = {}
+            for filename in data_info.filename:
+                f = json.load(open(os.path.join(datadir,filename),'r'))
+                data[filename] = f
 
             setattr(self, 'data_info', data_info)
         setattr(self, 'data', data)
