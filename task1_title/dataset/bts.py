@@ -48,7 +48,7 @@ class BTSDataset(FakeDataset):
             label = 1 if news_idx['label']=='fake' else 0
 
             doc = self.transform(
-                title = news_info['sourceDataInfo']['newsTitle'], 
+                title = news_info['labeledDataInfo']['newsTitle'], 
                 text  = news_info['sourceDataInfo']['newsContent'].split('\n')
             )
 

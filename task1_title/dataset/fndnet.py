@@ -49,7 +49,7 @@ class FNDNetDataset(FakeDataset):
             
             # transform and padding
             doc = self.transform(
-                title = news_info['sourceDataInfo']['newsTitle'], 
+                title = news_info['labeledDataInfo']['newsTitle'], 
                 text  = news_info['sourceDataInfo']['newsContent'].split('\n')
             )
 
