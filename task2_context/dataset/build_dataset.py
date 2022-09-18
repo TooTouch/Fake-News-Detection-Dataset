@@ -72,7 +72,7 @@ class FakeDataset(Dataset):
 
             # extract news contents
             news_info = self.data[news_idx['filename']]
-            doc = news_info['sourceDataInfo']['newsContent'].split('\n')
+            doc = [sent_info['sentenceContent'] for sent_info in news_info['labeledDataInfo']['processSentenceInfo']]
 
             # define fake label
             fake_label = np.zeros(len(doc) + (self.window_size-1)*2)
