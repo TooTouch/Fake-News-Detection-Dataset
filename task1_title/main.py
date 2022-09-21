@@ -37,8 +37,7 @@ def run(cfg):
     tokenizer, word_embed = create_tokenizer(
         name            = cfg['TOKENIZER']['name'], 
         vocab_path      = cfg['TOKENIZER'].get('vocab_path', None), 
-        max_vocab_size  = cfg['TOKENIZER'].get('max_vocab_size', None), 
-        pretrained_name = cfg['TOKENIZER'].get('pretrained_name', None)
+        max_vocab_size  = cfg['TOKENIZER'].get('max_vocab_size', None)
     )
     
     # Build Model

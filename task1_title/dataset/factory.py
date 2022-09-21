@@ -5,6 +5,11 @@ from konlpy.tag import Mecab
 from transformers import BertTokenizer
 from torch.utils.data import DataLoader
 
+import gluonnlp as nlp
+
+from kobert import get_pytorch_kobert_model
+from kobert.utils import get_tokenizer
+
 from .build_dataset import *
 from .tokenizer import FNDTokenizer
 
@@ -26,13 +31,14 @@ def extract_word_embedding(vocab_path, max_vocab_size=-1):
 
 
 
-def create_tokenizer(name, vocab_path, max_vocab_size, pretrained_name):
+def create_tokenizer(name, vocab_path, max_vocab_size):
     if name == 'mecab':
         vocab, word_embed = extract_word_embedding(vocab_path = vocab_path, max_vocab_size = max_vocab_size)
         tokenizer = FNDTokenizer(vocab = vocab, tokenizer = Mecab())
     elif name == 'bert':
         word_embed = None
-        tokenizer = BertTokenizer.from_pretrained(pretrained_name)
+        _, vocab = get_pytorch_kobert_model(cachedir=".cache")
+        tokenizer = nlp.data.BERTSPTokenizer(get_tokenizer(), vocab, lower=False)
 
     return tokenizer, word_embed 
 

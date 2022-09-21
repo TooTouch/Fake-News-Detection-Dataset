@@ -32,7 +32,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # config
-    cfg = yaml.load(open(args.yaml_config,'r'), Loader=yaml.Fullloader)
+    cfg = yaml.load(open(args.yaml_config,'r'), Loader=yaml.FullLoader)
 
     # save directory
     savedir = os.path.join(cfg['RESULT']['savedir'], cfg['RESULT']['dataname'])
@@ -42,26 +42,26 @@ if __name__ == '__main__':
     tokenizer, word_embed = create_tokenizer(
         name            = cfg['TOKENIZER']['name'], 
         vocab_path      = cfg['TOKENIZER'].get('vocab_path', None), 
-        max_vocab_size  = cfg['TOKENIZER'].get('max_vocab_size', None), 
-        pretrained_name = cfg['TOKENIZER'].get('pretrained_name', None)
+        max_vocab_size  = cfg['TOKENIZER'].get('max_vocab_size', None)
     )
 
     for split in ['train','valid','test']:
         dataset = create_dataset(
-            modelname      = cfg['MODEL']['modelname'], 
+            name           = cfg['DATASET']['name'], 
             data_path      = cfg['DATASET']['data_path'], 
             split          = split, 
             tokenizer      = tokenizer, 
+            saved_data_path = cfg['DATASET']['saved_data_path'],
             **cfg['DATASET']['PARAMETERS']
         )
         
         dataloader = create_dataloader(
             dataset     = dataset, 
             batch_size  = cfg['TRAIN']['batch_size'], 
-            num_workers = cfg['TRAIN']['num_workers']
+            num_workers = cfg['TRAIN']['num_workers'],
             shuffle     = False
         )
    
         # save
-        save(split, trainloader, savedir)
+        save(split, dataloader, savedir)
         
