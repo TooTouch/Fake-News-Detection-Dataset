@@ -7,8 +7,8 @@ MODE:
     
 DATASET:
     name: FNDNet
-    data_path: ../data/task1/
-    saved_data_path: ../data/task1/FNDNet_w1000
+    data_path: ../data/LabeledData/Part1/
+    saved_data_path: ../data/LabeledData/Part1/FNDNet_w1000
     PARAMETERS:
         max_word_len: 1000
 

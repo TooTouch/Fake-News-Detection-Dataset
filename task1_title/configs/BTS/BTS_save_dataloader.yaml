@@ -1,19 +1,20 @@
 EXP_NAME: BTS
 SEED: 223
-data_path: ../data/task1/
     
 DATASET:
-    saved_data_path: ../data/task1/BTS_w512
-    max_word_len: 512
+    name: BTS
+    data_path: ../data/LabeledData/Part1
+    saved_data_path: false
+    PARAMETERS:
+        max_word_len: 512
 
 TOKENIZER:
     name: bert
-    pretrained_name: 'klue/bert-base'
 
 TRAIN:
     batch_size: 256
     num_workers: 12
 
 RESULT:
-    savedir: './saved_model'
+    savedir: ../data/LabeledData/Part1
     dataname: 'BTS_w512'

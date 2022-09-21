@@ -7,19 +7,18 @@ MODE:
     
 DATASET:
     name: BTS
-    data_path: ../data/task1/
-    saved_data_path: ../data/task1/BTS_w512
+    data_path: ../data/LabeledData/Part1
+    saved_data_path: ../data/LabeledData/Part1/BTS_w512
     PARAMETERS:
         max_word_len: 512
 
 TOKENIZER:
     name: bert
-    pretrained_name: 'klue/bert-base'
-
+    
 MODEL:
     modelname: bts
     PARAMETERS:
-        pretrained_name: 'klue/bert-base'
+        pretrained_name: 'skt/kobert-base-v1'
         num_classes: 2
     CHECKPOINT:
         pretrained: False
@@ -27,14 +26,14 @@ MODEL:
 
 TRAIN:
     batch_size: 8
-    num_training_steps: 20
+    num_training_steps: 10000
     accumulation_steps: 1
     num_workers: 12
     use_wandb: True
 
 LOG:
     log_interval: 1
-    eval_interval: 5
+    eval_interval: 1000
 
 OPTIMIZER:
     lr: 0.00001

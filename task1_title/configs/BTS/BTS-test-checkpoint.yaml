@@ -7,19 +7,18 @@ MODE:
     
 DATASET:
     name: BTS
-    data_path: ../data/task1/
+    data_path: ../data/LabeledData/Part1
+    saved_data_path: ../data/LabeledData/Part1/BTS_w512
     PARAMETERS:
-        saved_data_path: ../data/task1/BTS_w512
         max_word_len: 512
 
 TOKENIZER:
     name: bert
-    pretrained_name: 'klue/bert-base'
 
 MODEL:
     modelname: bts
     PARAMETERS:
-        pretrained_name: 'klue/bert-base'
+        pretrained_name: 'skt/kobert-base-v1'
         num_classes: 2
     CHECKPOINT:
         pretrained: False
