@@ -136,8 +136,9 @@ def run(cfg):
             dataset = create_dataset(
                 name           = cfg['DATASET']['name'], 
                 data_path      = cfg['DATASET']['data_path'], 
-                split          = split, 
+                split          = split,
                 tokenizer      = tokenizer, 
+                saved_data_path = cfg['DATASET']['saved_data_path'],
                 **cfg['DATASET']['PARAMETERS']
             )
             
