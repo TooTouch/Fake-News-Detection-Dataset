@@ -36,7 +36,7 @@ class BTSDataset(FakeDataset):
         # length
         src = self.length_processing(src)
 
-        src_subtokens = [[self.vocab.cls_token] + src[0] + [self.vocab.sep_token] + src[1]]
+        src_subtokens = [[self.vocab.cls_token] + src[0] + [self.vocab.sep_token]] + [src[1] + [self.vocab.sep_token]]
         src_token_ids = [self.tokenizer.convert_tokens_to_ids(s) for s in src_subtokens]
         
         segments_ids = self.get_token_type_ids(src_token_ids)
