@@ -7,7 +7,7 @@ MODE:
     
 DATASET:
     name: BTS
-    data_path: ../data/task2/
+    data_path: ../data/LabeledData/Part2/
     PARAMETERS:
         max_word_len: 512
         window_size: 1
