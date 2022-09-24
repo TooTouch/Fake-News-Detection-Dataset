@@ -90,7 +90,7 @@ def kobertseg(hparams, **kwargs):
 
 @register_model
 def kobertseg_task2(pretrained, **kwargs):
-    url = 'https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/task2/KoBERTSeg_task2.pt'
+    url = 'https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/weights/KoBERTSeg_task2.pt'
 
     model = KoBERTSeg(
         finetune_bert = True, 

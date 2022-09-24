@@ -55,7 +55,7 @@ def bts(hparams, **kwargs):
 @register_model
 def bts_task2(pretrained, **kwargs):
     # pretrained weights
-    url = 'https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/task2/BTS_task2.pt'
+    url = 'https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/weights/BTS_task2.pt'
 
     model = BTS(
         finetune_bert = True
