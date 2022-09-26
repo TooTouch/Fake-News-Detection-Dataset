@@ -4,7 +4,6 @@ SEED: 223
 MODE:
     do_train: False
     do_test: True
-    do_sample_check: True
     
 DATASET:
     name: HAN

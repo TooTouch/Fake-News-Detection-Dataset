@@ -105,7 +105,7 @@ def training(model, num_training_steps, trainloader, validloader, criterion, opt
 
 
                 if ((step+1) // accumulation_steps) % eval_interval == 0 and step != 0: 
-                    eval_metrics, _ = evaluate(model, validloader, criterion, log_interval, device)
+                    eval_metrics = evaluate(model, validloader, criterion, log_interval, device)
                     model.train()
 
                     eval_log = dict([(f'eval_{k}', v) for k, v in eval_metrics.items()])
@@ -195,7 +195,7 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_ch
         }
         return metrics, results
     else:
-        return metrics, None
+        return metrics
 
 
 def calc_metrics(y_true, y_score, y_pred):

@@ -156,20 +156,19 @@ def run(cfg):
                 criterion    = criterion,
                 log_interval = cfg['LOG']['log_interval'],
                 device       = device,
-                sample_check = cfg['MODE']['do_sample_check']
+                sample_check = True
             )
 
             total_metrics[split] = {}
             for k, v in metrics.items():
                 total_metrics[split][k] = v
 
-        if cfg['MODE']['do_sample_check']:
-            results = dict()
-            results['test of Clickbait_Auto'] = check_data(dataset.data_info, exp_results, target=1, auto='True')
-            results['test of Clickbait_Direct'] = check_data(dataset.data_info, exp_results, target=1, auto='False')
-            results['test of NonClickbait'] = check_data(dataset.data_info, exp_results, target=0)
-            with open(os.path.join(savedir, f"{cfg['RESULT']['result_name']}_sample_test.json"), 'w', encoding='utf-8') as f:
-                json.dump(results, f, indent='\t', ensure_ascii=False)
+        results = dict()
+        results['test of Clickbait_Auto'] = check_data(dataset.data_info, exp_results, target=1, auto='True')
+        results['test of Clickbait_Direct'] = check_data(dataset.data_info, exp_results, target=1, auto='False')
+        results['test of NonClickbait'] = check_data(dataset.data_info, exp_results, target=0)
+        with open(os.path.join(savedir, f"{cfg['RESULT']['result_name']}_sample_test.json"), 'w', encoding='utf-8') as f:
+            json.dump(results, f, indent='\t', ensure_ascii=False)
 
 
         json.dump(total_metrics, open(os.path.join(savedir, f"{cfg['RESULT']['result_name']}.json"),'w'), indent=4)
