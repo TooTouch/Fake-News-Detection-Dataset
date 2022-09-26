@@ -29,7 +29,7 @@ def check_data(data_info, results, target, auto=None, topN=10):
     data = pd.concat([pd.DataFrame(results), pd.DataFrame(data_info)], axis=1)
     data['Auto'] = list(
         map(lambda x: re.search(r'(\w+)_(\w+)/(\w+)/(\w+).json', x).group(2) == 'Auto', data['filename']))
-    data[['output_0', 'output_1']] = pd.DataFrame(data.outputs.tolist(), index=data.index)
+    # data[['output_0', 'output_1']] = pd.DataFrame(data.outputs.tolist(), index=data.index)
 
     if auto is None:
         data = data.query(f'(targets=={target})')
@@ -37,7 +37,7 @@ def check_data(data_info, results, target, auto=None, topN=10):
         data = data.query(f'(targets=={target}) and (Auto=={auto})')
     
     err_filename = data.query(f'(targets != preds)').sort_values(
-        by=f'output_{0 if target == 1 else 1}', ascending=False).head(topN)['filename']
+        by='outputs', ascending=False if target==0 else True).head(topN)['filename']
 
     results = dict()
     results['num of data'] = len(data)

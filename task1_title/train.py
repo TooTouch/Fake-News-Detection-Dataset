@@ -105,7 +105,7 @@ def training(model, num_training_steps, trainloader, validloader, criterion, opt
 
 
                 if ((step+1) // accumulation_steps) % eval_interval == 0 and step != 0: 
-                    eval_metrics = evaluate(model, validloader, criterion, log_interval, device)
+                    eval_metrics, _ = evaluate(model, validloader, criterion, log_interval, device)
                     model.train()
 
                     eval_log = dict([(f'eval_{k}', v) for k, v in eval_metrics.items()])
@@ -150,8 +150,6 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_ch
     total_preds = []
     total_targets = []
 
-    results = dict()
-    
     model.eval()
     with torch.no_grad():
         for idx, (inputs, targets) in enumerate(dataloader):
@@ -172,11 +170,6 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_ch
             total_score.extend(outputs[:,1].cpu().tolist())
             total_preds.extend(preds.cpu().tolist())
             total_targets.extend(targets.cpu().tolist())
-
-            if sample_check:
-                results.setdefault('targets', []).extend(targets.detach().cpu().tolist())
-                results.setdefault('preds', []).extend(preds.detach().cpu().tolist())
-                results.setdefault('outputs', []).extend(outputs.detach().cpu().tolist())
             
             if idx % log_interval == 0 and idx != 0: 
                 _logger.info('TEST [%d/%d]: Loss: %.3f | Acc: %.3f%% [%d/%d]' % 
@@ -194,8 +187,15 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_ch
     _logger.info('TEST: Loss: %.3f | Acc: %.3f%% | AUROC: %.3f%% | F1-Score: %.3f%% | Recall: %.3f%% | Precision: %.3f%%' % 
                 (metrics['loss'], 100.*metrics['acc'], 100.*metrics['auroc'], 100.*metrics['f1'], 100.*metrics['recall'], 100.*metrics['precision']))
 
-    return metrics, results
-        
+    if sample_check:
+        results = {
+            'targets': total_targets,
+            'preds': total_preds,
+            'outputs': total_score
+        }
+        return metrics, results
+    else:
+        return metrics, None
 
 
 def calc_metrics(y_true, y_score, y_pred):
