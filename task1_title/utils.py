@@ -29,7 +29,6 @@ def check_data(data_info, results, target, auto=None, topN=10):
     data = pd.concat([pd.DataFrame(results), pd.DataFrame(data_info)], axis=1)
     data['Auto'] = list(
         map(lambda x: re.search(r'(\w+)_(\w+)/(\w+)/(\w+).json', x).group(2) == 'Auto', data['filename']))
-    # data[['output_0', 'output_1']] = pd.DataFrame(data.outputs.tolist(), index=data.index)
 
     if auto is None:
         data = data.query(f'(targets=={target})')
