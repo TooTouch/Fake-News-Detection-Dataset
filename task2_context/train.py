@@ -4,6 +4,7 @@ import os
 import wandb
 import logging
 import numpy as np
+from collections import OrderedDict
 
 import torch
 from utils import convert_device
@@ -150,7 +151,7 @@ def training(model, num_training_steps, trainloader, validloader, criterion, opt
     _logger.info('Best Metric: {0:.3%} (step {1:})'.format(best_f1, state['best_step']))
     
         
-def evaluate(model, dataloader, criterion, log_interval, device='cpu'):
+def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_check=False):
     correct = 0
     total = 0
     total_loss = 0
@@ -209,7 +210,7 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu'):
     
     metrics.update([('acc',correct/total), ('loss',total_loss/len(dataloader))])
 
-    acc_per_article = calc_acc_per_article(
+    acc_per_article, correct_list = calc_acc_per_article(
         y_true = total_targets,
         y_pred = total_preds
     )
@@ -222,7 +223,15 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu'):
                 100.*metrics['auroc'], 100.*metrics['f1'], 
                 100.*metrics['recall'], 100.*metrics['precision']))
 
-    return metrics
+    if sample_check:
+        conf_scores = get_scores(total_targets, total_preds, total_score)
+        results = {
+            'correct': correct_list,
+            'outputs': conf_scores
+        }
+        return metrics, results
+    else:
+        return metrics
         
 def stack_outputs(news_ids, total_score, score, total_preds, preds, total_targets, targets):
     for i, news_id in enumerate(news_ids):
@@ -240,16 +249,18 @@ def stack_outputs(news_ids, total_score, score, total_preds, preds, total_target
     return total_score, total_preds, total_targets
 
 def calc_acc_per_article(y_true, y_pred):
-    correct = 0
+    correct_list = []
     for news_id in y_true.keys():
         correct_i = torch.tensor(y_true[news_id]).eq(torch.tensor(y_pred[news_id])).sum().item()
         acc_news_id = correct_i / torch.tensor(y_true[news_id]).size().numel()
         
         if acc_news_id == 1:
-            correct += 1
+            correct_list.append(1)
+        else:
+            correct_list.append(0)
 
-    acc_per_article = correct / len(y_true.keys())
-    return acc_per_article
+    acc_per_article = correct_list.count(1) / len(y_true.keys())
+    return acc_per_article, correct_list
 
 def calc_metrics(y_true, y_score, y_pred):
     auroc = roc_auc_score(y_true, y_score, average='macro')
@@ -263,3 +274,20 @@ def calc_metrics(y_true, y_score, y_pred):
         'recall':recall, 
         'precision':precision
     }
+
+def get_scores(y_true, y_pred, y_score):
+    scores = []
+    for news_id in y_true.keys():
+        # Clickbait
+        if 1 in y_true[news_id]:
+            gold_label_idx = y_true[news_id].index(1)
+            scores.append(y_score[news_id][gold_label_idx])
+        else:
+            # NonClickbait & Wrong Prediction
+            if 1 in y_pred[news_id]:
+                wrong_scores = [y_score[news_id][i] for i, y in enumerate(y_pred[news_id]) if y==1]
+                scores.append(max(wrong_scores))
+            # NonClickbait & Correct Prediction
+            else:
+                scores.append(0)
+    return scores
