@@ -29,7 +29,7 @@ MODEL:
         dropout: 0.2
     CHECKPOINT:
         pretrained: False
-        checkpoint_path: ./saved_model/FNDNet_w_freeze_w2e/best_model.pt
+        checkpoint_path: ./saved_model/FNDNet_w_freeze_w2e/FNDNet_w_freeze_w2e_task1.pt
 
 TRAIN:
     batch_size: 256

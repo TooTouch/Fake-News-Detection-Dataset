@@ -142,14 +142,14 @@ def training(model, num_training_steps, trainloader, validloader, criterion, opt
     _logger.info('Best Metric: {0:.3%} (step {1:})'.format(best_acc, state['best_step']))
     
         
-def evaluate(model, dataloader, criterion, log_interval, device='cpu'):
+def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_check=False):
     correct = 0
     total = 0
     total_loss = 0
     total_score = []
     total_preds = []
     total_targets = []
-    
+
     model.eval()
     with torch.no_grad():
         for idx, (inputs, targets) in enumerate(dataloader):
@@ -187,8 +187,15 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu'):
     _logger.info('TEST: Loss: %.3f | Acc: %.3f%% | AUROC: %.3f%% | F1-Score: %.3f%% | Recall: %.3f%% | Precision: %.3f%%' % 
                 (metrics['loss'], 100.*metrics['acc'], 100.*metrics['auroc'], 100.*metrics['f1'], 100.*metrics['recall'], 100.*metrics['precision']))
 
-    return metrics
-        
+    if sample_check:
+        results = {
+            'targets': total_targets,
+            'preds': total_preds,
+            'outputs': total_score
+        }
+        return metrics, results
+    else:
+        return metrics
 
 
 def calc_metrics(y_true, y_score, y_pred):

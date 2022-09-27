@@ -13,9 +13,10 @@ from transformers import get_cosine_schedule_with_warmup
 from train import training, evaluate
 
 from log import setup_default_logging
-from utils import torch_seed
+from utils import torch_seed, check_data
 
 import pandas as pd
+import pdb
 
 _logger = logging.getLogger('train')
 
@@ -131,7 +132,7 @@ def run(cfg):
 
 
         total_metrics = {}
-        for split in ['train','valid','test']:
+        for split in ['train', 'valid', 'test']:
             _logger.info('{} evaluation'.format(split.upper()))
             dataset = create_dataset(
                 name           = cfg['DATASET']['name'], 
@@ -141,7 +142,7 @@ def run(cfg):
                 saved_data_path = cfg['DATASET']['saved_data_path'],
                 **cfg['DATASET']['PARAMETERS']
             )
-            
+
             dataloader = create_dataloader(
                 dataset     = dataset, 
                 batch_size  = cfg['TRAIN']['batch_size'], 
@@ -149,20 +150,29 @@ def run(cfg):
                 shuffle     = False
             )
 
-            metrics = evaluate(
+            metrics, exp_results = evaluate(
                 model        = model, 
                 dataloader   = dataloader, 
                 criterion    = criterion,
                 log_interval = cfg['LOG']['log_interval'],
-                device       = device
+                device       = device,
+                sample_check = True
             )
 
             total_metrics[split] = {}
             for k, v in metrics.items():
                 total_metrics[split][k] = v
 
+            results = dict()
+            results['test of Clickbait_Auto'] = check_data(dataset.data_info, exp_results, target=1, auto='True')
+            results['test of Clickbait_Direct'] = check_data(dataset.data_info, exp_results, target=1, auto='False')
+            results['test of NonClickbait'] = check_data(dataset.data_info, exp_results, target=0)
+            with open(os.path.join(savedir, f"err_sample_{split}.json"), 'w', encoding='utf-8') as f:
+                json.dump(results, f, indent='\t', ensure_ascii=False)
+
+
         json.dump(total_metrics, open(os.path.join(savedir, f"{cfg['RESULT']['result_name']}.json"),'w'), indent=4)
-        
+
 
 
 if __name__=='__main__':

@@ -4,7 +4,7 @@ SEED: 223
 MODE:
     do_train: False
     do_test: True
-    
+
 DATASET:
     name: BTS
     data_path: ../data/LabeledData/Part1
@@ -22,7 +22,7 @@ MODEL:
         num_classes: 2
     CHECKPOINT:
         pretrained: False
-        checkpoint_path: ./saved_model/BTS/best_model.pt
+        checkpoint_path: ./saved_model/BTS/BTS_task1.pt
 
 TRAIN:
     batch_size: 64
