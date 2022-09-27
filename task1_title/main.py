@@ -132,7 +132,7 @@ def run(cfg):
 
 
         total_metrics = {}
-        for split in ['test']:
+        for split in ['train', 'valid', 'test']:
             _logger.info('{} evaluation'.format(split.upper()))
             dataset = create_dataset(
                 name           = cfg['DATASET']['name'], 
@@ -163,12 +163,12 @@ def run(cfg):
             for k, v in metrics.items():
                 total_metrics[split][k] = v
 
-        results = dict()
-        results['test of Clickbait_Auto'] = check_data(dataset.data_info, exp_results, target=1, auto='True')
-        results['test of Clickbait_Direct'] = check_data(dataset.data_info, exp_results, target=1, auto='False')
-        results['test of NonClickbait'] = check_data(dataset.data_info, exp_results, target=0)
-        with open(os.path.join(savedir, f"{cfg['RESULT']['result_name']}_sample_test.json"), 'w', encoding='utf-8') as f:
-            json.dump(results, f, indent='\t', ensure_ascii=False)
+            results = dict()
+            results['test of Clickbait_Auto'] = check_data(dataset.data_info, exp_results, target=1, auto='True')
+            results['test of Clickbait_Direct'] = check_data(dataset.data_info, exp_results, target=1, auto='False')
+            results['test of NonClickbait'] = check_data(dataset.data_info, exp_results, target=0)
+            with open(os.path.join(savedir, f"err_sample_{split}.json"), 'w', encoding='utf-8') as f:
+                json.dump(results, f, indent='\t', ensure_ascii=False)
 
 
         json.dump(total_metrics, open(os.path.join(savedir, f"{cfg['RESULT']['result_name']}.json"),'w'), indent=4)

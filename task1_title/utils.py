@@ -25,7 +25,7 @@ def convert_device(inputs, device):
     return inputs
 
 
-def check_data(data_info, results, target, auto=None, topN=10):
+def check_data(data_info, results, target, auto=None, topN=None):
     data = pd.concat([pd.DataFrame(results), pd.DataFrame(data_info)], axis=1)
     data['Auto'] = list(
         map(lambda x: re.search(r'(\w+)_(\w+)/(\w+)/(\w+).json', x).group(2) == 'Auto', data['filename']))
@@ -35,8 +35,12 @@ def check_data(data_info, results, target, auto=None, topN=10):
     else:
         data = data.query(f'(targets=={target}) and (Auto=={auto})')
     
-    err_filename = data.query(f'(targets != preds)').sort_values(
-        by='outputs', ascending=False if target==0 else True).head(topN)['filename']
+    if topN is None:
+        err_filename = data.query(f'(targets != preds)').sort_values(
+            by='outputs', ascending=False if target==0 else True)['filename']
+    else:
+        err_filename = data.query(f'(targets != preds)').sort_values(
+            by='outputs', ascending=False if target == 0 else True).head(topN)['filename']
 
     results = dict()
     results['num of data'] = len(data)
