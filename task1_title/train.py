@@ -6,6 +6,7 @@ import logging
 from collections import OrderedDict
 
 import torch
+import numpy as np
 from utils import convert_device
 from sklearn.metrics import roc_auc_score, f1_score, recall_score, precision_score
 import transformers
@@ -167,7 +168,7 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_ch
             correct += targets.eq(preds).sum().item()
             total += targets.size(0)
 
-            total_score.extend(outputs[:,1].cpu().tolist())
+            total_score.extend(outputs.cpu().tolist())
             total_preds.extend(preds.cpu().tolist())
             total_targets.extend(targets.cpu().tolist())
             
@@ -178,7 +179,7 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_ch
     
     metrics = calc_metrics(
         y_true  = total_targets,
-        y_score = total_score,
+        y_score = np.array(total_score)[:,1],
         y_pred  = total_preds
     )
     
