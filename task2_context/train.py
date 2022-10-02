@@ -157,7 +157,9 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_ch
     total_loss = 0
     total_score = {}
     total_preds = {}
+    total_logits = {}
     total_targets = {}
+    softmax = torch.nn.Softmax(dim=-1)
     
     model.eval()
     with torch.no_grad():
@@ -178,6 +180,7 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_ch
             # total loss and acc
             total_loss += loss.item()
             preds = outputs.argmax(dim=-1)
+            logits = softmax(outputs)
 
             if 'KoBERTSegSep' in str(type(model)):
                 correct_i = targets.eq(preds)
@@ -187,12 +190,14 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_ch
             total += targets.size(0)
 
             # TODO
-            total_score, total_preds, total_targets = stack_outputs(
+            total_score, total_preds, total_logits, total_targets = stack_outputs(
                 news_ids      = news_ids, 
                 total_score   = total_score, 
                 score         = outputs[..., 1], 
-                total_preds   = total_preds, 
+                total_preds   = total_preds,
                 preds         = preds, 
+                total_logits  = total_logits,
+                logits        = logits, 
                 total_targets = total_targets, 
                 targets       = targets
             )
@@ -210,7 +215,7 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_ch
     
     metrics.update([('acc',correct/total), ('loss',total_loss/len(dataloader))])
 
-    acc_per_article, correct_list = calc_acc_per_article(
+    acc_per_article, pred_per_article = calc_acc_per_article(
         y_true = total_targets,
         y_pred = total_preds
     )
@@ -224,43 +229,45 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_ch
                 100.*metrics['recall'], 100.*metrics['precision']))
 
     if sample_check:
-        conf_scores = get_scores(total_targets, total_preds, total_score)
+        scores = get_scores(total_targets, total_preds, total_logits)
         results = {
-            'correct': correct_list,
-            'outputs': conf_scores
+            'pred_per_article': pred_per_article,
+            'scores': scores
         }
         return metrics, results
     else:
         return metrics
         
-def stack_outputs(news_ids, total_score, score, total_preds, preds, total_targets, targets):
+def stack_outputs(news_ids, total_score, score, total_preds, preds, total_logits, logits, total_targets, targets):
     for i, news_id in enumerate(news_ids):
         if news_id not in total_score.keys():
             total_score[news_id] = []
         if news_id not in total_preds.keys():
             total_preds[news_id] = []
+            total_logits[news_id] = []
         if news_id not in total_targets.keys():
             total_targets[news_id] = []
 
         total_score[news_id].append(score[i].cpu().tolist())
         total_preds[news_id].append(preds[i].cpu().tolist())
+        total_logits[news_id].append(logits[i].cpu().tolist())
         total_targets[news_id].append(targets[i].cpu().tolist())
 
-    return total_score, total_preds, total_targets
+    return total_score, total_preds, total_logits, total_targets
 
 def calc_acc_per_article(y_true, y_pred):
-    correct_list = []
+    pred_per_article = []
     for news_id in y_true.keys():
         correct_i = torch.tensor(y_true[news_id]).eq(torch.tensor(y_pred[news_id])).sum().item()
         acc_news_id = correct_i / torch.tensor(y_true[news_id]).size().numel()
         
         if acc_news_id == 1:
-            correct_list.append(1)
+            pred_per_article.append(1)
         else:
-            correct_list.append(0)
+            pred_per_article.append(0)
 
-    acc_per_article = correct_list.count(1) / len(y_true.keys())
-    return acc_per_article, correct_list
+    acc_per_article = pred_per_article.count(1) / len(y_true.keys())
+    return acc_per_article, pred_per_article
 
 def calc_metrics(y_true, y_score, y_pred):
     auroc = roc_auc_score(y_true, y_score, average='macro')
@@ -275,19 +282,22 @@ def calc_metrics(y_true, y_score, y_pred):
         'precision':precision
     }
 
-def get_scores(y_true, y_pred, y_score):
+def get_scores(y_true, y_pred, y_logit):
     scores = []
     for news_id in y_true.keys():
-        # Clickbait
-        if 1 in y_true[news_id]:
-            gold_label_idx = y_true[news_id].index(1)
-            scores.append(y_score[news_id][gold_label_idx])
+        true_labels, pred_labels, pred_logits = y_true[news_id], y_pred[news_id], y_logit[news_id]
+        if true_labels == pred_labels:
+            scores.append([])
         else:
-            # NonClickbait & Wrong Prediction
-            if 1 in y_pred[news_id]:
-                wrong_scores = [y_score[news_id][i] for i, y in enumerate(y_pred[news_id]) if y==1]
-                scores.append(max(wrong_scores))
-            # NonClickbait & Correct Prediction
-            else:
-                scores.append(0)
+            if 1 in true_labels:  # Clickbait
+                wrong_pred_scores = []
+                for idx, pred in enumerate(pred_labels):
+                    if pred != true_labels[idx]:
+                        if idx == true_labels.index(1):
+                            wrong_pred_scores.append(pred_logits[idx][0])
+                        else:
+                            wrong_pred_scores.append(pred_logits[idx][1])
+            else:  # NonClickbait
+                wrong_pred_scores = [pred_logits[idx][1] for idx, pred in enumerate(pred_labels) if pred==1]
+            scores.append(wrong_pred_scores)
     return scores

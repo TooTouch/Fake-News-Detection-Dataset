@@ -134,7 +134,7 @@ def run(cfg):
         # test
         total_metrics = {}
     
-        for split in ['train', 'valid', 'test']:
+        for split in ['test']:
             _logger.info('{} evaluation'.format(split.upper()))
             dataset = create_dataset(
                 name            = cfg['DATASET']['name'],
@@ -151,6 +151,26 @@ def run(cfg):
                 num_workers = cfg['TRAIN']['num_workers']
             )
 
+            # if os.path.isfile(os.path.join(savedir, f"exp_results_{split}.json")) and \
+            #     os.path.isfile(os.path.join(savedir, f"{cfg['RESULT']['result_name']}.json")):
+            #     exp_results = json.load()
+            #     metrics = 
+            # else:
+            #     metrics, exp_results = evaluate(
+            #         model        = model, 
+            #         dataloader   = dataloader, 
+            #         criterion    = criterion,
+            #         log_interval = cfg['LOG']['log_interval'],
+            #         device       = device,
+            #         sample_check = True
+            #     )
+            #     with open(os.path.join(savedir, f"exp_results_{split}.json"), 'w', encoding='utf-8') as f:
+            #         json.dump(exp_results, f, indent='\t', ensure_ascii=False)
+
+            #     total_metrics[split] = {}
+            #     for k, v in metrics.items():
+            #         total_metrics[split][k] = v
+
             metrics, exp_results = evaluate(
                 model        = model, 
                 dataloader   = dataloader, 
@@ -159,16 +179,17 @@ def run(cfg):
                 device       = device,
                 sample_check = True
             )
-
+            with open(os.path.join(savedir, f"exp_results_{split}.json"), 'w', encoding='utf-8') as f:
+                json.dump(exp_results, f, indent=4, ensure_ascii=False)
             total_metrics[split] = {}
             for k, v in metrics.items():
                 total_metrics[split][k] = v
-
+            option = 'outputs'
             results = dict()
-            results['test of Clickbait_Auto'] = check_data(dataset.data_info, exp_results, target=1, auto='True')
-            results['test of Clickbait_Direct'] = check_data(dataset.data_info, exp_results, target=1, auto='False')
-            results['test of NonClickbait'] = check_data(dataset.data_info, exp_results, target=0)
-            with open(os.path.join(savedir, f"err_sample_{split}.json"), 'w', encoding='utf-8') as f:
+            results['test of Clickbait_Auto'] = check_data(dataset.data_info, exp_results, target=1, auto='True', option=option)
+            results['test of Clickbait_Direct'] = check_data(dataset.data_info, exp_results, target=1, auto='False', option=option)
+            results['test of NonClickbait'] = check_data(dataset.data_info, exp_results, target=0, option=option)
+            with open(os.path.join(savedir, f"err_sample_{split}_by_{option}.json"), 'w', encoding='utf-8') as f:
                 json.dump(results, f, indent='\t', ensure_ascii=False)
 
         json.dump(total_metrics, open(os.path.join(savedir, f"{cfg['RESULT']['result_name']}.json"),'w'), indent=4)
