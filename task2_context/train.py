@@ -157,7 +157,6 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_ch
     total_loss = 0
     total_score = {}
     total_preds = {}
-    total_logits = {}
     total_targets = {}
     softmax = torch.nn.Softmax(dim=-1)
     
@@ -180,7 +179,6 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_ch
             # total loss and acc
             total_loss += loss.item()
             preds = outputs.argmax(dim=-1)
-            logits = softmax(outputs)
 
             if 'KoBERTSegSep' in str(type(model)):
                 correct_i = targets.eq(preds)
@@ -190,14 +188,12 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_ch
             total += targets.size(0)
 
             # TODO
-            total_score, total_preds, total_logits, total_targets = stack_outputs(
+            total_score, total_preds, total_targets = stack_outputs(
                 news_ids      = news_ids, 
                 total_score   = total_score, 
-                score         = outputs[..., 1], 
+                score         = softmax(outputs), 
                 total_preds   = total_preds,
                 preds         = preds, 
-                total_logits  = total_logits,
-                logits        = logits, 
                 total_targets = total_targets, 
                 targets       = targets
             )
@@ -206,10 +202,9 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_ch
                 _logger.info('TEST [%d/%d]: Loss: %.3f | Acc: %.3f%% [%d/%d]' % 
                             (idx+1, len(dataloader), total_loss/(idx+1), 100.*correct/total, correct, total))
 
-
     metrics = calc_metrics(
         y_true  = np.concatenate(list(total_targets.values())),
-        y_score = np.concatenate(list(total_score.values())),
+        y_score = np.concatenate(list(total_score.values()))[:, 1],
         y_pred  = np.concatenate(list(total_preds.values()))
     )
     
@@ -229,7 +224,7 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_ch
                 100.*metrics['recall'], 100.*metrics['precision']))
 
     if sample_check:
-        scores = get_scores(total_targets, total_preds, total_logits)
+        scores = get_scores(total_targets, total_preds, total_score)
         results = {
             'pred_per_article': pred_per_article,
             'scores': scores
@@ -238,22 +233,20 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_ch
     else:
         return metrics
         
-def stack_outputs(news_ids, total_score, score, total_preds, preds, total_logits, logits, total_targets, targets):
+def stack_outputs(news_ids, total_score, score, total_preds, preds, total_targets, targets):
     for i, news_id in enumerate(news_ids):
         if news_id not in total_score.keys():
             total_score[news_id] = []
         if news_id not in total_preds.keys():
             total_preds[news_id] = []
-            total_logits[news_id] = []
         if news_id not in total_targets.keys():
             total_targets[news_id] = []
 
         total_score[news_id].append(score[i].cpu().tolist())
         total_preds[news_id].append(preds[i].cpu().tolist())
-        total_logits[news_id].append(logits[i].cpu().tolist())
         total_targets[news_id].append(targets[i].cpu().tolist())
 
-    return total_score, total_preds, total_logits, total_targets
+    return total_score, total_preds, total_targets
 
 def calc_acc_per_article(y_true, y_pred):
     pred_per_article = []
@@ -282,22 +275,12 @@ def calc_metrics(y_true, y_score, y_pred):
         'precision':precision
     }
 
-def get_scores(y_true, y_pred, y_logit):
+def get_scores(y_true, y_pred, y_score):
     scores = []
     for news_id in y_true.keys():
-        true_labels, pred_labels, pred_logits = y_true[news_id], y_pred[news_id], y_logit[news_id]
+        true_labels, pred_labels, pred_scores = y_true[news_id], y_pred[news_id], y_score[news_id]
         if true_labels == pred_labels:
             scores.append([])
         else:
-            if 1 in true_labels:  # Clickbait
-                wrong_pred_scores = []
-                for idx, pred in enumerate(pred_labels):
-                    if pred != true_labels[idx]:
-                        if idx == true_labels.index(1):
-                            wrong_pred_scores.append(pred_logits[idx][0])
-                        else:
-                            wrong_pred_scores.append(pred_logits[idx][1])
-            else:  # NonClickbait
-                wrong_pred_scores = [pred_logits[idx][1] for idx, pred in enumerate(pred_labels) if pred==1]
-            scores.append(wrong_pred_scores)
+            scores.append([pred_scores[idx][pred] for idx, pred in enumerate(pred_labels) if pred != true_labels[idx]])
     return scores
