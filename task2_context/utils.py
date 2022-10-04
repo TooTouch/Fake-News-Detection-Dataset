@@ -2,6 +2,8 @@ import os
 import random
 import torch
 import numpy as np
+import re
+import pandas as pd
 
 def torch_seed(random_seed):
     torch.manual_seed(random_seed)
@@ -21,3 +23,31 @@ def convert_device(inputs, device):
         if k != 'src_txt':
             inputs[k] = inputs[k].to(device)
     return inputs
+
+
+def check_data(data_info, results, target, auto=None, topN=None, option='score'):
+    data = pd.concat([pd.DataFrame(results), pd.DataFrame(data_info)], axis=1)
+    data['Auto'] = list(
+        map(lambda x: re.search(r'(\w+)_(\w+)/(\w+)/(\w+).json', x).group(2) == 'Auto', data['filename']))
+    data['cnt'] = list(map(lambda x: len(x), data['scores']))
+    data['score'] = list(map(lambda x: max(x) if x else 0, data['scores']))
+
+    if auto is None:
+        data = data.query("label.str.contains('real')")
+    else:
+        data = data.query(f"(label.str.contains('fake')) and (Auto=={auto})")
+    
+    if topN is None:
+        err_filename = data.query("pred_per_article == 0").sort_values(
+            by=option, ascending=False if target==0 else True)['filename']
+    else:
+        err_filename = data.query("pred_per_article == 0").sort_values(
+            by=option, ascending=False if target==0 else True).head(topN)['filename']
+
+    results = dict()
+    results['num of data'] = len(data)
+    results['num of errors'] = len(data.query("pred_per_article == 0"))
+    results['rate of errors'] = round(results['num of errors'] / results['num of data'], 4)
+    results['filenames of errors'] = list(err_filename.values)
+
+    return results

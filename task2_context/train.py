@@ -4,6 +4,7 @@ import os
 import wandb
 import logging
 import numpy as np
+from collections import OrderedDict
 
 import torch
 from utils import convert_device
@@ -150,13 +151,14 @@ def training(model, num_training_steps, trainloader, validloader, criterion, opt
     _logger.info('Best Metric: {0:.3%} (step {1:})'.format(best_f1, state['best_step']))
     
         
-def evaluate(model, dataloader, criterion, log_interval, device='cpu'):
+def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_check=False):
     correct = 0
     total = 0
     total_loss = 0
     total_score = {}
     total_preds = {}
     total_targets = {}
+    softmax = torch.nn.Softmax(dim=-1)
     
     model.eval()
     with torch.no_grad():
@@ -189,8 +191,8 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu'):
             total_score, total_preds, total_targets = stack_outputs(
                 news_ids      = news_ids, 
                 total_score   = total_score, 
-                score         = outputs[..., 1], 
-                total_preds   = total_preds, 
+                score         = softmax(outputs), 
+                total_preds   = total_preds,
                 preds         = preds, 
                 total_targets = total_targets, 
                 targets       = targets
@@ -200,16 +202,15 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu'):
                 _logger.info('TEST [%d/%d]: Loss: %.3f | Acc: %.3f%% [%d/%d]' % 
                             (idx+1, len(dataloader), total_loss/(idx+1), 100.*correct/total, correct, total))
 
-
     metrics = calc_metrics(
         y_true  = np.concatenate(list(total_targets.values())),
-        y_score = np.concatenate(list(total_score.values())),
+        y_score = np.concatenate(list(total_score.values()))[:, 1],
         y_pred  = np.concatenate(list(total_preds.values()))
     )
     
     metrics.update([('acc',correct/total), ('loss',total_loss/len(dataloader))])
 
-    acc_per_article = calc_acc_per_article(
+    acc_per_article, pred_per_article = calc_acc_per_article(
         y_true = total_targets,
         y_pred = total_preds
     )
@@ -222,7 +223,15 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu'):
                 100.*metrics['auroc'], 100.*metrics['f1'], 
                 100.*metrics['recall'], 100.*metrics['precision']))
 
-    return metrics
+    if sample_check:
+        scores = get_scores(total_targets, total_preds, total_score)
+        results = {
+            'pred_per_article': pred_per_article,
+            'scores': scores
+        }
+        return metrics, results
+    else:
+        return metrics
         
 def stack_outputs(news_ids, total_score, score, total_preds, preds, total_targets, targets):
     for i, news_id in enumerate(news_ids):
@@ -240,16 +249,18 @@ def stack_outputs(news_ids, total_score, score, total_preds, preds, total_target
     return total_score, total_preds, total_targets
 
 def calc_acc_per_article(y_true, y_pred):
-    correct = 0
+    pred_per_article = []
     for news_id in y_true.keys():
         correct_i = torch.tensor(y_true[news_id]).eq(torch.tensor(y_pred[news_id])).sum().item()
         acc_news_id = correct_i / torch.tensor(y_true[news_id]).size().numel()
         
         if acc_news_id == 1:
-            correct += 1
+            pred_per_article.append(1)
+        else:
+            pred_per_article.append(0)
 
-    acc_per_article = correct / len(y_true.keys())
-    return acc_per_article
+    acc_per_article = pred_per_article.count(1) / len(y_true.keys())
+    return acc_per_article, pred_per_article
 
 def calc_metrics(y_true, y_score, y_pred):
     auroc = roc_auc_score(y_true, y_score, average='macro')
@@ -263,3 +274,13 @@ def calc_metrics(y_true, y_score, y_pred):
         'recall':recall, 
         'precision':precision
     }
+
+def get_scores(y_true, y_pred, y_score):
+    scores = []
+    for news_id in y_true.keys():
+        true_labels, pred_labels, pred_scores = y_true[news_id], y_pred[news_id], y_score[news_id]
+        if true_labels == pred_labels:
+            scores.append([])
+        else:
+            scores.append([pred_scores[idx][pred] for idx, pred in enumerate(pred_labels) if pred != true_labels[idx]])
+    return scores

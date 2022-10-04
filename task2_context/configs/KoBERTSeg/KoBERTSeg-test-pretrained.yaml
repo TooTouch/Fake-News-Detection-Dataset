@@ -29,5 +29,6 @@ LOG:
     log_interval: 1
 
 RESULT:
+    option: score
     savedir: './saved_model'
     result_name: test_results

@@ -19,7 +19,11 @@ from kobert.utils import get_tokenizer
 
 from train import training, evaluate
 from log import setup_default_logging
-from utils import torch_seed
+from utils import torch_seed, check_data
+
+import pandas as pd
+import pdb
+
 
 _logger = logging.getLogger('train')
 
@@ -127,11 +131,11 @@ def run(cfg):
         )
 
     elif cfg['MODE']['do_test']:
-
         # test
         total_metrics = {}
     
-        for split in ['train','valid','test']:
+        for split in ['test']:
+            _logger.info('{} evaluation'.format(split.upper()))
             dataset = create_dataset(
                 name            = cfg['DATASET']['name'],
                 data_path       = cfg['DATASET']['data_path'], 
@@ -140,24 +144,34 @@ def run(cfg):
                 vocab           = vocab,
                 **cfg['DATASET']['PARAMETERS']
             )
-
+            
             dataloader = create_dataloader(
                 dataset     = dataset, 
                 batch_size  = cfg['TRAIN']['batch_size'],
                 num_workers = cfg['TRAIN']['num_workers']
             )
 
-            metrics = evaluate(
+            metrics, exp_results = evaluate(
                 model        = model, 
                 dataloader   = dataloader, 
                 criterion    = criterion,
                 log_interval = cfg['LOG']['log_interval'],
-                device       = device
+                device       = device,
+                sample_check = True
             )
+            with open(os.path.join(savedir, f"exp_results_{split}.json"), 'w', encoding='utf-8') as f:
+                json.dump(exp_results, f, indent=4, ensure_ascii=False)
 
             total_metrics[split] = {}
             for k, v in metrics.items():
                 total_metrics[split][k] = v
+
+            results = dict()
+            results['test of Clickbait_Auto'] = check_data(dataset.data_info, exp_results, target=1, auto='True', option=cfg['RESULT']['option'])
+            results['test of Clickbait_Direct'] = check_data(dataset.data_info, exp_results, target=1, auto='False', option=cfg['RESULT']['option'])
+            results['test of NonClickbait'] = check_data(dataset.data_info, exp_results, target=0, option=cfg['RESULT']['option'])
+            with open(os.path.join(savedir, f"err_sample_{split}_by_{cfg['RESULT']['option']}.json"), 'w', encoding='utf-8') as f:
+                json.dump(results, f, indent='\t', ensure_ascii=False)
 
         json.dump(total_metrics, open(os.path.join(savedir, f"{cfg['RESULT']['result_name']}.json"),'w'), indent=4)
 
