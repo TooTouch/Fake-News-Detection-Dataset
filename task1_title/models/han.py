@@ -1,13 +1,13 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-import pandas as pd
 import numpy as np
-import csv
 
 from .utils import download_weights
 from .registry import register_model
 from einops import rearrange
+
+import logging
+_logger = logging.getLogger('train')
 
 class HierAttNet(nn.Module):
     def __init__(self, word_dims=64, sent_dims=128, dropout=0.1, num_classes=2, 
@@ -164,6 +164,7 @@ def han_w_freeze_w2e_task1(pretrained=False, **kwargs):
     if pretrained:
         weights = download_weights(url)
         model.load_state_dict(weights)
+        _logger.info('load a trained model weights from {}'.format(url))
     
     return model
 

@@ -4,6 +4,9 @@ import torch.nn as nn
 from .registry import register_model
 from .utils import download_weights
 
+import logging
+_logger = logging.getLogger('train')
+
 class BTS(BertPreTrainedModel):
     def __init__(self, pretrained_name, config, num_classes):
         super().__init__(config)
@@ -73,6 +76,7 @@ def bts_task1(pretrained=False, **kwargs):
     if pretrained:
         weights = download_weights(url)
         model.load_state_dict(weights)
+        _logger.info('load a trained model weights from {}'.format(url))
     
     return model
 

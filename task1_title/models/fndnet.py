@@ -5,6 +5,9 @@ import numpy as np
 from .registry import register_model
 from .utils import download_weights
 
+import logging
+_logger = logging.getLogger('train')
+
 class FNDNet(nn.Module):
     def __init__(self, dims=128, num_classes=2, dropout=0.2,
                  vocab_len=58043, embed_dims=100):
@@ -104,6 +107,7 @@ def fndnet_w_freeze_w2e_task1(pretrained=False, **kwargs):
     if pretrained:
         weights = download_weights(url)
         model.load_state_dict(weights)
+        _logger.info('load a trained model weights from {}'.format(url))
     
     return model
 
