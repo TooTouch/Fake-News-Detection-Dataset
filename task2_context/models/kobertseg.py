@@ -100,5 +100,6 @@ def kobertseg_task2(pretrained, **kwargs):
     if pretrained:
         weights = download_weights(url)
         model.load_state_dict(weights)
+        _logger.info('load a trained model weights from {}'.format(url))
 
     return model
