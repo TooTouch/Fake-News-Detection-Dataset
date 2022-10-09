@@ -34,4 +34,4 @@ LOG:
 
 RESULT:
     savedir: './saved_model'
-    result_name: test_results
+    result_name: results
