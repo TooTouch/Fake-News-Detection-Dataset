@@ -19,10 +19,9 @@ from kobert.utils import get_tokenizer
 
 from train import training, evaluate
 from log import setup_default_logging
-from utils import torch_seed, check_data
+from utils import torch_seed
 
 import pandas as pd
-import pdb
 
 
 _logger = logging.getLogger('train')
@@ -131,9 +130,6 @@ def run(cfg):
         )
 
     elif cfg['MODE']['do_test']:
-        # test
-        total_metrics = {}
-    
         for split in cfg['MODE']['test_list']:
             _logger.info('{} evaluation'.format(split.upper()))
             dataset = create_dataset(
@@ -163,13 +159,8 @@ def run(cfg):
             # save exp result
             pd.concat([dataset.data_info, pd.DataFrame(exp_results)], axis=1).to_csv(os.path.join(savedir, f'exp_results_{split}.csv'), index=False)
 
-            # save result metrics per dataset
-            total_metrics[split] = {}
-            for k, v in metrics.items():
-                total_metrics[split][k] = v
-
-        # save result metrics
-        json.dump(total_metrics, open(os.path.join(savedir, f"{cfg['RESULT']['result_name']}.json"),'w'), indent=4)
+            # save result metrics
+            json.dump(metrics, open(os.path.join(savedir, f"{cfg['RESULT']['result_name']}_{split}.json"),'w'), indent=4)
 
 
 if __name__=='__main__':
