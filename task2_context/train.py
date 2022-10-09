@@ -158,7 +158,6 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_ch
     total_score = {}
     total_preds = {}
     total_targets = {}
-    softmax = torch.nn.Softmax(dim=-1)
     
     model.eval()
     with torch.no_grad():
@@ -191,7 +190,7 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_ch
             total_score, total_preds, total_targets = stack_outputs(
                 news_ids      = news_ids, 
                 total_score   = total_score, 
-                score         = softmax(outputs), 
+                score         = torch.nn.functional.softmax(outputs, dim=1), 
                 total_preds   = total_preds,
                 preds         = preds, 
                 total_targets = total_targets, 
@@ -224,10 +223,11 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_ch
                 100.*metrics['recall'], 100.*metrics['precision']))
 
     if sample_check:
-        scores = get_scores(total_targets, total_preds, total_score)
         results = {
             'pred_per_article': pred_per_article,
-            'scores': scores
+            'y_true'          : list(total_targets.values()),
+            'y_pred'          : list(total_preds.values()),
+            'y_score'         : list(total_score.values())
         }
         return metrics, results
     else:
@@ -269,18 +269,8 @@ def calc_metrics(y_true, y_score, y_pred):
     precision = precision_score(y_true, y_pred, average='macro')
 
     return {
-        'auroc':auroc, 
-        'f1':f1, 
-        'recall':recall, 
-        'precision':precision
+        'auroc'    : auroc, 
+        'f1'       : f1, 
+        'recall'   : recall, 
+        'precision': precision
     }
-
-def get_scores(y_true, y_pred, y_score):
-    scores = []
-    for news_id in y_true.keys():
-        true_labels, pred_labels, pred_scores = y_true[news_id], y_pred[news_id], y_score[news_id]
-        if true_labels == pred_labels:
-            scores.append([])
-        else:
-            scores.append([pred_scores[idx][pred] for idx, pred in enumerate(pred_labels) if pred != true_labels[idx]])
-    return scores

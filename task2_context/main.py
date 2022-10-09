@@ -134,7 +134,7 @@ def run(cfg):
         # test
         total_metrics = {}
     
-        for split in ['test']:
+        for split in cfg['MODE']['test_list']:
             _logger.info('{} evaluation'.format(split.upper()))
             dataset = create_dataset(
                 name            = cfg['DATASET']['name'],
@@ -159,20 +159,16 @@ def run(cfg):
                 device       = device,
                 sample_check = True
             )
-            with open(os.path.join(savedir, f"exp_results_{split}.json"), 'w', encoding='utf-8') as f:
-                json.dump(exp_results, f, indent=4, ensure_ascii=False)
+            
+            # save exp result
+            pd.concat([dataset.data_info, pd.DataFrame(exp_results)], axis=1).to_csv(os.path.join(savedir, f'exp_results_{split}.csv'), index=False)
 
+            # save result metrics per dataset
             total_metrics[split] = {}
             for k, v in metrics.items():
                 total_metrics[split][k] = v
 
-            results = dict()
-            results['test of Clickbait_Auto'] = check_data(dataset.data_info, exp_results, target=1, auto='True', option=cfg['RESULT']['option'])
-            results['test of Clickbait_Direct'] = check_data(dataset.data_info, exp_results, target=1, auto='False', option=cfg['RESULT']['option'])
-            results['test of NonClickbait'] = check_data(dataset.data_info, exp_results, target=0, option=cfg['RESULT']['option'])
-            with open(os.path.join(savedir, f"err_sample_{split}_by_{cfg['RESULT']['option']}.json"), 'w', encoding='utf-8') as f:
-                json.dump(results, f, indent='\t', ensure_ascii=False)
-
+        # save result metrics
         json.dump(total_metrics, open(os.path.join(savedir, f"{cfg['RESULT']['result_name']}.json"),'w'), indent=4)
 
 
