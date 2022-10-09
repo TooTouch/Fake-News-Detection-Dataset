@@ -5,6 +5,8 @@ MODE:
     do_train: False
     do_test: True
     test_list:
+        - train
+        - valid
         - test
         
 DATASET:
