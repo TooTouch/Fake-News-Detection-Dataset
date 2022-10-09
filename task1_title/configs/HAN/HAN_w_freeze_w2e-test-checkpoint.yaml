@@ -4,6 +4,8 @@ SEED: 223
 MODE:
     do_train: False
     do_test: True
+    test_list:
+        - test
     
 DATASET:
     name: HAN
@@ -31,7 +33,7 @@ MODEL:
         embed_dims: 100
     CHECKPOINT:
         pretrained: False
-        checkpoint_path: ./saved_model/HAN_w_freeze_w2e/HAN_w_freeze_w2e_task1.pt
+        checkpoint_path: ./saved_model/HAN_w_freeze_w2e/best_model.pt
 
 TRAIN:
     batch_size: 256

@@ -4,7 +4,9 @@ SEED: 223
 MODE:
     do_train: False
     do_test: True
-    
+    test_list:
+        - test
+        
 DATASET:
     name: HAN
     data_path: ../data/LabeledData/Part1/

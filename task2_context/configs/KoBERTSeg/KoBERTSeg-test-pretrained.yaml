@@ -4,6 +4,8 @@ SEED: 223
 MODE:
     do_train: False
     do_test: True
+    test_list:
+        - test
     
 DATASET:
     name: KoBERTSeg
@@ -29,6 +31,5 @@ LOG:
     log_interval: 1
 
 RESULT:
-    option: score
     savedir: './saved_model'
     result_name: test_results

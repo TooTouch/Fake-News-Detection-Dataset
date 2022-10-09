@@ -4,6 +4,8 @@ SEED: 223
 MODE:
     do_train: False
     do_test: True
+    test_list:
+        - test
     
 DATASET:
     name: FNDNet
@@ -29,7 +31,7 @@ MODEL:
         dropout: 0.2
     CHECKPOINT:
         pretrained: False
-        checkpoint_path: ./saved_model/FNDNet_w_freeze_w2e/FNDNet_w_freeze_w2e_task1.pt
+        checkpoint_path: ./saved_model/FNDNet_w_freeze_w2e/best_model.pt
 
 TRAIN:
     batch_size: 256
