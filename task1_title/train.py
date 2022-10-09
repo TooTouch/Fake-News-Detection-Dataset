@@ -158,13 +158,15 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_ch
             
             # predict
             outputs = model(**inputs)
-            
+            outputs = torch.nn.functional.softmax(outputs, dim=1)
+
             # loss 
             loss = criterion(outputs, targets)
             
             # total loss and acc
             total_loss += loss.item()
             preds = outputs.argmax(dim=1)
+
             correct += targets.eq(preds).sum().item()
             total += targets.size(0)
 
@@ -176,7 +178,6 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_ch
                 _logger.info('TEST [%d/%d]: Loss: %.3f | Acc: %.3f%% [%d/%d]' % 
                             (idx+1, len(dataloader), total_loss/(idx+1), 100.*correct/total, correct, total))
                 
-    
     metrics = calc_metrics(
         y_true  = total_targets,
         y_score = np.array(total_score)[:,1],
@@ -191,7 +192,7 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_ch
     if sample_check:
         results = {
             'targets': total_targets,
-            'preds': total_preds,
+            'preds'  : total_preds,
             'outputs': total_score
         }
         return metrics, results
@@ -206,8 +207,8 @@ def calc_metrics(y_true, y_score, y_pred):
     precision = precision_score(y_true, y_pred)
 
     return {
-        'auroc':auroc, 
-        'f1':f1, 
-        'recall':recall, 
-        'precision':precision
+        'auroc'    : auroc, 
+        'f1'       : f1, 
+        'recall'   : recall, 
+        'precision': precision
     }

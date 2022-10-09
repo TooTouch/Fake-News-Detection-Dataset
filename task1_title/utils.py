@@ -25,28 +25,50 @@ def convert_device(inputs, device):
     return inputs
 
 
-def check_data(data_info, results, target, auto=None, topN=None):
-    data = pd.concat([pd.DataFrame(results), pd.DataFrame(data_info)], axis=1)
-    data['Auto'] = list(
-        map(lambda x: re.search(r'(\w+)_(\w+)/(\w+)/(\w+).json', x).group(2) == 'Auto', data['filename']))
-    data[['output_0', 'output_1']] = pd.DataFrame(data.outputs.tolist(), index=data.index)
+def extract_wrong_ratio(df):
+    # extract category: Clickbait_Auto, Clickbait_Direct, NoneClickbait_Auto
+    df['category'] = df['filename'].apply(lambda x: x.split('/')[0])
 
-    if auto is None:
-        data = data.query(f'(targets=={target})')
-    else:
-        data = data.query(f'(targets=={target}) and (Auto=={auto})')
+    # wonrg case
+    df_incorrect = df[df.targets!=df.preds]
+
+    # total count per category
+    cnt_cat = df.category.value_counts().reset_index()
+    cnt_cat.columns = ['category','total_cnt']
+
+    # wrong count per category
+    cnt_wrong_cat = df_incorrect.category.value_counts().reset_index()
+    cnt_wrong_cat.columns = ['category','wrong_cnt']
+
+    # merge and summary
+    cnt_df = pd.merge(cnt_cat, cnt_wrong_cat, on='category', how='inner')
+    cnt_df['wrong / total (%)'] = cnt_df.apply(
+        lambda x: f'{x.wrong_cnt} / {x.total_cnt} ({x.wrong_cnt/x.total_cnt:.2%})', axis=1)
+    cnt_df = cnt_df[['category','wrong / total (%)']]
     
-    if topN is None:
-        err_filename = data.query(f'(targets != preds)').sort_values(
-            by=f'output_{0 if target == 1 else 1}', ascending=False)['filename']
-    else:
-        err_filename = data.query(f'(targets != preds)').sort_values(
-            by=f'output_{0 if target == 1 else 1}', ascending=False).head(topN)['filename']
+    return cnt_df
 
-    results = dict()
-    results['num of data'] = len(data)
-    results['num of errors'] = len(data.query(f'(targets != preds)'))
-    results['rate of errors'] = round(results['num of errors'] / results['num of data'], 4)
-    results['filenames of errors'] = list(err_filename.values)
 
-    return results
+def select_wrong_case_topN(df, cat, n):
+    assert cat in ['Clickbait_Direct','Clickbait_Auto','NonClickbait_Auto'], "cat should be either 'Clickbait_Direct','Clickbait_Auto','NonClickbait_Auto'"
+    # define wrong pred 
+    if cat in ['Clickbait_Direct','Clickbait_Auto']:
+        pred = 0
+    elif cat == 'NonClickbait_Auto':
+        pred = 1
+    
+    # extract category: Clickbait_Auto, Clickbait_Direct, NonClickbait_Auto
+    df['category'] = df['filename'].apply(lambda x: x.split('/')[0])
+    
+    # wonrg case
+    df_incorrect = df[df.targets!=df.preds]
+    
+    # select top N
+    wrong_case = pd.concat([
+            df_incorrect[df_incorrect.category==cat]['filename'],
+            df_incorrect[df_incorrect.category==cat]['outputs'].apply(lambda x: eval(x)[pred])
+        ],
+        axis=1
+    ).sort_values('outputs',ascending=False).head(n)
+
+    return wrong_case
