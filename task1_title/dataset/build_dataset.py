@@ -13,8 +13,8 @@ class FakeDataset(Dataset):
         # tokenizer
         self.tokenizer = tokenizer
 
-    def load_dataset(self, datadir, split, saved_data_path=False):
-        data_info = pd.read_csv(os.path.join(datadir, f'{split}_info.csv'))
+    def load_dataset(self, data_dir, data_info_dir, split, saved_data_path=False):
+        data_info = pd.read_csv(os.path.join(data_info_dir, f'{split}_info.csv'))
         setattr(self, 'saved_data_path', saved_data_path)
 
         if saved_data_path:
@@ -25,7 +25,7 @@ class FakeDataset(Dataset):
                 
             data = {}
             for filename in data_info.filename:
-                f = json.load(open(os.path.join(datadir,filename),'r'))
+                f = json.load(open(os.path.join(data_dir, filename),'r'))
                 data[filename] = f
 
         setattr(self, 'data_info', data_info)

@@ -7,8 +7,9 @@ MODE:
     
 DATASET:
     name: HAN
-    data_path: ../data/LabeledData/Part1/
-    saved_data_path: ../data/LabeledData/Part1/HAN_s16_w64
+    data_path: ../data/direct_exp/Part1 # news article directory
+    data_info_path: ../data/direct_exp/Part1/random_select # splitted csv file director
+    saved_data_path: ../data/one-cycle/Part1/HAN_s16_w64
     PARAMETERS:
         max_sent_len: 16
         max_word_len: 64

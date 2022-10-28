@@ -3,7 +3,8 @@ SEED: 223
     
 DATASET:
     name: FNDNet
-    data_path: ../data/LabeledData/Part1
+    data_path: ../data/direct_exp/Part1 # news article directory
+    data_info_path: ../data/direct_exp/Part1/random_select # splitted csv file director
     saved_data_path: false
     PARAMETERS:
         max_word_len: 1000
@@ -19,5 +20,5 @@ TRAIN:
     use_wandb: True
 
 RESULT:
-    savedir: ../data/LabeledData/Part1
+    savedir: ../data/one-cycle/Part1
     dataname: 'FNDNet_w1000'

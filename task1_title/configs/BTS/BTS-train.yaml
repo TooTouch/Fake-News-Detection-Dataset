@@ -7,8 +7,9 @@ MODE:
     
 DATASET:
     name: BTS
-    data_path: ../data/LabeledData/Part1
-    saved_data_path: ../data/LabeledData/Part1/BTS_w512
+    data_path: ../data/direct_exp/Part1 # news article directory
+    data_info_path: ../data/direct_exp/Part1/random_select # splitted csv file director
+    saved_data_path: ../data/one-cycle/Part1/BTS_w512
     PARAMETERS:
         max_word_len: 512
 

@@ -49,6 +49,7 @@ if __name__ == '__main__':
         dataset = create_dataset(
             name           = cfg['DATASET']['name'], 
             data_path      = cfg['DATASET']['data_path'], 
+            data_info_path = cfg['DATASET']['data_info_path'],
             split          = split, 
             tokenizer      = tokenizer, 
             saved_data_path = cfg['DATASET']['saved_data_path'],
