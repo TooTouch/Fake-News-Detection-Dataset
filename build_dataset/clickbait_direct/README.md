@@ -38,13 +38,14 @@ SEED: 42
 
 # Methods
 
-1. random_select
+**random_select**
 
-전체 중 무작위로 제목 교체
+- 전체 중 무작위로 제목 교체
 
-2. random_category_select
+  
+**random_category_select**
 
-같은 카테고리 내에서 무작위로 제목 교체
+- 같은 카테고리 내에서 무작위로 제목 교체
 
 
 # Run
