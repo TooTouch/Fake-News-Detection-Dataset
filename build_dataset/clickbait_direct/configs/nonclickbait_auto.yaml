@@ -1,0 +1,13 @@
+BUILD:
+  datadir: '../../data/origin_fake_news/NonClickbait_Auto'
+  savedir: '../../data/direct_exp/Part1/NonClickbait_Auto'
+
+SPLIT:
+  datadir: '../../data/origin_fake_news'
+  savedir: '../../data/direct_exp/Part1'
+  ratio:
+    - 6 # train ratio
+    - 2 # validation ratio
+    - 2 # test ratio
+
+SEED: 42
