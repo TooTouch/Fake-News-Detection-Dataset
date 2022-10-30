@@ -20,5 +20,5 @@ TRAIN:
     use_wandb: True
 
 RESULT:
-    savedir: ../data/one-cycle/Part1
-    dataname: 'FNDNet_w1000'
+    savedir: ../data/direct_exp/Part1
+    dataname: 'FNDNet_w1000-random_select'
