@@ -121,3 +121,34 @@ python split_data.py --yaml_confg ${config file path}
 ```
 
 
+
+# Results
+
+## Random Select
+
+|                                   |   AUROC |    F1 |   RECALL |   PRECISION |   ACC |
+|:----------------------------------|--------:|------:|---------:|------------:|------:|
+| FNDNet_w_freeze_w2e-random_select |   0.948 | 0.844 |    0.809 |       0.882 | 0.883 |
+| HAN_w_freeze_w2e-random_select    |   0.984 | 0.927 |    0.902 |       0.953 | 0.944 |
+| BTS-random_select                 |   1     | 0.997 |    0.998 |       0.996 | 0.997 |
+
+
+|    | category                     | BTS-random_select wrong / total (%)   | FNDNet_w_freeze_w2e-random_select wrong / total (%)   | HAN_w_freeze_w2e-random_select wrong / total (%)   |
+|---:|:-----------------------------|:--------------------------------------|:------------------------------------------------------|:---------------------------------------------------|
+|  0 | NonClickbait_Auto            | 139 / 48450 (0.29%)                   | 3361 / 48450 (6.94%)                                  | 1393 / 48450 (2.88%)                               |
+|  1 | Clickbait_Auto_random_select | 72 / 31181 (0.23%)                    | 5956 / 31181 (19.10%)                                 | 3062 / 31181 (9.82%)                               |
+
+
+## Random Category Select
+
+|                                            |   AUROC |    F1 |   RECALL |   PRECISION |   ACC |
+|:-------------------------------------------|--------:|------:|---------:|------------:|------:|
+| FNDNet_w_freeze_w2e-random_category_select |   0.901 | 0.768 |    0.749 |       0.788 | 0.823 |
+| HAN_w_freeze_w2e-random_category_select    |   0.967 | 0.881 |    0.858 |       0.906 | 0.909 |
+| BTS-random_category_select                 |   1     | 0.994 |    0.995 |       0.993 | 0.995 |
+
+
+|    | category                              | BTS-random_category_select wrong / total (%)   | FNDNet_w_freeze_w2e-random_category_select wrong / total (%)   | HAN_w_freeze_w2e-random_category_select wrong / total (%)   |
+|---:|:--------------------------------------|:-----------------------------------------------|:---------------------------------------------------------------|:------------------------------------------------------------|
+|  0 | NonClickbait_Auto                     | 220 / 48450 (0.45%)                            | 6289 / 48450 (12.98%)                                          | 2785 / 48450 (5.75%)                                        |
+|  1 | Clickbait_Auto_random_category_select | 151 / 31181 (0.48%)                            | 7815 / 31181 (25.06%)                                          | 4437 / 31181 (14.23%)                                       |
