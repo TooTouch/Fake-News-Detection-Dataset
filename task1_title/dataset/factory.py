@@ -2,10 +2,15 @@ import pandas as pd
 import csv
 
 from konlpy.tag import Mecab
-from transformers import BertTokenizer
 from torch.utils.data import DataLoader
 
-from .build_dataset import FNDTokenizer, FNDDataset
+import gluonnlp as nlp
+
+from kobert import get_pytorch_kobert_model
+from kobert.utils import get_tokenizer
+
+from .build_dataset import *
+from .tokenizer import FNDTokenizer
 
 
 def extract_word_embedding(vocab_path, max_vocab_size=-1):
@@ -25,37 +30,40 @@ def extract_word_embedding(vocab_path, max_vocab_size=-1):
 
 
 
-def create_tokenizer(args):
-    if args.tokenizer == 'mecab':
-        vocab, word_embed = extract_word_embedding(vocab_path = args.vocab_path, max_vocab_size = args.max_vocab_size)
+def create_tokenizer(name, vocab_path, max_vocab_size):
+    if name == 'mecab':
+        vocab, word_embed = extract_word_embedding(vocab_path = vocab_path, max_vocab_size = max_vocab_size)
         tokenizer = FNDTokenizer(vocab = vocab, tokenizer = Mecab())
-    elif args.tokenizer == 'bert':
+    elif name == 'bert':
         word_embed = None
-        tokenizer = BertTokenizer.from_pretrained(args.pretrained_name)
+        _, vocab = get_pytorch_kobert_model(cachedir=".cache")
+        tokenizer = nlp.data.BERTSPTokenizer(get_tokenizer(), vocab, lower=False)
 
     return tokenizer, word_embed 
 
 
-def create_dataset(args, split, tokenizer):
-    dataset = FNDDataset(
-        modelname      = args.modelname,
-        datadir        = args.data_path,
-        split          = split,  
-        tokenizer      = tokenizer, 
-        max_word_len   = args.max_word_len, 
-        max_sent_len   = args.max_sent_len,
-        use_saved_data = args.use_saved_data
+def create_dataset(name, data_path, data_info_path, split, tokenizer, saved_data_path, **kwargs):
+    dataset = __import__('dataset').__dict__[f'{name}Dataset'](
+        tokenizer = tokenizer,
+        **kwargs
+    )
+
+    dataset.load_dataset(
+        data_dir        = data_path, 
+        data_info_dir   = data_info_path,
+        split           = split, 
+        saved_data_path = saved_data_path
     )
 
     return dataset
 
 
-def create_dataloader(args, dataset, shuffle=False):
+def create_dataloader(dataset, batch_size, num_workers, shuffle=False):
 
     dataloader = DataLoader(
         dataset, 
-        batch_size  = args.batch_size, 
-        num_workers = args.num_workers, 
+        batch_size  = batch_size, 
+        num_workers = num_workers, 
         shuffle     = shuffle
     )
 

@@ -1,0 +1,36 @@
+EXP_NAME: BTS
+SEED: 223
+
+MODE:
+    do_train: False
+    do_test: True
+    test_list:
+        - train
+        - valid
+        - test
+    
+DATASET:
+    name: BTS
+    data_path: ../data/LabeledData/Part2/
+    PARAMETERS:
+        max_word_len: 512
+        window_size: 1
+
+MODEL:
+    modelname: bts_task2
+    PARAMETERS:
+        finetune_bert: True
+    CHECKPOINT:
+        pretrained: True
+        checkpoint_path: null
+
+TRAIN:
+    batch_size: 8
+    num_workers: 12
+
+LOG:
+    log_interval: 1
+
+RESULT:
+    savedir: './saved_model'
+    result_name: results

@@ -4,6 +4,9 @@ import torch.nn as nn
 from .registry import register_model
 from .utils import download_weights
 
+import logging
+_logger = logging.getLogger('train')
+
 class BTS(BertPreTrainedModel):
     def __init__(self, pretrained_name, config, num_classes):
         super().__init__(config)
@@ -28,13 +31,13 @@ class BTS(BertPreTrainedModel):
 
         outputs = self.bert(
             input_ids,
-            attention_mask=attention_mask,
-            token_type_ids=token_type_ids,
-            position_ids=position_ids,
-            head_mask=head_mask,
-            inputs_embeds=inputs_embeds,
-            output_attentions=output_attentions,
-            output_hidden_states=output_hidden_states,
+            attention_mask       = attention_mask,
+            token_type_ids       = token_type_ids,
+            position_ids         = position_ids,
+            head_mask            = head_mask,
+            inputs_embeds        = inputs_embeds,
+            output_attentions    = output_attentions,
+            output_hidden_states = output_hidden_states,
         )
 
         pooled_output = outputs[1]
@@ -48,13 +51,12 @@ class BTS(BertPreTrainedModel):
             return logits
 
 @register_model
-def bts(**kwargs):
-    args = kwargs['args']
-    model_config = AutoConfig.from_pretrained(args.pretrained_name)
+def bts(hparams, **kwargs):
+    model_config = AutoConfig.from_pretrained(hparams['pretrained_name'])
     model = BTS(
-            pretrained_name = args.pretrained_name, 
-            config          = model_config,
-            num_classes     = args.num_classes
+        pretrained_name = hparams['pretrained_name'], 
+        config          = model_config,
+        num_classes     = hparams['num_classes']
     )
 
     return model
@@ -74,6 +76,7 @@ def bts_task1(pretrained=False, **kwargs):
     if pretrained:
         weights = download_weights(url)
         model.load_state_dict(weights)
+        _logger.info('load a trained model weights from {}'.format(url))
     
     return model
 

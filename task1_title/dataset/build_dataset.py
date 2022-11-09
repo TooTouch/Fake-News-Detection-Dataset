@@ -4,68 +4,41 @@ import pandas as pd
 import torch
 import os
 
+import logging
 
-class FNDDataset(Dataset):
-    def __init__(self, modelname, datadir, split, tokenizer, max_word_len, max_sent_len, use_saved_data=False):
-        self.modelname = modelname
-        self.split = split
-        self.max_word_len = max_word_len
-        self.max_sent_len = max_sent_len
+_logger = logging.getLogger('train')
 
-        self._transform = 'han' if 'han' in self.modelname else 'fndnet'
-
-        # load data
-        self.use_saved_data = use_saved_data
-        if self.use_saved_data:
-            if 'han' in self.modelname:
-                dataname = f'HAN_s{max_sent_len}_w{max_word_len}'
-            elif 'fndnet' in self.modelname:
-                dataname = f'FNDNet_w{max_word_len}'
-            elif 'bts' in self.modelname:
-                dataname = f'BTS_w{max_word_len}'
-            self.data = torch.load(os.path.join(datadir, dataname, f'{split}.pt'))
-        else:
-            self.data = json.load(open(os.path.join(datadir, f'{split}.json'),'r'))
-            self.data_info = pd.read_csv(os.path.join(datadir, f'{split}_info.csv'))
-        
+class FakeDataset(Dataset):
+    def __init__(self, tokenizer):
         # tokenizer
         self.tokenizer = tokenizer
 
-    def transform_han(self, sent_list):
-        sent_list = sent_list[:self.max_sent_len]
-        doc = [self.tokenizer.encode(sent)[:self.max_word_len] for sent in sent_list] 
-        
-        return doc
-    
-    def padding_han(self, doc):
-        num_pad_doc = self.max_sent_len - len(doc)
-        num_pad_sent = [max(0, self.max_word_len - len(sent)) for sent in doc]
+    def load_dataset(self, data_dir, data_info_dir, split, saved_data_path=False):
+        data_info = pd.read_csv(os.path.join(data_info_dir, f'{split}_info.csv'))
+        setattr(self, 'saved_data_path', saved_data_path)
 
-        doc = [sent + [self.tokenizer.pad_token_id] * num_pad_sent[idx] for idx, sent in enumerate(doc)]
-        doc = doc + [[self.tokenizer.pad_token_id] * self.max_word_len for i in range(num_pad_doc)]
-            
-        return doc
+        if saved_data_path:
+            _logger.info('load saved data')
+            data = torch.load(os.path.join(saved_data_path, f'{split}.pt'))
+        else:
+            _logger.info('load raw data')
+                
+            data = {}
+            for filename in data_info.filename:
+                f = json.load(open(os.path.join(data_dir, filename),'r'))
+                data[filename] = f
 
-    def transform_fndnet(self, sent_list):
-        doc = sum([self.tokenizer.encode(sent) for sent in sent_list], [])[:self.max_word_len]
+        setattr(self, 'data_info', data_info)
+        setattr(self, 'data', data)
 
-        return doc 
+    def transform(self):
+        raise NotImplementedError
 
-    def padding_fndnet(self, doc):
-        num_pad_word = max(0, self.max_word_len - len(doc))
-        doc = doc + [self.tokenizer.pad_token_id] * num_pad_word
-
-        return doc
-
-    def transform(self, sent_list):
-        return getattr(self, f'transform_{self._transform}')(sent_list)
-
-    def padding(self, doc):
-        return getattr(self, f'padding_{self._transform}')(doc)
+    def padding(self):
+        raise NotImplementedError
 
     def __getitem__(self, i):
-
-        if self.use_saved_data:
+        if self.saved_data_path:
             doc = {}
             for k in self.data['doc'].keys():
                 doc[k] = self.data['doc'][k][i]
@@ -76,89 +49,19 @@ class FNDDataset(Dataset):
         
         else:
             news_idx = self.data_info.iloc[i]
-            news_info = self.data[str(news_idx['id'])]
+            news_info = self.data[news_idx['filename']]
         
             # label
             label = 1 if news_idx['label']=='fake' else 0
-
-            if 'bts' not in self.modelname:
-                # input
-                sent_list = [news_info['title']] + news_info['text']
-                
-                # transform and padding
-                doc = self.transform(sent_list)
-                doc = self.padding(doc)
-
-                doc = {'input_ids':torch.tensor(doc)}
-
-            elif 'bts' in self.modelname:
-                doc = self.tokenizer(
-                    news_info['title'],
-                    ' '.join(news_info['text']),
-                    return_tensors='pt',
-                    max_length = self.max_word_len,
-                    padding='max_length',
-                    truncation=True,
-                    add_special_tokens=True
-                )
-
-                doc['input_ids'] = doc['input_ids'][0]
-                doc['attention_mask'] = doc['attention_mask'][0]
-                doc['token_type_ids'] = doc['token_type_ids'][0]
+        
+            # transform and padding
+            doc = self.transform(
+                title = news_info['labeledDataInfo']['newTitle'], 
+                text  = news_info['sourceDataInfo']['newsContent'].split('\n')
+            )
 
             return doc, label
 
-
     def __len__(self):
-        if self.use_saved_data:
-            return len(self.data['doc']['input_ids'])
-        else:
-            return len(self.data)
-    
-    @property
-    def num_classes(self):
-        return 2
-
-
-class FNDTokenizer:
-    def __init__(self, vocab, tokenizer, special_tokens: list = []):    
-        self.vocab = vocab        
-        self.tokenizer = tokenizer
-
-        # add token ids
-        self.special_tokens = {}
-
-        special_tokens = ['UNK','PAD'] + special_tokens
-        for special_token in special_tokens:
-            self.add_tokens(special_token)
-        
-        # set unknown and pad 
-        self.unk_token_id = self.special_tokens['UNK']
-        self.pad_token_id = self.special_tokens['PAD']
-        
-    def encode(self, sentence):
-        return [
-            self.vocab.index(word) if word in self.vocab else self.unk_token_id 
-            for word in self.tokenizer.morphs(sentence)
-        ]
-    
-    def batch_encode(self, b_sentence):
-        return [self.encode(sentence) for sentence in b_sentence]
-    
-    def decode(self, input_ids):
-        return [self.vocab[i] for i in input_ids]
-    
-    def batch_decode(self, b_input_ids):
-        return [self.decode(input_ids) for input_ids in b_input_ids]
-    
-    def __len__(self):
-        return self.vocab_size
-
-    @property
-    def vocab_size(self):
-        return len(self.vocab)
-
-    def add_tokens(self, name):
-        self.special_tokens.update({name: self.vocab_size})
-        self.vocab += [name]
+        raise NotImplementedError
 

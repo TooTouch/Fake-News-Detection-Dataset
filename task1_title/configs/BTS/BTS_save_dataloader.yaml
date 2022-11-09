@@ -1,0 +1,21 @@
+EXP_NAME: BTS
+SEED: 223
+    
+DATASET:
+    name: BTS
+    data_path: ../data/direct_exp/Part1 # news article directory
+    data_info_path: ../data/direct_exp/Part1/random_category_select # splitted csv file director
+    saved_data_path: false
+    PARAMETERS:
+        max_word_len: 512
+
+TOKENIZER:
+    name: bert
+
+TRAIN:
+    batch_size: 256
+    num_workers: 12
+
+RESULT:
+    savedir: ../data/direct_exp/Part1
+    dataname: 'BTS_w512-random_category_select'

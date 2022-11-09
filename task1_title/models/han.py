@@ -1,13 +1,13 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-import pandas as pd
 import numpy as np
-import csv
 
 from .utils import download_weights
 from .registry import register_model
 from einops import rearrange
+
+import logging
+_logger = logging.getLogger('train')
 
 class HierAttNet(nn.Module):
     def __init__(self, word_dims=64, sent_dims=128, dropout=0.1, num_classes=2, 
@@ -135,12 +135,14 @@ class Attention(nn.Module):
 
 
 @register_model
-def han(**kwargs):
-    args = kwargs['args']
+def han(hparams, **kwargs):
     model = HierAttNet(
-        word_dims   = args.word_dims, 
-        sent_dims   = args.sent_dims, 
-        num_classes = args.num_classes, 
+        word_dims   = hparams['word_dims'], 
+        sent_dims   = hparams['sent_dims'],
+        embed_dims  = hparams['embed_dims'],
+        num_classes = hparams['num_classes'], 
+        dropout     = hparams['dropout'],
+        vocab_len   = hparams['vocab_len']
     )
 
     return model
@@ -162,25 +164,26 @@ def han_w_freeze_w2e_task1(pretrained=False, **kwargs):
     if pretrained:
         weights = download_weights(url)
         model.load_state_dict(weights)
+        _logger.info('load a trained model weights from {}'.format(url))
     
     return model
 
-@register_model  
-def han_wo_freeze_w2e_task1(pretrained=False, **kwargs):
-    # pretrained weights
-    url = 'https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/weights/HAN_wo_freeze_w2e_task1.pt'
+# @register_model  
+# def han_wo_freeze_w2e_task1(pretrained=False, **kwargs):
+#     # pretrained weights
+#     url = 'https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/weights/HAN_wo_freeze_w2e_task1.pt'
     
-    model = HierAttNet(
-        word_dims   = 32, 
-        sent_dims   = 64, 
-        dropout     = 0.1,
-        num_classes = 2, 
-        vocab_len   = 50002, 
-        embed_dims  = 100
-    )
+#     model = HierAttNet(
+#         word_dims   = 32, 
+#         sent_dims   = 64, 
+#         dropout     = 0.1,
+#         num_classes = 2, 
+#         vocab_len   = 50002, 
+#         embed_dims  = 100
+#     )
 
-    if pretrained:
-        weights = download_weights(url)
-        model.load_state_dict(weights)
+#     if pretrained:
+#         weights = download_weights(url)
+#         model.load_state_dict(weights)
     
-    return model
+#     return model

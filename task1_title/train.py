@@ -6,7 +6,9 @@ import logging
 from collections import OrderedDict
 
 import torch
+import numpy as np
 from utils import convert_device
+from sklearn.metrics import roc_auc_score, f1_score, recall_score, precision_score
 import transformers
 
 _logger = logging.getLogger('train')
@@ -103,21 +105,21 @@ def training(model, num_training_steps, trainloader, validloader, criterion, opt
                                 data_time  = data_time_m))
 
 
-                if ((step+1) // accumulation_steps) % eval_interval == 0 or step == 0: 
+                if ((step+1) // accumulation_steps) % eval_interval == 0 and step != 0: 
                     eval_metrics = evaluate(model, validloader, criterion, log_interval, device)
                     model.train()
+
+                    eval_log = dict([(f'eval_{k}', v) for k, v in eval_metrics.items()])
+
                     # wandb
                     if use_wandb:
-                        wandb.log({
-                            'eval_acc':eval_metrics['acc'],
-                            'eval_loss':eval_metrics['loss']
-                        },
-                        step=step)
+                        wandb.log(eval_log, step=step)
 
                     # checkpoint
                     if best_acc < eval_metrics['acc']:
                         # save best score
-                        state = {'best_step':step, 'best_acc':eval_metrics['acc']}
+                        state = {'best_step':step}
+                        state.update(eval_log)
                         json.dump(state, open(os.path.join(savedir, 'best_score.json'),'w'), indent=4)
 
                         # save best model
@@ -138,14 +140,17 @@ def training(model, num_training_steps, trainloader, validloader, criterion, opt
     # save best model
     torch.save(model.state_dict(), os.path.join(savedir, f'latest_model.pt'))
 
-    _logger.info('Best Metric: {0:.3%} (step {1:})'.format(state['best_acc'], state['best_step']))
+    _logger.info('Best Metric: {0:.3%} (step {1:})'.format(best_acc, state['best_step']))
     
         
-def evaluate(model, dataloader, criterion, log_interval, device='cpu'):
+def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_check=False):
     correct = 0
     total = 0
     total_loss = 0
-    
+    total_score = []
+    total_preds = []
+    total_targets = []
+
     model.eval()
     with torch.no_grad():
         for idx, (inputs, targets) in enumerate(dataloader):
@@ -153,19 +158,57 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu'):
             
             # predict
             outputs = model(**inputs)
-            
+            outputs = torch.nn.functional.softmax(outputs, dim=1)
+
             # loss 
             loss = criterion(outputs, targets)
             
             # total loss and acc
             total_loss += loss.item()
             preds = outputs.argmax(dim=1)
+
             correct += targets.eq(preds).sum().item()
             total += targets.size(0)
+
+            total_score.extend(outputs.cpu().tolist())
+            total_preds.extend(preds.cpu().tolist())
+            total_targets.extend(targets.cpu().tolist())
             
             if idx % log_interval == 0 and idx != 0: 
                 _logger.info('TEST [%d/%d]: Loss: %.3f | Acc: %.3f%% [%d/%d]' % 
                             (idx+1, len(dataloader), total_loss/(idx+1), 100.*correct/total, correct, total))
                 
-    return OrderedDict([('acc',correct/total), ('loss',total_loss/len(dataloader))])
-        
+    metrics = calc_metrics(
+        y_true  = total_targets,
+        y_score = np.array(total_score)[:,1],
+        y_pred  = total_preds
+    )
+    
+    metrics.update([('acc',correct/total), ('loss',total_loss/len(dataloader))])
+
+    _logger.info('TEST: Loss: %.3f | Acc: %.3f%% | AUROC: %.3f%% | F1-Score: %.3f%% | Recall: %.3f%% | Precision: %.3f%%' % 
+                (metrics['loss'], 100.*metrics['acc'], 100.*metrics['auroc'], 100.*metrics['f1'], 100.*metrics['recall'], 100.*metrics['precision']))
+
+    if sample_check:
+        results = {
+            'targets': total_targets,
+            'preds'  : total_preds,
+            'outputs': total_score
+        }
+        return metrics, results
+    else:
+        return metrics
+
+
+def calc_metrics(y_true, y_score, y_pred):
+    auroc = roc_auc_score(y_true, y_score)
+    f1 = f1_score(y_true, y_pred)
+    recall = recall_score(y_true, y_pred)
+    precision = precision_score(y_true, y_pred)
+
+    return {
+        'auroc'    : auroc, 
+        'f1'       : f1, 
+        'recall'   : recall, 
+        'precision': precision
+    }

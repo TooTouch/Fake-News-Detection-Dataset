@@ -1,9 +1,11 @@
 import numpy as np
 import wandb
+import json
 import logging
 import os
 import torch
 import argparse
+import yaml
 
 from models import create_model 
 from dataset import create_dataset, create_dataloader, create_tokenizer
@@ -18,171 +20,159 @@ import pandas as pd
 _logger = logging.getLogger('train')
 
 
-def get_args(notebook=False):
-    parser = argparse.ArgumentParser(description='Fake News Detection - Task1')
-
-    parser.add_argument('--exp_name', type=str, help='experiment name')
-    parser.add_argument('--modelname', type=str, default='han', help='model name')
-    parser.add_argument('--seed', type=int, default=223, help='seed')
-
-    parser.add_argument('--do_train', action='store_true', help='training mode')
-    parser.add_argument('--do_test', action='store_true', help='testing mode')
-
-    parser.add_argument('--savedir', type=str, default='./saved_model', help='save directory')
-    parser.add_argument('--result_path', type=str, default='./results.csv', help='result file')
-
-    # training
-    parser.add_argument("--batch_size", type=int, default=64, help='batch size')
-    parser.add_argument("--num_training_steps", type=int, default=1, help='number of training steps') 
-    parser.add_argument("--log_interval", type=int, default=1, help='log interval')
-    parser.add_argument("--eval_interval", type=int, default=1000, help='eval interval')
-    parser.add_argument("--accumulation_steps", type=int, default=1, help='number of accumulation steps')
-
-    # optimizer
-    parser.add_argument("--use_scheduler", action='store_true', help='use scheduler')
-    parser.add_argument("--lr", type=float, default=1e-1)
-    parser.add_argument("--warmup_ratio", type=float, default=0.1, help='learning rate warmup ratio')
-    parser.add_argument("--weight_decay", type=float, default=5e-4)
-
-    # dataset
-    parser.add_argument("--use_saved_data", action='store_true', help='use saved data')
-    parser.add_argument("--tokenizer", type=str, default='mecab', choices=['mecab','bert'], help='tokenizer name')
-    parser.add_argument("--vocab_path", type=str, default="../word-embeddings/glove/glove.txt")
-    parser.add_argument("--data_path", type=str, default="../data/task1/")
-    parser.add_argument("--num_classes", type=int, default=2, help='number of class')
-    parser.add_argument('--max_vocab_size', type=int, default=-1, help='maximum vocab size')
-    parser.add_argument("--max_sent_len", type=int, default=128, help='maximum number of sentences in a document')
-    parser.add_argument('--max_word_len', type=int, default=128, help='maximum number of words in a sentence')
-    parser.add_argument('--num_workers', default=12, type=int, help='number of workers')
-    parser.add_argument('--use_pin_memory', action='store_true', help='use pin memory')
-
-    # models
-    parser.add_argument("--pretrained_name", type=str, default='klue/bert-base')
-    parser.add_argument("--checkpoint_path", type=str, default=None, help='use checkpoint path')
-    parser.add_argument("--pretrained", action='store_true', help='download pretrained model')
-    parser.add_argument("--dims", type=int, default=128, help='embedding dimension')
-    parser.add_argument("--word_dims", type=int, default=32)
-    parser.add_argument("--sent_dims", type=int, default=64)
-    parser.add_argument("--use_pretrained_word_embed", action='store_true', help='use pretrained word embedding')
-    parser.add_argument("--freeze_word_embed", action='store_true', help='freeze pretrained word embedding')
-
-    # wandb
-    parser.add_argument('--use_wandb', action='store_true', help='use wandb')
-
-    
-    if notebook:
-        args = parser.parse_args(args=[])
-    else:
-        args = parser.parse_args()
-        
-    return args
-
-
-def run(args):
+def run(cfg):
 
     # setting seed and device
     setup_default_logging()
-    torch_seed(args.seed)
+    torch_seed(cfg['SEED'])
 
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
     _logger.info('Device: {}'.format(device))
 
+    # savedir
+    savedir = os.path.join(cfg['RESULT']['savedir'], cfg['EXP_NAME'])
+    os.makedirs(savedir, exist_ok=True)
+
     # tokenizer
-    tokenizer, word_embed = create_tokenizer(args)
+    tokenizer, word_embed = create_tokenizer(
+        name            = cfg['TOKENIZER']['name'], 
+        vocab_path      = cfg['TOKENIZER'].get('vocab_path', None), 
+        max_vocab_size  = cfg['TOKENIZER'].get('max_vocab_size', None)
+    )
     
     # Build Model
-    model = create_model(args.modelname, args.pretrained, word_embed, tokenizer, args)
+    model = create_model(
+        modelname                 = cfg['MODEL']['modelname'],
+        hparams                   = cfg['MODEL']['PARAMETERS'],
+        pretrained                = cfg['MODEL']['CHECKPOINT']['pretrained'],
+        word_embed                = word_embed,
+        tokenizer                 = tokenizer,
+        freeze_word_embed         = cfg['MODEL'].get('freeze_word_embed',False),
+        use_pretrained_word_embed = cfg['MODEL'].get('use_pretrained_word_embed',False),
+        checkpoint_path           = cfg['MODEL']['CHECKPOINT']['checkpoint_path'],
+    )
     model.to(device)
 
     _logger.info('# of trainable params: {}'.format(np.sum([p.numel() if p.requires_grad else 0 for p in model.parameters()])))
 
-    if args.do_train:
+    if cfg['MODE']['do_train']:
         # wandb
-        if args.use_wandb:
-            wandb.init(name=args.exp_name, project='Fake New Detection - Task1', config=args)
-
-        # savedir
-        savedir = os.path.join(args.savedir, args.exp_name)
-        os.makedirs(savedir, exist_ok=True)
+        if cfg['TRAIN']['use_wandb']:
+            wandb.init(name=cfg['EXP_NAME'], project='Fake New Detection - Task1', config=cfg)
 
         # Build datasets
-        trainset = create_dataset(args, 'train', tokenizer)
-        validset = create_dataset(args, 'valid', tokenizer)
-        trainloader = create_dataloader(args, trainset, True)
-        validloader = create_dataloader(args, validset)
+        trainset = create_dataset(
+            name           = cfg['DATASET']['name'], 
+            data_path      = cfg['DATASET']['data_path'], 
+            data_info_path = cfg['DATASET']['data_info_path'],
+            split          = 'train', 
+            tokenizer      = tokenizer, 
+            saved_data_path = cfg['DATASET']['saved_data_path'],
+            **cfg['DATASET']['PARAMETERS']
+        )
+
+        validset = create_dataset(
+            name           = cfg['DATASET']['name'], 
+            data_path      = cfg['DATASET']['data_path'], 
+            data_info_path = cfg['DATASET']['data_info_path'],
+            split          = 'valid', 
+            tokenizer      = tokenizer, 
+            saved_data_path = cfg['DATASET']['saved_data_path'],
+            **cfg['DATASET']['PARAMETERS']
+        )
+        
+        trainloader = create_dataloader(
+            dataset     = trainset, 
+            batch_size  = cfg['TRAIN']['batch_size'], 
+            num_workers = cfg['TRAIN']['num_workers'],
+            shuffle     = True
+        )
+        validloader = create_dataloader(
+            dataset     = validset, 
+            batch_size  = cfg['TRAIN']['batch_size'], 
+            num_workers = cfg['TRAIN']['num_workers'],
+            shuffle     = False
+        )
 
         # Set training
         criterion = torch.nn.CrossEntropyLoss()
-        optimizer = torch.optim.AdamW(params=filter(lambda p: p.requires_grad, model.parameters()), lr=args.lr, weight_decay=args.weight_decay)
+        optimizer = torch.optim.AdamW(
+            params       = filter(lambda p: p.requires_grad, model.parameters()), 
+            lr           = cfg['OPTIMIZER']['lr'], 
+            weight_decay = cfg['OPTIMIZER']['weight_decay']
+        )
 
         # scheduler
-        if args.use_scheduler:
-            # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs)
+        if cfg['SCHEDULER']['use_scheduler']:
             scheduler = get_cosine_schedule_with_warmup(
                 optimizer, 
-                num_warmup_steps   = int(args.num_training_steps * args.warmup_ratio), 
-                num_training_steps = args.num_training_steps)
+                num_warmup_steps   = int(cfg['TRAIN']['num_training_steps'] * cfg['SCHEDULER']['warmup_ratio']), 
+                num_training_steps = cfg['TRAIN']['num_training_steps'])
         else:
             scheduler = None
 
         # Fitting model
         training(
             model              = model, 
-            num_training_steps = args.num_training_steps, 
+            num_training_steps = cfg['TRAIN']['num_training_steps'], 
             trainloader        = trainloader, 
             validloader        = validloader, 
             criterion          = criterion, 
             optimizer          = optimizer, 
             scheduler          = scheduler,
-            log_interval       = args.log_interval,
-            eval_interval      = args.eval_interval,
+            log_interval       = cfg['LOG']['log_interval'],
+            eval_interval      = cfg['LOG']['eval_interval'],
             savedir            = savedir,
-            accumulation_steps = args.accumulation_steps,
+            accumulation_steps = cfg['TRAIN']['accumulation_steps'],
             device             = device,
-            use_wandb          = args.use_wandb
+            use_wandb          = cfg['TRAIN']['use_wandb']
         )
 
-    elif args.do_test:
-        trainset = create_dataset(args, 'train', tokenizer)
-        validset = create_dataset(args, 'valid', tokenizer)
-        testset = create_dataset(args, 'test', tokenizer)
-
-        trainloader = create_dataloader(args, trainset)
-        validloader = create_dataloader(args, validset)
-        testloader = create_dataloader(args, testset)
-
+    elif cfg['MODE']['do_test']:
         criterion = torch.nn.CrossEntropyLoss()
 
-        # Build Model
-        model = create_model(args.modelname, args.pretrained, word_embed, tokenizer, args)
-        model.to(device)
+        for split in cfg['MODE']['test_list']:
+            _logger.info('{} evaluation'.format(split.upper()))
+            dataset = create_dataset(
+                name           = cfg['DATASET']['name'], 
+                data_path      = cfg['DATASET']['data_path'], 
+                data_info_path = cfg['DATASET']['data_info_path'],
+                split          = split,
+                tokenizer      = tokenizer, 
+                saved_data_path = cfg['DATASET']['saved_data_path'],
+                **cfg['DATASET']['PARAMETERS']
+            )
 
-        # result path
-        if os.path.isfile(args.result_path):
-            df = pd.read_csv(args.result_path)
-        else:
-            df = pd.DataFrame()
+            dataloader = create_dataloader(
+                dataset     = dataset, 
+                batch_size  = cfg['TRAIN']['batch_size'], 
+                num_workers = cfg['TRAIN']['num_workers'],
+                shuffle     = False
+            )
 
-        total_metrics = {}
-        for split, dataloader in {'train':trainloader, 'valid':validloader, 'test':testloader}.items():
-            metrics = evaluate(
+            metrics, exp_results = evaluate(
                 model        = model, 
                 dataloader   = dataloader, 
                 criterion    = criterion,
-                log_interval = args.log_interval,
-                device       = device
+                log_interval = cfg['LOG']['log_interval'],
+                device       = device,
+                sample_check = True
             )
+            
+            # save exp result
+            pd.concat([dataset.data_info, pd.DataFrame(exp_results)], axis=1).to_csv(os.path.join(savedir, f'exp_results_{split}.csv'), index=False)
 
-            for k, v in metrics.items():
-                total_metrics[f'{split}_{k}'] = v
-
-        total_metrics['exp_name'] = args.exp_name
-        df = df.append(total_metrics, ignore_index=True)
-        df.to_csv(args.result_path, index=False)
-        
+            # save result metrics
+            json.dump(metrics, open(os.path.join(savedir, f"{cfg['RESULT']['result_name']}_{split}.json"),'w'), indent='\t')
 
 
 if __name__=='__main__':
-    args = get_args()
+    parser = argparse.ArgumentParser(description='Fake News Detection - Task1')
+    parser.add_argument('--yaml_config', type=str, default=None, help='exp config file')    
 
-    run(args)
+    args = parser.parse_args()
+
+    # config
+    cfg = yaml.load(open(args.yaml_config,'r'), Loader=yaml.FullLoader)
+
+    run(cfg)
