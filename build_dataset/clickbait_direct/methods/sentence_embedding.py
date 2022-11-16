@@ -1,5 +1,5 @@
 # !pip install sentence-transformers
-
+import pdb
 import re
 import json
 import pickle
@@ -33,14 +33,55 @@ def clean_news(content):
     return cleaned_content
 
 
-def sentence_embedding(
+def get_argmax_columns(
+    cand_list: list,
+    argmax_columns_path: str,
+    model_name: str,
+    device_num: int,
+    pooling_mode: str,
+) -> np.array:
+
+    # print(max([len(c) for c in cand_list]))
+    # pdb.set_trace()
+    # Device setting
+    device = torch.device(device_num if torch.cuda.is_available() else "cpu")
+
+    # Model setting
+    model = set_model(model_name, pooling_mode, device)
+    print(len(model.tokenizer(cand_list[0])["input_ids"]))
+    pdb.set_trace()
+    print(model.tokenizer(cand_list[1]))
+
+    # Get embeddings of titles in numpy array
+    with torch.no_grad():
+        embedding_list = model.encode(
+            cand_list,
+            batch_size=4,
+            show_progress_bar=True,
+            convert_to_tensor=True,
+            device=device,
+        )
+    length = len(cand_list)
+    sim_matrix = torch.zeros((length, length), device=device)
+    for i in tqdm(range(length), desc="Get Sim-list"):
+        similarity = F.cosine_similarity(embedding_list[i], embedding_list, dim=-1)
+        sim_matrix[i] += similarity
+        sim_matrix[i][i] = 0
+
+    sim_matrix = sim_matrix.cpu().numpy()
+    argmax_columns = np.argmax(sim_matrix, axis=1)
+    pickle.dump(obj=argmax_columns, file=open(argmax_columns_path, "wb"))
+
+    return argmax_columns
+
+
+def get_fake_title(
+    type: str,
     file_list_cat: list,
     file_path: np.array,
     argmax_columns: np.array,
     argmax_columns_path: str,
-    data_type: str,
     model_name: str,
-    pooling_mode: str,
     device_num: int,
 ) -> str:
 
@@ -51,24 +92,20 @@ def sentence_embedding(
 
     # Get query index
     query_idx = file_list_cat.index(file_path)
-    
-    # similairty matrix pickle file check
+
+    # argmax columns pickle file check
     if argmax_columns is None:
-        
-        # Set a new file indices of each category
+        # file idx in file list category
         file_idxs = np.arange(len(file_list_cat))
-        
-        # Get all the titles
-        cand_titles = [
-        json.load(open(file_list_cat[idx], "r"))["sourceDataInfo"]["newsTitle"]
-        for idx in file_idxs
-        ]
 
-        if data_type == "title":
-            cand_list = cand_titles
-
-        else:
-            # Get all the contents
+        # candidate of titles
+        if type == "title":
+            cand_list = [
+                json.load(open(file_list_cat[idx], "r"))["sourceDataInfo"]["newsTitle"]
+                for idx in file_idxs
+            ]
+            pooling_mode = "mean"
+        elif type == "contents":
             cand_list = [
                 clean_news(
                     json.load(open(file_list_cat[idx], "r"))["sourceDataInfo"][
@@ -77,34 +114,73 @@ def sentence_embedding(
                 )
                 for idx in file_idxs
             ]
-
-        # Device setting
-        device = torch.device(device_num if torch.cuda.is_available() else "cpu")
-
-        # Model setting
-        model = set_model(model_name, pooling_mode, device)
-
-        # Get embeddings of titles in numpy array
-        with torch.no_grad():
-            embedding_list = model.encode(
-                cand_list,
-                batch_size=1024,
-                show_progress_bar=True,
-                convert_to_tensor=True,
-                device=device,
-            )
-        length = len(cand_list)
-        sim_matrix = torch.zeros((length, length), device=device)
-        for i in tqdm(range(length), desc="Get Sim-list"):
-            similarity = F.cosine_similarity(embedding_list[i], embedding_list, dim=-1)
-            sim_matrix[i] += similarity
-            sim_matrix[i][i] = 0
-
-        sim_matrix = sim_matrix.cpu().numpy()
-        argmax_columns= np.argmax(sim_matrix,axis=1)
-        pickle.dump(obj=argmax_columns, file=open(argmax_columns_path, "wb"))
+            # print(cand_list[0])
+            pooling_mode = "cls"
+        argmax_columns = get_argmax_columns(
+            cand_list,
+            argmax_columns_path,
+            model_name,
+            device_num,
+            pooling_mode,
+        )
 
     # Get the index of the most similar title
-    fake_title = json.load(open(file_list_cat[argmax_columns[query_idx]], "r"))["sourceDataInfo"]["newsTitle"]
-    
+    fake_title = json.load(open(file_list_cat[argmax_columns[query_idx]], "r"))[
+        "sourceDataInfo"
+    ]["newsTitle"]
+
+    return fake_title
+
+
+def sentence_embedding_title(
+    file_list_cat: list,
+    file_path: np.array,
+    argmax_columns: np.array,
+    argmax_columns_path: str,
+    model_name: str,
+    device_num: int,
+) -> str:
+
+    """
+    i) Calculate the similarity of titles between given file and the others in the same category
+    ii) Switch the original title with the most similar title among another titles
+    """
+    type = "title"
+    fake_title = get_fake_title(
+        type,
+        file_list_cat,
+        file_path,
+        argmax_columns,
+        argmax_columns_path,
+        model_name,
+        device_num,
+    )
+
+    return fake_title
+
+
+def sentence_embedding_contents(
+    file_list_cat: list,
+    file_path: np.array,
+    argmax_columns: np.array,
+    argmax_columns_path: str,
+    model_name: str,
+    device_num: int,
+) -> str:
+
+    """
+    i) Calculate the similarity of contents embedding vectors between given file and the others in the same category
+    ii) Switch the original title with the most similar contents among another titles
+    """
+    type = "contents"
+    fake_title = get_fake_title(
+        type,
+        file_list_cat,
+        file_path,
+        argmax_columns,
+        argmax_columns_path,
+        model_name,
+        device_num,
+    )
+
     return fake_title

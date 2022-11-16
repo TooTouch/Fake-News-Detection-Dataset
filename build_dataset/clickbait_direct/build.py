@@ -73,11 +73,11 @@ def make_fake_title(
                 "file_list": file_list,
             }
 
-        elif cfg_method["name"] == "sentence_embedding":
+        elif "sentence_embedding" in cfg_method["name"]:
 
             # Check pickle file of argmax_columns
             argmax_columns_path = os.path.join(
-                savedir, category_name, f"{cfg_method['data_type']}_argmax_columns.pkl"
+                savedir, category_name, f"{cfg_method['name']}_argmax_columns.pkl"
             )
             if os.path.isfile(argmax_columns_path) and argmax_columns is None:
                 argmax_columns = pickle.load(open(argmax_columns_path, "rb"))
@@ -90,11 +90,10 @@ def make_fake_title(
                 "file_path": file_path,
                 "argmax_columns": argmax_columns,
                 "argmax_columns_path": argmax_columns_path,
-                "data_type": cfg_method["data_type"],
                 "model_name": cfg_method["model_name"],
-                "pooling_mode": cfg_method["pooling_mode"],
                 "device_num": cfg_method["device_num"],
             }
+
         fake_title = __import__("methods").__dict__[cfg_method["name"]](**kwargs)
 
         # update label infomation

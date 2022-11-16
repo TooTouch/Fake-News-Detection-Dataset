@@ -10,6 +10,10 @@ from sklearn.model_selection import train_test_split
 
 
 def run(datadir: str, savedir: str, split_ratio: list, method: str, seed: int) -> None:
+    folders = os.listdir(os.path.join(datadir))
+    assert 'Clickbait_Auto' in folders, f'Clickbait_Auto folder does not exist in {datadir}'
+    assert 'NonClickbait_Auto' in folders, f'NonClickbait_Auto folder does not exist in {datadir}'
+
     task1 = glob(os.path.join(datadir,'*/*/*'))
     task1 = [f for f in task1 if 'Clickbait_Direct' not in f]
 
