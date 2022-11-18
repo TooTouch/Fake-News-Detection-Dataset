@@ -21,60 +21,60 @@ def clean_news(content):
 
 # ------------------- Ver.1-----------------------------------#
 
-# def set_model(model_name: str, pooling_mode: str, device: int) -> SentenceTransformer:
-#     # Backbone setting
-#     word_embedding_model = models.Transformer(model_name)
-#     # Pooling setting
-#     pooling_model = models.Pooling(
-#         word_embedding_model.get_word_embedding_dimension(), pooling_mode=pooling_mode
-#     )
-#     # Aggregation
-#     model = SentenceTransformer(
-#         modules=[word_embedding_model, pooling_model], device=device
-#     )
+def set_model(model_name: str, pooling_mode: str, device: int) -> SentenceTransformer:
+    # Backbone setting
+    word_embedding_model = models.Transformer(model_name)
+    # Pooling setting
+    pooling_model = models.Pooling(
+        word_embedding_model.get_word_embedding_dimension(), pooling_mode=pooling_mode
+    )
+    # Aggregation
+    model = SentenceTransformer(
+        modules=[word_embedding_model, pooling_model], device=device
+    )
 
-#     return model
+    return model
 
 
-# def get_argmax_columns(
-#     cand_list: list,
-#     argmax_columns_path: str,
-#     model_name: str,
-#     device_num: int,
-#     pooling_mode: str,
-# ) -> np.array:
+def get_argmax_columns(
+    cand_list: list,
+    argmax_columns_path: str,
+    model_name: str,
+    device_num: int,
+    pooling_mode: str,
+) -> np.array:
 
-#     device = torch.device(device_num if torch.cuda.is_available() else "cpu")
-#     # Model setting
-#     model = set_model(model_name, pooling_mode, device)
+    device = torch.device(device_num if torch.cuda.is_available() else "cpu")
+    # Model setting
+    model = set_model(model_name, pooling_mode, device)
 
-#     # Get embeddings of titles in numpy array
-#     with torch.no_grad():
+    # Get embeddings of titles in numpy array
+    with torch.no_grad():
 
-#         embedding_list = model.encode_multi_process(
-#             cand_list,
-#             model.start_multi_process_pool(),
-#         )
-#         embedding_list = torch.from_numpy(embedding_list).to(device)
-#         # embedding_list = model.encode(
-#         #     cand_list,
-#         #     batch_size=4,
-#         #     show_progress_bar=True,
-#         #     convert_to_tensor=True,
-#         #     device=device,
-#         # )
-#     length = len(cand_list)
-#     sim_matrix = torch.zeros((length, length), device=device)
-#     for i in tqdm(range(length), desc="Get Sim-list"):
-#         similarity = F.cosine_similarity(embedding_list[i], embedding_list, dim=-1)
-#         sim_matrix[i] += similarity
-#         sim_matrix[i][i] = 0
+        embedding_list = model.encode_multi_process(
+            cand_list,
+            model.start_multi_process_pool(),
+        )
+        embedding_list = torch.from_numpy(embedding_list).to(device)
+        # embedding_list = model.encode(
+        #     cand_list,
+        #     batch_size=4,
+        #     show_progress_bar=True,
+        #     convert_to_tensor=True,
+        #     device=device,
+        # )
+    length = len(cand_list)
+    sim_matrix = torch.zeros((length, length), device=device)
+    for i in tqdm(range(length), desc="Get Sim-list"):
+        similarity = F.cosine_similarity(embedding_list[i], embedding_list, dim=-1)
+        sim_matrix[i] += similarity
+        sim_matrix[i][i] = 0
 
-#     sim_matrix = sim_matrix.cpu().numpy()
-#     argmax_columns = np.argmax(sim_matrix, axis=1)
-#     pickle.dump(obj=argmax_columns, file=open(argmax_columns_path, "wb"))
+    sim_matrix = sim_matrix.cpu().numpy()
+    argmax_columns = np.argmax(sim_matrix, axis=1)
+    pickle.dump(obj=argmax_columns, file=open(argmax_columns_path, "wb"))
 
-#     return argmax_columns
+    return argmax_columns
 
 
 # ----------------------ver.2----------------------------#
