@@ -2,7 +2,7 @@ BUILD:
   datadir: '../../data/origin_fake_news/Clickbait_Auto'
   savedir: '../../data/direct_exp/Part1/Clickbait_Auto'
   METHOD:
-    name: 'tfidf_content_category_select'
+    name: 'bow_content_category_select'
     bow_dir: '../../data/preprocessed/Clickbait_Auto/bow_sim_matrix'
     morphs_extract_dir: '../../data/preprocessed/Clickbait_Auto/morphs'
     sim_matrix_type: 'content'

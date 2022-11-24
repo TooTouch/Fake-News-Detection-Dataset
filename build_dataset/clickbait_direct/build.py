@@ -68,7 +68,6 @@ def make_fake_title(file_list: list, savedir: str, cfg_method: dict) -> None:
                 'category':category_name,
                 'file_list':file_list
             }
-
         elif cfg_method['name'] in ['bow_title_category_select', 'bow_content_category_select']:
             kwargs = {
                 'file_path':file_path,
@@ -118,7 +117,6 @@ def make_label(file_list: list, savedir: str) -> None:
             indent       = '\t',
             ensure_ascii = False
         )
-
 
 def preprocess(file_list: list, cfg_method: dict) -> None:
     '''
