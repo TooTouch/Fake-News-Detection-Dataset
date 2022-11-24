@@ -49,7 +49,6 @@ def sim_preprocess(category_list, file_list, bow_dir, morphs_extract_dir, morphs
         os.makedirs(bow_dir, exist_ok=True)
         
         morphs_extract_path = f'{morphs_extract_dir}/{category}_{morphs_type}_extracted.json'
-        os.makedirs(morphs_extract_path, exist_ok=True)
 
         save_bow_sim_matrix(file_list_cat,
                         category,
@@ -156,8 +155,6 @@ def save_bow_sim_matrix(file_list: list, category: str, bow_dir: str, morphs_ext
     '''
     make & save BoW similarity matrix + save argmax of BoW similarity matrix
     '''
-    morphs_extracted = json.load(open(morphs_extract_path, 'r'))
-    newsFile_paths = [item['newsFile_path'] for item in morphs_extracted.values()]
 
     # make & save BoW similarity matrix
     if not os.path.exists(f'{bow_dir}/{category}_BoW_titles_total.csv'):
@@ -182,6 +179,10 @@ def save_bow_sim_matrix(file_list: list, category: str, bow_dir: str, morphs_ext
     BoW_contents_sim_matrix[np.arange(BoW_contents_sim_matrix.shape[0]), np.arange(BoW_contents_sim_matrix.shape[0])] = -1
     title_sim_argmax = BoW_titles_sim_matrix.argmax(axis=1)
     content_sim_argmax = BoW_contents_sim_matrix.argmax(axis=1)
+
+
+    morphs_extracted = json.load(open(morphs_extract_path, 'r'))
+    newsFile_paths = [item['newsFile_path'] for item in morphs_extracted.values()]
 
     if not os.path.exists(f'{bow_dir}/sim_argmax.json'):
         sim_argmax = dict()
