@@ -10,7 +10,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 def bow_title_category_select(file_path: str,
                           sim_argmax: dict) -> str:
     """
-    select news title among file list using BoW between news title
+    select news title among file list using bow between news title
     """
     # select news title
     similar_newsFile_path = sim_argmax[file_path]['title']
@@ -27,7 +27,7 @@ def bow_title_category_select(file_path: str,
 def bow_content_category_select(file_path: str,
                           sim_argmax: dict) -> str:
     """
-    select news title among file list using BoW between news contents
+    select news title among file list using bow between news contents
     """
     # select news title
     similar_newsFile_path = sim_argmax[file_path]['content']
@@ -46,7 +46,7 @@ def sim_preprocess(category_list, file_list, bow_dir, morphs_extract_dir, morphs
 
         file_list_cat = [f for f in file_list if category in f]
 
-        # load BoW matrix
+        # load bow matrix
         os.makedirs(bow_dir, exist_ok=True)
         
         morphs_extract_path = f'{morphs_extract_dir}/{category}_{morphs_type}_extracted.json'
@@ -105,12 +105,12 @@ def count_words(news_TitleOrContent:list) -> dict:
     for word in news_TitleOrContent:  
         if word not in word_to_index.keys():
             word_to_index[word] = len(word_to_index)  
-            # add default 1 to BoW
+            # add default 1 to bow
             bow_vector.insert(len(word_to_index) - 1, 1)
         else:
             # get index of word already exists in word_to_index
             index = word_to_index.get(word)
-            # add 1 to BoW ofr word already exists in word_to_index
+            # add 1 to bow for word already exists in word_to_index
             bow_vector[index] = bow_vector[index] + 1
     for word in word_to_index.keys():
         bow[word]=bow_vector[word_to_index[word]]
@@ -133,8 +133,8 @@ def make_bag_of_words(file_list: list, category: str, bow_dir: str, morphs_extra
     newsContents = [item['newsContent'] for item in morphs_extracted.values()]
     newsFile_paths = [item['newsFile_path'] for item in morphs_extracted.values()]
 
-    BoW_titles={}
-    BoW_contents={}
+    bow_titles={}
+    bow_contents={}
     
     for i in tqdm(range(len(file_list))):
         newsID = list(morphs_extracted.keys())[i]
@@ -143,28 +143,28 @@ def make_bag_of_words(file_list: list, category: str, bow_dir: str, morphs_extra
         newsFile_path=newsFile_paths[i]       
         
         
-        BoW_titles[newsID] =count_words(newsTitle) #newsID 대신 newsFile_path를 넣어도 될 것 같다.
-        BoW_contents[newsID] = count_words(newsContent)
+        bow_titles[newsID] =count_words(newsTitle) #newsID 대신 newsFile_path를 넣어도 될 것 같다.
+        bow_contents[newsID] = count_words(newsContent)
 
-    BoW_titles_total=pd.DataFrame(BoW_titles).T.fillna(0)
-    BoW_contents_total=pd.DataFrame(BoW_contents).T.fillna(0)
+    bow_titles_total=pd.DataFrame(bow_titles).T.fillna(0)
+    bow_contents_total=pd.DataFrame(bow_contents).T.fillna(0)
 
-    BoW_titles_total.to_csv(f'{bow_dir}/{category}_BoW_titles_total.csv')
-    BoW_contents_total.to_csv(f'{bow_dir}/{category}_BoW_contents_total.csv')
+    bow_titles_total.to_csv(f'{bow_dir}/{category}_bow_titles_total.csv')
+    bow_contents_total.to_csv(f'{bow_dir}/{category}_bow_contents_total.csv')
 
-    return BoW_titles_total, BoW_contents_total
+    return bow_titles_total, bow_contents_total
 
 def save_bow_sim_matrix(file_list: list, category: str, bow_dir: str, morphs_extract_path: str, morphs_type: str='morphs') -> dict:
     '''
-    make & save BoW similarity matrix + save argmax of BoW similarity matrix
+    make & save bow similarity matrix + save argmax of bow similarity matrix
     '''
 
-    # make & save BoW similarity matrix
-    if not os.path.exists(f'{bow_dir}/{category}_BoW_titles_total.csv'):
-        BoW_titles_total, BoW_contents_total = make_bag_of_words(file_list, category, bow_dir, morphs_extract_path, morphs_type=morphs_type)
+    # make & save bow similarity matrix
+    if not os.path.exists(f'{bow_dir}/{category}_bow_titles_total.csv'):
+        bow_titles_total, bow_contents_total = make_bag_of_words(file_list, category, bow_dir, morphs_extract_path, morphs_type=morphs_type)
     else:
-        BoW_titles_total = pd.read_csv(f'{bow_dir}/{category}_BoW_titles_total.csv', index_col=0)
-        BoW_contents_total = pd.read_csv(f'{bow_dir}/{category}_BoW_contents_total.csv', index_col=0)
+        bow_titles_total = pd.read_csv(f'{bow_dir}/{category}_bow_titles_total.csv', index_col=0)
+        bow_contents_total = pd.read_csv(f'{bow_dir}/{category}_bow_contents_total.csv', index_col=0)
 
     bow_titles_total=bow_titles_total.to_numpy()
     bow_contents_total=bow_contents_total.to_numpy()
