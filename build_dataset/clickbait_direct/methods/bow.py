@@ -99,7 +99,7 @@ def count_words(news_TitleOrContent:list) -> dict:
     '''
     word_to_index = {}
     bow_vector= []
-    BoW={}
+    bow={}
     for word in news_TitleOrContent:  
         if word not in word_to_index.keys():
             word_to_index[word] = len(word_to_index)  
@@ -111,8 +111,8 @@ def count_words(news_TitleOrContent:list) -> dict:
             # add 1 to BoW ofr word already exists in word_to_index
             bow_vector[index] = bow_vector[index] + 1
     for word in word_to_index.keys():
-        BoW[word]=bow_vector[word_to_index[word]]
-    return BoW
+        bow[word]=bow_vector[word_to_index[word]]
+    return bow
 
 def make_bag_of_words(file_list: list, category: str, bow_dir: str, morphs_extract_path: str, morphs_type: str='morphs') -> dict:
     '''
@@ -163,22 +163,22 @@ def save_bow_sim_matrix(file_list: list, category: str, bow_dir: str, morphs_ext
         BoW_titles_total = pd.read_csv(f'{bow_dir}/{category}_BoW_titles_total.csv', index_col=0)
         BoW_contents_total = pd.read_csv(f'{bow_dir}/{category}_BoW_contents_total.csv', index_col=0)
 
-    BoW_titles_total=BoW_titles_total.to_numpy()
-    BoW_contents_total=BoW_contents_total.to_numpy()
+    bow_titles_total=bow_titles_total.to_numpy()
+    bow_contents_total=bow_contents_total.to_numpy()
     
-    BoW_titles_sim_matrix = cosine_similarity(BoW_titles_total)
-    BoW_contents_sim_matrix = cosine_similarity(BoW_contents_total)
-    BoW_titles_sim_path=f'{bow_dir}/BoW_titles_{category}_{morphs_type}.npy'
-    BoW_contents_sim_path=f'{bow_dir}/BoW_contents_{category}_{morphs_type}.npy'
+    bow_titles_sim_matrix = cosine_similarity(bow_titles_total)
+    bow_contents_sim_matrix = cosine_similarity(bow_contents_total)
+    bow_titles_sim_path=f'{bow_dir}/bow_titles_{category}_{morphs_type}.npy'
+    bow_contents_sim_path=f'{bow_dir}/bow_contents_{category}_{morphs_type}.npy'
 
-    np.save(BoW_titles_sim_path, BoW_titles_sim_matrix)
-    np.save(BoW_contents_sim_path, BoW_contents_sim_matrix)
+    np.save(bow_titles_sim_path, bow_titles_sim_matrix)
+    np.save(bow_contents_sim_path, bow_contents_sim_matrix)
 
-    # save argmax of BoW similarity matrix
-    BoW_titles_sim_matrix[np.arange(BoW_titles_sim_matrix.shape[0]), np.arange(BoW_titles_sim_matrix.shape[0])] = -1
-    BoW_contents_sim_matrix[np.arange(BoW_contents_sim_matrix.shape[0]), np.arange(BoW_contents_sim_matrix.shape[0])] = -1
-    title_sim_argmax = BoW_titles_sim_matrix.argmax(axis=1)
-    content_sim_argmax = BoW_contents_sim_matrix.argmax(axis=1)
+    # save argmax of bow similarity matrix
+    bow_titles_sim_matrix[np.arange(bow_titles_sim_matrix.shape[0]), np.arange(bow_titles_sim_matrix.shape[0])] = -1
+    bow_contents_sim_matrix[np.arange(bow_contents_sim_matrix.shape[0]), np.arange(bow_contents_sim_matrix.shape[0])] = -1
+    title_sim_argmax = bow_titles_sim_matrix.argmax(axis=1)
+    content_sim_argmax = bow_contents_sim_matrix.argmax(axis=1)
 
 
     morphs_extracted = json.load(open(morphs_extract_path, 'r'))
