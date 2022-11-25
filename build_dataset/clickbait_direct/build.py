@@ -123,8 +123,8 @@ def preprocess(file_list: list, category_list:list, cfg_method: dict) -> None:
     preprocess for clickbait direct
     '''
     if cfg_method['name'] in ['bow_title_category_select', 'bow_content_category_select']:
-        if not os.path.exists(os.path.join(cfg_method['bow_dir']+'/'+cfg_method['morphs_type'], 'sim_argmax.json')):
-            os.makedirs(cfg_method['bow_dir']/cfg_method['morphs_type'], exist_ok=True)
+        if not os.path.exists(os.path.join(cfg_method['bow_dir'], cfg_method['morphs_type'], 'sim_argmax.json')):
+            os.makedirs(os.path.join(cfg_method['bow_dir'], cfg_method['morphs_type']), exist_ok=True)
             kwargs = {
                 'category_list': category_list,
                 'file_list': file_list,

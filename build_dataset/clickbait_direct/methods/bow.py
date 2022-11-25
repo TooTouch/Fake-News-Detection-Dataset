@@ -47,8 +47,9 @@ def sim_preprocess(category_list, file_list, bow_dir, morphs_extract_dir, morphs
         file_list_cat = [f for f in file_list if category in f]
 
         # load bow matrix
-        os.makedirs(bow_dir/morphs_type, exist_ok=True)
+        os.makedirs(os.path.join(bow_dir, morphs_type), exist_ok=True)
         
+
         morphs_extract_path = f'{morphs_extract_dir}/{category}_{morphs_type}_extracted.json'
 
         save_bow_sim_matrix(file_list_cat,

@@ -3,14 +3,14 @@ BUILD:
   savedir: '../../data/direct_exp/Part1/bow_title_category_select/morphs'
   METHOD:
     name: 'bow_title_category_select'
-    bow_dir: '../../data/preprocessed/Clickbait_Auto/bow_sim_matrix'
-    morphs_extract_dir: '../../data/preprocessed/Clickbait_Auto/morphs'
+    bow_dir: '../../data/preprocessed/bow_sim_matrix'
+    morphs_extract_dir: '../../data/preprocessed/morphs'   
     sim_matrix_type: 'title'
     morphs_type: 'morphs'
 
 SPLIT:
   datadir: '../../data/origin_fake_news'
-  savedir: '../../data/direct_exp/Part1'
+  savedir: '../../data/direct_exp/Part1/bow_title_category_select/morphs'
   ratio:
     - 6 # train ratio
     - 2 # validation ratio
