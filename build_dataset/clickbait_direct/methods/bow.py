@@ -47,7 +47,7 @@ def sim_preprocess(category_list, file_list, bow_dir, morphs_extract_dir, morphs
         file_list_cat = [f for f in file_list if category in f]
 
         # load bow matrix
-        os.makedirs(bow_dir, exist_ok=True)
+        os.makedirs(bow_dir/morphs_type, exist_ok=True)
         
         morphs_extract_path = f'{morphs_extract_dir}/{category}_{morphs_type}_extracted.json'
 
@@ -57,7 +57,7 @@ def sim_preprocess(category_list, file_list, bow_dir, morphs_extract_dir, morphs
                         morphs_extract_path,
                         morphs_type)
 
-def morphs_extract(file_list: list, morphs_extract_path: str, morphs_type: str='morphs') -> dict:
+def morphs_extract(file_list: list, morphs_extract_path: str, morphs_type: str) -> dict:
     """
     extract morphs from news title
     """
@@ -116,7 +116,7 @@ def count_words(news_TitleOrContent:list) -> dict:
         bow[word]=bow_vector[word_to_index[word]]
     return bow
 
-def make_bag_of_words(file_list: list, category: str, bow_dir: str, morphs_extract_path: str, morphs_type: str='morphs') -> dict:
+def make_bag_of_words(file_list: list, category: str, bow_dir: str, morphs_extract_path: str, morphs_type: str) -> dict:
     '''
     from extracted morphs, build bag of words
     '''
@@ -149,30 +149,30 @@ def make_bag_of_words(file_list: list, category: str, bow_dir: str, morphs_extra
     bow_titles_total=pd.DataFrame(bow_titles).T.fillna(0)
     bow_contents_total=pd.DataFrame(bow_contents).T.fillna(0)
 
-    bow_titles_total.to_csv(f'{bow_dir}/{category}_bow_titles_total.csv')
-    bow_contents_total.to_csv(f'{bow_dir}/{category}_bow_contents_total.csv')
+    bow_titles_total.to_csv(f'{bow_dir}/{morphs_type}/{category}_bow_titles_total.csv')
+    bow_contents_total.to_csv(f'{bow_dir}/{morphs_type}/{category}_bow_contents_total.csv')
 
     return bow_titles_total, bow_contents_total
 
-def save_bow_sim_matrix(file_list: list, category: str, bow_dir: str, morphs_extract_path: str, morphs_type: str='morphs') -> dict:
+def save_bow_sim_matrix(file_list: list, category: str, bow_dir: str, morphs_extract_path: str, morphs_type: str) -> dict:
     '''
     make & save bow similarity matrix + save argmax of bow similarity matrix
     '''
 
     # make & save bow similarity matrix
-    if not os.path.exists(f'{bow_dir}/{category}_bow_titles_total.csv'):
-        bow_titles_total, bow_contents_total = make_bag_of_words(file_list, category, bow_dir, morphs_extract_path, morphs_type=morphs_type)
+    if not os.path.exists(f'{bow_dir}/{morphs_type}/{category}_bow_titles_total.csv'):
+        bow_titles_total, bow_contents_total = make_bag_of_words(file_list, category, bow_dir, morphs_extract_path, morphs_type)
     else:
-        bow_titles_total = pd.read_csv(f'{bow_dir}/{category}_bow_titles_total.csv', index_col=0)
-        bow_contents_total = pd.read_csv(f'{bow_dir}/{category}_bow_contents_total.csv', index_col=0)
+        bow_titles_total = pd.read_csv(f'{bow_dir}/{morphs_type}/{category}_bow_titles_total.csv', index_col=0)
+        bow_contents_total = pd.read_csv(f'{bow_dir}/{morphs_type}/{category}_bow_contents_total.csv', index_col=0)
 
     bow_titles_total=bow_titles_total.to_numpy()
     bow_contents_total=bow_contents_total.to_numpy()
     
     bow_titles_sim_matrix = cosine_similarity(bow_titles_total)
     bow_contents_sim_matrix = cosine_similarity(bow_contents_total)
-    bow_titles_sim_path=f'{bow_dir}/bow_titles_{category}_{morphs_type}.npy'
-    bow_contents_sim_path=f'{bow_dir}/bow_contents_{category}_{morphs_type}.npy'
+    bow_titles_sim_path=f'{bow_dir}/{morphs_type}/{category}_bow_titles.npy'
+    bow_contents_sim_path=f'{bow_dir}/{morphs_type}/{category}_bow_contents.npy'
 
     np.save(bow_titles_sim_path, bow_titles_sim_matrix)
     np.save(bow_contents_sim_path, bow_contents_sim_matrix)
@@ -187,13 +187,13 @@ def save_bow_sim_matrix(file_list: list, category: str, bow_dir: str, morphs_ext
     morphs_extracted = json.load(open(morphs_extract_path, 'r'))
     newsFile_paths = [item['newsFile_path'] for item in morphs_extracted.values()]
 
-    if not os.path.exists(f'{bow_dir}/sim_argmax.json'):
+    if not os.path.exists(f'{bow_dir}/{morphs_type}/sim_argmax.json'):
         sim_argmax = dict()
     else:
-        sim_argmax = json.load(open(f'{bow_dir}/sim_argmax.json', 'r'))
+        sim_argmax = json.load(open(f'{bow_dir}/{morphs_type}/sim_argmax.json', 'r'))
     for file_path, ts_index, cs_index in zip(newsFile_paths, title_sim_argmax, content_sim_argmax):
         sim_argmax.setdefault(category, {})
         sim_argmax[category][file_path] = {'title': newsFile_paths[ts_index],
                                            'content': newsFile_paths[cs_index]}
-    json.dump(sim_argmax, open(f'{bow_dir}/sim_argmax.json', 'w'), indent=4)
+    json.dump(sim_argmax, open(f'{bow_dir}/{morphs_type}/sim_argmax.json', 'w'), indent=4)
     

@@ -1,6 +1,6 @@
 BUILD:
   datadir: '../../data/origin_fake_news/Clickbait_Auto'
-  savedir: '../../data/direct_exp/Part1/Clickbait_Auto'
+  savedir: '../../data/direct_exp/Part1/bow_title_category_select/morphs'
   METHOD:
     name: 'bow_title_category_select'
     bow_dir: '../../data/preprocessed/Clickbait_Auto/bow_sim_matrix'
