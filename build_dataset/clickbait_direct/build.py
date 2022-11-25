@@ -118,7 +118,7 @@ def make_label(file_list: list, savedir: str) -> None:
             ensure_ascii = False
         )
 
-def preprocess(file_list: list, cfg_method: dict) -> None:
+def preprocess(file_list: list, category_list:list, cfg_method: dict) -> None:
     '''
     preprocess for clickbait direct
     '''
@@ -159,7 +159,7 @@ if __name__ == '__main__':
     # load file list
     file_list = glob(os.path.join(cfg['BUILD']['datadir'], '*/*'))
 
-    preprocess(file_list, cfg['BUILD']['METHOD'])
+    preprocess(file_list, category_list, cfg['BUILD']['METHOD'])
     
     # run
     if cfg['BUILD'].get('METHOD',False):
