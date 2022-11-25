@@ -3,6 +3,7 @@ import pandas as pd
 import json
 import os
 from konlpy.tag import Okt
+import re
 from tqdm.auto import tqdm
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -63,14 +64,15 @@ def morphs_extract(file_list: list, morphs_extract_path: str, morphs_type: str='
     morphs_extracted = dict()
 
     print('extracting morphemes...')
+    RE_FILTER = re.compile("[\[.\],!?\"':;~()]")
 
     for file_path in tqdm(file_list):
         # load source file
         source_file = json.load(open(file_path, "r"))
 
         newsID = source_file['sourceDataInfo']['newsID']
-        newsTitle = source_file['sourceDataInfo']['newsTitle']
-        newsContent = source_file['sourceDataInfo']['newsContent']
+        newsTitle = re.sub(RE_FILTER, "",source_file['sourceDataInfo']['newsTitle'])
+        newsContent = re.sub(RE_FILTER, "",source_file['sourceDataInfo']['newsContent'])
 
         # extract morphs
         okt = Okt()
@@ -139,6 +141,7 @@ def make_bag_of_words(file_list: list, category: str, bow_dir: str, morphs_extra
         newsTitle=newsTitles[i].split()
         newsContent=newsContents[i].split()
         newsFile_path=newsFile_paths[i]       
+        
         
         BoW_titles[newsID] =count_words(newsTitle) #newsID 대신 newsFile_path를 넣어도 될 것 같다.
         BoW_contents[newsID] = count_words(newsContent)
