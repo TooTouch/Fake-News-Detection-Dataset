@@ -68,7 +68,7 @@ def morphs_extract(file_list: list, morphs_extract_path: str, morphs_type: str) 
     morphs_extracted = dict()
 
     print('extracting morphemes...')
-    RE_FILTER = re.compile("[\[.\],&+-!?\"':;~()]") #&+-
+    RE_FILTER = re.compile("[\[.\],&+!?\"':;~()]") #&+-
 
     for file_path in tqdm(file_list):
         # load source file
