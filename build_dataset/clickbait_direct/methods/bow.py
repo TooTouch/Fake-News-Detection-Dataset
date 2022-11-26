@@ -68,7 +68,7 @@ def morphs_extract(file_list: list, morphs_extract_path: str, morphs_type: str) 
     morphs_extracted = dict()
 
     print('extracting morphemes...')
-    RE_FILTER = re.compile("[\[.\],!?\"':;~()]") #&+-
+    RE_FILTER = re.compile("[\[.\],&+-!?\"':;~()]") #&+-
 
     for file_path in tqdm(file_list):
         # load source file
@@ -159,7 +159,7 @@ def make_bag_of_words(file_list: list, category: str, bow_dir: str, morphs_extra
         newsContent=newsContents[i].split()
         newsFile_path=newsFile_paths[i]       
         
-        bow_titles[newsID] =count_words(newsTitle).
+        bow_titles[newsID] =count_words(newsTitle)
         bow_contents[newsID] = count_words(newsContent)
 
     bow_titles_total=concat_bow(bow_titles)
