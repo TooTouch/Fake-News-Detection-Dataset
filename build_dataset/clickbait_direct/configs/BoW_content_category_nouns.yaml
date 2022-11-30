@@ -1,6 +1,6 @@
 BUILD:
   datadir: '../../data/origin_fake_news/Clickbait_Auto'
-  savedir: '../../data/direct_exp/Part1/bow_content_category_select/nouns'
+  savedir: '../../data/direct_exp/Part1/Clickbait_Auto'
   METHOD:
     name: 'bow_content_category_select'
     bow_dir: '../../data/preprocessed/bow_sim_matrix'
@@ -10,7 +10,7 @@ BUILD:
 
 SPLIT:
   datadir: '../../data/origin_fake_news'
-  savedir: '../../data/direct_exp/Part1/bow_content_category_select/nouns'
+  savedir: '../../data/direct_exp/Part1'
   ratio:
     - 6 # train ratio
     - 2 # validation ratio

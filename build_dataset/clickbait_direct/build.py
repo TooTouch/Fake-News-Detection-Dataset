@@ -133,6 +133,17 @@ def preprocess(file_list: list, category_list:list, cfg_method: dict) -> None:
                 'morphs_type': cfg_method['morphs_type'],
             }
             __import__('methods').__dict__['sim_preprocess'](**kwargs)
+        else:
+            print('sim_argmax.json already exists')
+            kwargs = {
+                'category_list': category_list,
+                'file_list': file_list,
+                'bow_dir': cfg_method['bow_dir'],
+                'morphs_extract_dir': cfg_method['morphs_extract_dir'],
+                'morphs_type': cfg_method['morphs_type'],
+            }
+            __import__('methods').__dict__['sim_preprocess'](**kwargs)
+
     else:
         pass
 
@@ -159,10 +170,9 @@ if __name__ == '__main__':
     # load file list
     file_list = glob(os.path.join(cfg['BUILD']['datadir'], '*/*'))
 
-    preprocess(file_list, category_list, cfg['BUILD']['METHOD'])
-    
     # run
     if cfg['BUILD'].get('METHOD',False):
+        preprocess(file_list, category_list, cfg['BUILD']['METHOD'])
         make_fake_title(
             file_list  = file_list, 
             savedir    = cfg['BUILD']['savedir'], 
