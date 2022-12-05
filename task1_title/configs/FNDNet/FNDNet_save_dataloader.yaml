@@ -4,7 +4,7 @@ SEED: 223
 DATASET:
     name: FNDNet
     data_path: ../data/direct_exp/Part1 # news article directory
-    data_info_path: ../data/direct_exp/Part1/random_select # splitted csv file director
+    data_info_path: ../data/direct_exp/Part1/sentence_embedding_contents # splitted csv file director
     saved_data_path: false
     PARAMETERS:
         max_word_len: 1000
@@ -21,4 +21,4 @@ TRAIN:
 
 RESULT:
     savedir: ../data/direct_exp/Part1
-    dataname: 'FNDNet_w1000-random_select'
+    dataname: 'FNDNet_w1000-sentence_embedding_contents'

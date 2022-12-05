@@ -1,4 +1,4 @@
-EXP_NAME: HAN_w_freeze_w2e-random_category_select
+EXP_NAME: HAN_w_freeze_w2e-sentence_embedding_contents
 SEED: 223
 
 MODE:
@@ -12,8 +12,8 @@ MODE:
 DATASET:
     name: HAN
     data_path: ../data/direct_exp/Part1 # news article directory
-    data_info_path: ../data/direct_exp/Part1/random_category_select # splitted csv file director
-    saved_data_path: ../data/direct_exp/Part1/HAN_s16_w64-random_category_select
+    data_info_path: ../data/direct_exp/Part1/sentence_embedding_contents # splitted csv file director
+    saved_data_path: ../data/direct_exp/Part1/HAN_s16_w64-sentence_embedding_contents
     PARAMETERS:
         max_sent_len: 16
         max_word_len: 64
@@ -36,7 +36,7 @@ MODEL:
         embed_dims: 100
     CHECKPOINT:
         pretrained: False
-        checkpoint_path: ./saved_model/HAN_w_freeze_w2e-random_category_select/best_model.pt
+        checkpoint_path: ./saved_model/HAN_w_freeze_w2e-sentence_embedding_contents/best_model.pt
 
 TRAIN:
     batch_size: 256

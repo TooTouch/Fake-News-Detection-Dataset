@@ -83,6 +83,7 @@ def make_fake_title(
                 argmax_columns = pickle.load(open(argmax_columns_path, "rb"))
 
             elif not os.path.isfile(argmax_columns_path):
+                print(f"category:{category_name}")
                 argmax_columns = None
 
             kwargs = {
@@ -92,6 +93,7 @@ def make_fake_title(
                 "argmax_columns_path": argmax_columns_path,
                 "model_name": cfg_method["model_name"],
                 "device_num": cfg_method["device_num"],
+                "batch_size": cfg_method["batch_size"],
             }
 
         fake_title = __import__("methods").__dict__[cfg_method["name"]](**kwargs)
