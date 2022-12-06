@@ -29,7 +29,7 @@ def sim_preprocess(category_list: list,
     for category in tqdm(category_list):
         file_list_cat = [f for f in file_list if category in f]
         os.makedirs(sim_argmax_dir, exist_ok=True)
-        morphs_extract_path = f'{morphs_extract_dir}/{category}_morphs_extracted.json'
+        morphs_extract_path = os.path.join(morphs_extract_dir,f'{category}_morphs_extracted.json')
         save_sim_argmax(file_list_cat,
                         category,
                         sim_argmax_dir,
@@ -52,23 +52,42 @@ def save_sim_argmax(file_list: list,
         print(f"morphs_extract_path {morphs_extract_path.split('/')[-1]} found")
         morphs_extracted = json.load(open(morphs_extract_path, 'r'))
 
+    # extract titles, contents, and file path
     newsTitles = [item['newsTitle'] for item in morphs_extracted.values()]
     newsContents = [item['newsContent'] for item in morphs_extracted.values()]
     newsFile_paths = [item['newsFile_path'] for item in morphs_extracted.values()]
 
-    title_sim_matrix = make_sim_matrix(newsTitles)
-    title_sim_argmax = title_sim_matrix.argmax(axis=1)
+    # ngram setting
+    ngram_set_title = [ngram_set(text, n_list=[2,3]) for text in tqdm(newsTitles)]
+    ngram_set_content = [ngram_set(text, n_list=[2,3]) for text in tqdm(newsContents)]
 
+    # make similarity matrix
     if not os.path.exists(f'{sim_argmax_dir}/sim_argmax.json'):
         sim_argmax = dict()
+        sim_argmax.setdefault(category, {})
     else:
         sim_argmax = json.load(open(f'{sim_argmax_dir}/sim_argmax.json', 'r'))
+
+    ## title
+    title_sim_matrix = make_sim_matrix(ngram_set_title)
+    title_sim_argmax = title_sim_matrix.argmax(axis=1)
+
     for file_path, ts_index in zip(newsFile_paths, title_sim_argmax):
-        sim_argmax.setdefault(category, {})
-        sim_argmax[category][file_path] = {'title': newsFile_paths[ts_index]}
-        
+        sim_argmax[category].setdefault(file_path, {})
+        sim_argmax[category][file_path]['title'] = newsFile_paths[ts_index]
+
     json.dump(sim_argmax, open(f'{sim_argmax_dir}/sim_argmax.json', 'w'), indent=4)
 
+    ## content
+    content_sim_matrix = make_sim_matrix(ngram_set_content)
+    content_sim_argmax = content_sim_matrix.argmax(axis=1)
+
+    for file_path, cs_index in zip(newsFile_paths, content_sim_argmax):
+        sim_argmax[category][file_path]['content'] = newsFile_paths[cs_index]
+
+    json.dump(sim_argmax, open(f'{sim_argmax_dir}/sim_argmax.json', 'w'), indent=4)
+    
+            
 
 def morphs_extract(file_list: list, morphs_extract_path: str, morphs_type: str) -> dict:
     """
@@ -89,8 +108,8 @@ def morphs_extract(file_list: list, morphs_extract_path: str, morphs_type: str) 
         # extract morphs
         okt = Okt()
         morphs_extracted[newsID] = {
-            'newsTitle': eval(f"' '.join(okt.{morphs_type}(newsTitle))"),
-            'newsContent': eval(f"' '.join(okt.{morphs_type}(newsContent))"),
+            'newsTitle': eval(f"okt.{morphs_type}(newsTitle)"),
+            'newsContent': eval(f"okt.{morphs_type}(newsContent)"),
             'newsFile_path': file_path
         }
 
@@ -103,39 +122,38 @@ def morphs_extract(file_list: list, morphs_extract_path: str, morphs_type: str) 
     return morphs_extracted
 
 
-def make_sim_matrix(texts: list) -> np.ndarray:
-    sim_matrix = [[[] for i in range(len(texts))] for j in range(len(texts))]
+def make_sim_matrix(ngram_set: list) -> np.ndarray:
+    nb_set = len(ngram_set)
+    sim_matrix = np.zeros((nb_set, nb_set), dtype=np.float16)
     
-    for idx1, text in enumerate(tqdm(texts)):
-        sim_matrix[idx1][idx1] = 0
-        for idx2 in range(idx1+1, len(texts)):
-            score = round(get_ngram_score(text, texts[idx2], 2, 3), 4)
+    for idx1 in tqdm(range(nb_set)):
+        for idx2 in range(idx1+1, nb_set):
+            score = get_ngram_score(
+                ngram_set1 = ngram_set[idx1], 
+                ngram_set2 = ngram_set[idx2]
+            )
             sim_matrix[idx1][idx2] = score
             sim_matrix[idx2][idx1] = score
 
-    return np.array(sim_matrix)
+    return sim_matrix
 
 
-def get_ngram_score(text1: str, text2: str, n_min: int, n_max: int) -> float:
-    n_gram_scores = []
-    for n in range(n_min, n_max+1):
-        n_gram_scores.append(diff_ngram(text1, text2, n))
-    return sum(n_gram_scores) / 2
+def get_ngram_score(ngram_set1: list, ngram_set2: list) -> float:
+    n_gram_scores = [diff_ngram(ngram1, ngram2) for ngram1, ngram2 in zip(ngram_set1, ngram_set2)]
+        
+    return sum(n_gram_scores) / len(ngram_set1)
 
 
-def diff_ngram(text1: str, text2: str, n: int) -> float:
-    text1_ngram = ngram(text1, n)
-    text2_ngram = ngram(text2, n)
-    overlap_ngram = set(text1_ngram) & set(text2_ngram)
-    try:
-        return (2*len(overlap_ngram)) / (len(text1_ngram)+len(text2_ngram))
-    except ZeroDivisionError:
-        return 0
-    
+def diff_ngram(ngram1: list, ngram2: list) -> float:
+    overlap_ngram = ngram1 & ngram2
+
+    return (2*len(overlap_ngram)) / (len(ngram1)+len(ngram2))
+
 def ngram(text: str, n: int) -> list:
-    ngrams = []
     text_len = len(text) - n + 1
-    for i in range(text_len):
-        text_n = text[i:i+n]
-        ngrams.append(text_n)
+    ngrams = [tuple(text[i:i+n]) for i in range(text_len)]
+    
     return ngrams
+
+def ngram_set(text: str, n_list: list) -> list:
+    return [set(ngram(text, n)) for n in n_list]
