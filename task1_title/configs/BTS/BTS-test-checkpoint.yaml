@@ -1,4 +1,4 @@
-EXP_NAME: BTS-Part1
+EXP_NAME: BTS-sentence_embedding_contents
 SEED: 223
 
 MODE:
@@ -11,8 +11,9 @@ MODE:
 
 DATASET:
     name: BTS
-    data_path: ../data/labeled_fake_news/Part1 # news article directory
-    saved_data_path: ../data/labeled_fake_news/Part1/BTS_w512
+    data_path: ../data/direct_exp/Part1 # news article directory
+    data_info_path: ../data/direct_exp/Part1/sentence_embedding_contents # splitted csv file director
+    saved_data_path: ../data/direct_exp/Part1/BTS_w512-sentence_embedding_contents
     PARAMETERS:
         max_word_len: 512
 
@@ -26,7 +27,7 @@ MODEL:
         num_classes: 2
     CHECKPOINT:
         pretrained: False
-        checkpoint_path: ./saved_model/BTS-Part1/best_model.pt
+        checkpoint_path: ./saved_model/BTS-sentence_embedding_contents/best_model.pt
 
 TRAIN:
     batch_size: 64

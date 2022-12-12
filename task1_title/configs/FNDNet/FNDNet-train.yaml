@@ -7,8 +7,14 @@ MODE:
     
 DATASET:
     name: FNDNet
+<<<<<<< HEAD:task1_title/configs/FNDNet/FNDNet-train.yaml
     data_path: ../data/labeled_fake_news/Part1 # news article directory
     saved_data_path: ../data/labeled_fake_news/Part1/FNDNet_w1000
+=======
+    data_path: ../data/direct_exp/Part1 # news article directory
+    data_info_path: ../data/direct_exp/Part1/sentence_embedding # splitted csv file director
+    saved_data_path: ../data/one-cycle/Part1/FNDNet_w1000
+>>>>>>> 04b7ae4e9825729d357b7c32fa9c15e7f919f4e9:task1_title/configs/FNDNet/FNDNet_wo_freeze_w2e-train.yaml
     PARAMETERS:
         max_word_len: 1000
 

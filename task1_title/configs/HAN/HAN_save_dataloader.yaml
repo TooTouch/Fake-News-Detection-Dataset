@@ -3,7 +3,12 @@ SEED: 223
     
 DATASET:
     name: HAN
+<<<<<<< HEAD
     data_path: ../data/labeled_fake_news/Part1 # news article directory
+=======
+    data_path: ../data/direct_exp/Part1 # news article directory
+    data_info_path: ../data/direct_exp/Part1/sentence_embedding_contents # splitted csv file director
+>>>>>>> 04b7ae4e9825729d357b7c32fa9c15e7f919f4e9
     saved_data_path: false
     PARAMETERS:  
         max_sent_len: 16
@@ -19,5 +24,10 @@ TRAIN:
     num_workers: 12
 
 RESULT:
+<<<<<<< HEAD
     savedir: ../data/labeled_fake_news/Part1
     dataname: 'HAN_s16_w64'
+=======
+    savedir: ../data/direct_exp/Part1
+    dataname: 'HAN_s16_w64-sentence_embedding_contents'
+>>>>>>> 04b7ae4e9825729d357b7c32fa9c15e7f919f4e9
