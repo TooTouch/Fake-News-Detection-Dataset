@@ -1,12 +1,10 @@
 import numpy as np
-import pandas as pd
 import json
 import os
 from konlpy.tag import Okt
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from tqdm.auto import tqdm
-import pdb
 
 
 def tfidf_title_category_select(file_path: str,
@@ -20,8 +18,6 @@ def tfidf_title_category_select(file_path: str,
     # target file
     target_file = json.load(open(similar_newsFile_path, 'r'))
     fake_title = target_file['sourceDataInfo']['newsTitle']
-    # print(f"orgin_title: {json.load(open(file_path, 'r'))['sourceDataInfo']['newsTitle']}")
-    # print(f'fake_title: {fake_title}')
 
     return fake_title
 
@@ -37,8 +33,6 @@ def tfidf_content_category_select(file_path: str,
     # target file
     target_file = json.load(open(similar_newsFile_path, 'r'))
     fake_title = target_file['sourceDataInfo']['newsTitle']
-    # print(f"orgin_title: {json.load(open(file_path, 'r'))['sourceDataInfo']['newsTitle']}")
-    # print(f'fake_title: {fake_title}')
 
     return fake_title
 
@@ -123,9 +117,6 @@ def make_sim_matrix(text: list) -> np.ndarray:
     make similarity matrix using tfidf similarity
     """
     tf_idf_model = TfidfVectorizer().fit(text)
-    # word_id_list = sorted(tf_idf_model.vocabulary_.items(), key=lambda x: x[1], reverse=False)
-    # word_list = [x[0] for x in word_id_list]
-
     tf_idf_df = tf_idf_model.transform(text).toarray()
     cos_sim = cosine_similarity(tf_idf_df, tf_idf_df)
 
