@@ -1,4 +1,4 @@
-EXP_NAME: HAN-Part1
+EXP_NAME: HAN_wo_freeze_w2e
 SEED: 223
 
 MODE:
@@ -6,19 +6,14 @@ MODE:
     do_test: True
     test_list:
         - train
-        - validation
+        - valid
         - test
-    
+        
 DATASET:
     name: HAN
-<<<<<<< HEAD:task1_title/configs/HAN/HAN-test-checkpoint.yaml
-    data_path: ../data/labeled_fake_news/Part1 # news article directory
-    saved_data_path: ../data/labeled_fake_news/Part1/HAN_s16_w64
-=======
     data_path: ../data/direct_exp/Part1 # news article directory
-    data_info_path: ../data/direct_exp/Part1/sentence_embedding_contents # splitted csv file director
+    data_info_path: ../data/direct_exp/Part1/random_select # splitted csv file director
     saved_data_path: ../data/one-cycle/Part1/HAN_s16_w64
->>>>>>> 04b7ae4e9825729d357b7c32fa9c15e7f919f4e9:task1_title/configs/HAN/HAN_w_freeze_w2e-test-pretrained.yaml
     PARAMETERS:
         max_sent_len: 16
         max_word_len: 64
@@ -30,7 +25,7 @@ TOKENIZER:
 
 MODEL:
     modelname: han
-    freeze_word_embed: True
+    freeze_word_embed: False
     use_pretrained_word_embed: True
     PARAMETERS:
         num_classes: 2
@@ -41,7 +36,7 @@ MODEL:
         embed_dims: 100
     CHECKPOINT:
         pretrained: False
-        checkpoint_path: ./saved_model/HAN-Part1/best_model.pt
+        checkpoint_path: ./saved_model/HAN_wo_freeze_w2e/best_model.pt
 
 TRAIN:
     batch_size: 256
