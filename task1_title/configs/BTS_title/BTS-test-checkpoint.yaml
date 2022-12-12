@@ -1,0 +1,41 @@
+EXP_NAME: BTS-bow_title_category_select
+SEED: 223
+
+MODE:
+    do_train: False
+    do_test: True
+    test_list:
+        - train
+        - valid
+        - test
+
+DATASET:
+    name: BTS
+    data_path: ../data/direct_exp/Part1 # news article directory
+    data_info_path: ../data/direct_exp/Part1/bow_title_category_select # splitted csv file director
+    saved_data_path: ../data/direct_exp/Part1/BTS_w512-bow_title_category_select
+    PARAMETERS:
+        max_word_len: 512
+
+TOKENIZER:
+    name: bert
+
+MODEL:
+    modelname: bts
+    PARAMETERS:
+        pretrained_name: 'skt/kobert-base-v1'
+        num_classes: 2
+    CHECKPOINT:
+        pretrained: False
+        checkpoint_path: ./saved_model/BTS-bow_title_category_select/best_model.pt
+
+TRAIN:
+    batch_size: 64
+    num_workers: 12
+
+LOG:
+    log_interval: 10
+
+RESULT:
+    savedir: './saved_model'
+    result_name: results

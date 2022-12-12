@@ -1,0 +1,24 @@
+EXP_NAME: HAN_w_freeze_w2e-bow_title_category_select
+SEED: 223
+    
+DATASET:
+    name: HAN
+    data_path: ../data/direct_exp/Part1 # news article directory
+    data_info_path: ../data/direct_exp/Part1/bow_title_category_select # splitted csv file director
+    saved_data_path: false
+    PARAMETERS:  
+        max_sent_len: 16
+        max_word_len: 64
+
+TOKENIZER: 
+    name: mecab
+    vocab_path: ./word-embeddings/glove/glove.txt
+    max_vocab_size: 50000  
+
+TRAIN:
+    batch_size: 256
+    num_workers: 12
+
+RESULT:
+    savedir: ../data/direct_exp/Part1
+    dataname: 'HAN_s16_w64-bow_title_category_select'

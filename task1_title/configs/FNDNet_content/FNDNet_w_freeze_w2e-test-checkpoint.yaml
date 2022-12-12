@@ -1,0 +1,48 @@
+EXP_NAME: FNDNet_w_freeze_w2e-bow_content_category_select
+SEED: 223
+
+MODE:
+    do_train: False
+    do_test: True
+    test_list:
+        - train
+        - valid
+        - test
+    
+DATASET:
+    name: FNDNet
+    data_path: ../data/direct_exp/Part1 # news article directory
+    data_info_path: ../data/direct_exp/Part1/bow_content_category_select # splitted csv file director
+    saved_data_path: ../data/direct_exp/Part1/FNDNet_w1000-bow_content_category_select
+    PARAMETERS:
+        max_word_len: 1000
+
+TOKENIZER: 
+    name: mecab
+    vocab_path: ./word-embeddings/glove/glove.txt
+    max_vocab_size: 50000  
+    
+MODEL:
+    modelname: fndnet
+    freeze_word_embed: True
+    use_pretrained_word_embed: True
+    PARAMETERS:
+        num_classes: 2
+        vocab_len: 50002
+        dims: 128
+        embed_dims: 100
+        dropout: 0.2
+    CHECKPOINT:
+        pretrained: False
+        checkpoint_path: ./saved_model/FNDNet_w_freeze_w2e-bow_content_category_select/best_model.pt
+
+TRAIN:
+    batch_size: 256
+    num_workers: 12
+
+LOG:
+    log_interval: 10
+
+RESULT:
+    savedir: './saved_model'
+    result_name: results
