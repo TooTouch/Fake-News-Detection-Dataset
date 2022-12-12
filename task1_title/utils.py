@@ -27,7 +27,7 @@ def convert_device(inputs, device):
 
 def extract_wrong_ratio(df):
     # extract category: Clickbait_Auto, Clickbait_Direct, NoneClickbait_Auto
-    df['category'] = df['filename'].apply(lambda x: x.split('/')[0])
+    df['category'] = df['filename'].apply(lambda x: os.path.basename(os.path.abspath(os.path.join(x, '../../'))))
 
     # wonrg case
     df_incorrect = df[df.targets!=df.preds]
@@ -50,9 +50,9 @@ def extract_wrong_ratio(df):
 
 
 def select_wrong_case_topN(df, cat, n):
-    assert cat in ['Clickbait_Direct','Clickbait_Auto','NonClickbait_Auto'], "cat should be either 'Clickbait_Direct','Clickbait_Auto','NonClickbait_Auto'"
+    assert cat in ['ClickBait_Direct_Part1','Clickbait_Auto','NonClickbait_Auto'], "cat should be either 'Clickbait_Direct','Clickbait_Auto','NonClickbait_Auto'"
     # define wrong pred 
-    if cat in ['Clickbait_Direct','Clickbait_Auto']:
+    if cat in ['ClickBait_Direct_Part1','Clickbait_Auto']:
         pred = 0
     elif cat == 'NonClickbait_Auto':
         pred = 1
