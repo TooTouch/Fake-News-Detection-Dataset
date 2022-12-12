@@ -43,10 +43,6 @@ def make_fake_title(file_list: list, savedir: str, cfg_method: dict) -> None:
     '''
     make fake title using selected method
     '''
-
-    if cfg_method['name'] in ['tfidf_title_category_select', 'tfidf_content_category_select']:
-        preload_sim_argmax = json.load(open(f"{cfg_method['matrix_dir']}/sim_argmax.json", 'r'))
-
     for file_path in tqdm(file_list):
 
         # source file name and category
@@ -67,11 +63,6 @@ def make_fake_title(file_list: list, savedir: str, cfg_method: dict) -> None:
                 'file_path':file_path,
                 'category':category_name,
                 'file_list':file_list
-            }
-        elif cfg_method['name'] in ['tfidf_title_category_select', 'tfidf_content_category_select']:
-            kwargs = {
-                'file_path':file_path,
-                'sim_argmax':preload_sim_argmax[category_name]
             }
 
         fake_title = __import__('methods').__dict__[cfg_method['name']](**kwargs)
@@ -118,24 +109,6 @@ def make_label(file_list: list, savedir: str) -> None:
             ensure_ascii = False
         )
 
-def preprocess(file_list: list, cfg_method: dict) -> None:
-    '''
-    preprocess for clickbait direct
-    '''
-    if cfg_method['name'] in ['tfidf_title_category_select', 'tfidf_content_category_select']:
-        if not os.path.exists(os.path.join(cfg_method['matrix_dir'], 'sim_argmax.json')):
-            os.makedirs(cfg_method['matrix_dir'], exist_ok=True)
-            kwargs = {
-                'category_list': category_list,
-                'file_list': file_list,
-                'matrix_dir': cfg_method['matrix_dir'],
-                'morphs_extract_dir': cfg_method['morphs_extract_dir'],
-                'morphs_type': cfg_method['morphs_type'],
-            }
-            __import__('methods').__dict__['sim_preprocess'](**kwargs)
-    else:
-        pass
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -159,13 +132,11 @@ if __name__ == '__main__':
     # load file list
     file_list = glob(os.path.join(cfg['BUILD']['datadir'], '*/*'))
 
-    preprocess(file_list, cfg['BUILD']['METHOD'])
-
     # run
     if cfg['BUILD'].get('METHOD',False):
         make_fake_title(
-            file_list  = file_list,
-            savedir    = cfg['BUILD']['savedir'],
+            file_list  = file_list, 
+            savedir    = cfg['BUILD']['savedir'], 
             cfg_method = cfg['BUILD']['METHOD']
         )
     else:
