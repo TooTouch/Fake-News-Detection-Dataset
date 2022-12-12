@@ -43,12 +43,8 @@ def make_fake_title(file_list: list, savedir: str, cfg_method: dict) -> None:
     '''
     make fake title using selected method
     '''
-
-    if cfg_method['name'] in ['bow_title_category_select', 'bow_content_category_select']:
-        preload_sim_argmax = json.load(open(f"{cfg_method['bow_dir']}/{cfg_method['morphs_type']}/sim_argmax.json", 'r')) ##
-
     for file_path in tqdm(file_list):
-        
+
         # source file name and category
         category_name = os.path.basename(os.path.dirname(file_path))
         file_name = os.path.basename(file_path)
@@ -68,14 +64,9 @@ def make_fake_title(file_list: list, savedir: str, cfg_method: dict) -> None:
                 'category':category_name,
                 'file_list':file_list
             }
-        elif cfg_method['name'] in ['bow_title_category_select', 'bow_content_category_select']:
-            kwargs = {
-                'file_path':file_path,
-                'sim_argmax':preload_sim_argmax[category_name]
-            }
 
         fake_title = __import__('methods').__dict__[cfg_method['name']](**kwargs)
-        
+
         # update label infomation
         source_file = update_label_info(file=source_file, new_title=fake_title)
         
@@ -118,35 +109,6 @@ def make_label(file_list: list, savedir: str) -> None:
             ensure_ascii = False
         )
 
-def preprocess(file_list: list, category_list:list, cfg_method: dict) -> None:
-    '''
-    preprocess for clickbait direct
-    '''
-    if cfg_method['name'] in ['bow_title_category_select', 'bow_content_category_select']:
-        if not os.path.exists(os.path.join(cfg_method['bow_dir'], cfg_method['morphs_type'], 'sim_argmax.json')):
-            os.makedirs(os.path.join(cfg_method['bow_dir'], cfg_method['morphs_type']), exist_ok=True)
-            kwargs = {
-                'category_list': category_list,
-                'file_list': file_list,
-                'bow_dir': cfg_method['bow_dir'],
-                'morphs_extract_dir': cfg_method['morphs_extract_dir'],
-                'morphs_type': cfg_method['morphs_type'],
-            }
-            __import__('methods').__dict__['sim_preprocess'](**kwargs)
-        else:
-            print('sim_argmax.json already exists')
-            kwargs = {
-                'category_list': category_list,
-                'file_list': file_list,
-                'bow_dir': cfg_method['bow_dir'],
-                'morphs_extract_dir': cfg_method['morphs_extract_dir'],
-                'morphs_type': cfg_method['morphs_type'],
-            }
-            __import__('methods').__dict__['sim_preprocess'](**kwargs)
-
-    else:
-        pass
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -172,7 +134,6 @@ if __name__ == '__main__':
 
     # run
     if cfg['BUILD'].get('METHOD',False):
-        preprocess(file_list, category_list, cfg['BUILD']['METHOD'])
         make_fake_title(
             file_list  = file_list, 
             savedir    = cfg['BUILD']['savedir'], 
