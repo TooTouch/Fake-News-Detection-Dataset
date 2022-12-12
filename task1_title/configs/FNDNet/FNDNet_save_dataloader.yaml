@@ -1,14 +1,10 @@
-EXP_NAME: FNDNet
+EXP_NAME: FNDNet_w_freeze_w2e
 SEED: 223
     
 DATASET:
     name: FNDNet
-<<<<<<< HEAD
-    data_path: ../data/labeled_fake_news/Part1 # news article directory
-=======
     data_path: ../data/direct_exp/Part1 # news article directory
-    data_info_path: ../data/direct_exp/Part1/sentence_embedding_contents # splitted csv file director
->>>>>>> 04b7ae4e9825729d357b7c32fa9c15e7f919f4e9
+    data_info_path: ../data/direct_exp/Part1/random_select # splitted csv file director
     saved_data_path: false
     PARAMETERS:
         max_word_len: 1000
@@ -24,10 +20,5 @@ TRAIN:
     use_wandb: True
 
 RESULT:
-<<<<<<< HEAD
-    savedir: ../data/labeled_fake_news/Part1
-    dataname: 'FNDNet_w1000'
-=======
     savedir: ../data/direct_exp/Part1
-    dataname: 'FNDNet_w1000-sentence_embedding_contents'
->>>>>>> 04b7ae4e9825729d357b7c32fa9c15e7f919f4e9
+    dataname: 'FNDNet_w1000-random_select'
