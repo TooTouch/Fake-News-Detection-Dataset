@@ -3,6 +3,7 @@ import json
 import pandas as pd
 import torch
 import os
+from glob import glob
 
 import logging
 
@@ -13,8 +14,8 @@ class FakeDataset(Dataset):
         # tokenizer
         self.tokenizer = tokenizer
 
-    def load_dataset(self, data_dir, data_info_dir, split, saved_data_path=False):
-        data_info = pd.read_csv(os.path.join(data_info_dir, f'{split}_info.csv'))
+    def load_dataset(self, data_dir, split, saved_data_path=False):
+        data_info = glob(os.path.join(data_dir, split, '*/*/*'))
         setattr(self, 'saved_data_path', saved_data_path)
 
         if saved_data_path:
@@ -24,8 +25,8 @@ class FakeDataset(Dataset):
             _logger.info('load raw data')
                 
             data = {}
-            for filename in data_info.filename:
-                f = json.load(open(os.path.join(data_dir, filename),'r'))
+            for filename in data_info:
+                f = json.load(open(filename,'r'))
                 data[filename] = f
 
         setattr(self, 'data_info', data_info)
@@ -48,11 +49,10 @@ class FakeDataset(Dataset):
             return doc, label
         
         else:
-            news_idx = self.data_info.iloc[i]
-            news_info = self.data[news_idx['filename']]
+            news_info = self.data[self.data_info[i]]
         
             # label
-            label = 1 if news_idx['label']=='fake' else 0
+            label = 1 if 'NonClickbait_Auto' not in self.data_info[i] else 0
         
             # transform and padding
             doc = self.transform(
