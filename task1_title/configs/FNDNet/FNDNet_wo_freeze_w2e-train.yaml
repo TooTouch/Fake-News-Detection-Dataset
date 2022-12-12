@@ -8,7 +8,7 @@ MODE:
 DATASET:
     name: FNDNet
     data_path: ../data/direct_exp/Part1 # news article directory
-    data_info_path: ../data/direct_exp/Part1/random_select # splitted csv file director
+    data_info_path: ../data/direct_exp/Part1/sentence_embedding # splitted csv file director
     saved_data_path: ../data/one-cycle/Part1/FNDNet_w1000
     PARAMETERS:
         max_word_len: 1000
