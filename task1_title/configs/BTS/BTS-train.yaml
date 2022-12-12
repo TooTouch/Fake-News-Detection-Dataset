@@ -1,4 +1,4 @@
-EXP_NAME: BTS-random_category_select
+EXP_NAME: BTS-Part1
 SEED: 223
 
 MODE:
@@ -7,9 +7,8 @@ MODE:
     
 DATASET:
     name: BTS
-    data_path: ../data/direct_exp/Part1 # news article directory
-    data_info_path: ../data/direct_exp/Part1/random_category_select # splitted csv file director
-    saved_data_path: ../data/direct_exp/Part1/BTS_w512-random_category_select
+    data_path: ../data/labeled_fake_news/Part1 # news article directory
+    saved_data_path: ../data/labeled_fake_news/Part1/BTS_w512
     PARAMETERS:
         max_word_len: 512
 

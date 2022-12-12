@@ -1,4 +1,4 @@
-EXP_NAME: HAN_wo_freeze_w2e
+EXP_NAME: HAN-Part1
 SEED: 223
 
 MODE:
@@ -7,9 +7,8 @@ MODE:
     
 DATASET:
     name: HAN
-    data_path: ../data/direct_exp/Part1 # news article directory
-    data_info_path: ../data/direct_exp/Part1/random_select # splitted csv file director
-    saved_data_path: ../data/one-cycle/Part1/HAN_s16_w64
+    data_path: ../data/labeled_fake_news/Part1 # news article directory
+    saved_data_path: ../data/labeled_fake_news/Part1/HAN_s16_w64
     PARAMETERS:
         max_sent_len: 16
         max_word_len: 64
@@ -17,11 +16,11 @@ DATASET:
 TOKENIZER: 
     name: mecab
     vocab_path: ./word-embeddings/glove/glove.txt
-    max_vocab_size: 50000    
+    max_vocab_size: 50000  
 
 MODEL:
     modelname: han
-    freeze_word_embed: False
+    freeze_word_embed: True
     use_pretrained_word_embed: True
     PARAMETERS:
         num_classes: 2
@@ -51,7 +50,7 @@ OPTIMIZER:
 
 SCHEDULER:
     warmup_ratio: 0.1
-    use_scheduler: True
+    use_scheduler: False
 
 RESULT:
     savedir: './saved_model'
