@@ -1,4 +1,4 @@
-EXP_NAME: BTS
+EXP_NAME: BTS-random_category_select
 SEED: 223
 
 MODE:
@@ -8,12 +8,12 @@ MODE:
         - train
         - valid
         - test
-    
+
 DATASET:
     name: BTS
     data_path: ../data/direct_exp/Part1 # news article directory
-    data_info_path: ../data/direct_exp/Part1/random_select # splitted csv file director
-    saved_data_path: ../data/one-cycle/Part1/BTS_w512
+    data_info_path: ../data/direct_exp/Part1/random_category_select # splitted csv file director
+    saved_data_path: ../data/direct_exp/Part1/BTS_w512-random_category_select
     PARAMETERS:
         max_word_len: 512
 
@@ -21,13 +21,13 @@ TOKENIZER:
     name: bert
 
 MODEL:
-    modelname: bts_task1
+    modelname: bts
     PARAMETERS:
         pretrained_name: 'skt/kobert-base-v1'
         num_classes: 2
     CHECKPOINT:
-        pretrained: True
-        checkpoint_path: null
+        pretrained: False
+        checkpoint_path: ./saved_model/BTS-random_category_select/best_model.pt
 
 TRAIN:
     batch_size: 64

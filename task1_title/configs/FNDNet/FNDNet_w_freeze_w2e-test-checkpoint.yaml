@@ -1,4 +1,4 @@
-EXP_NAME: HAN_w_freeze_w2e-bow_content_category_select
+EXP_NAME: FNDNet_w_freeze_w2e-random_category_select
 SEED: 223
 
 MODE:
@@ -10,33 +10,31 @@ MODE:
         - test
     
 DATASET:
-    name: HAN
+    name: FNDNet
     data_path: ../data/direct_exp/Part1 # news article directory
-    data_info_path: ../data/direct_exp/Part1/bow_content_category_select # splitted csv file director
-    saved_data_path: ../data/direct_exp/Part1/HAN_s16_w64-bow_content_category_select
+    data_info_path: ../data/direct_exp/Part1/random_category_select # splitted csv file director
+    saved_data_path: ../data/direct_exp/Part1/FNDNet_w1000-random_category_select
     PARAMETERS:
-        max_sent_len: 16
-        max_word_len: 64
+        max_word_len: 1000
 
 TOKENIZER: 
     name: mecab
     vocab_path: ./word-embeddings/glove/glove.txt
     max_vocab_size: 50000  
-
+    
 MODEL:
-    modelname: han
+    modelname: fndnet
     freeze_word_embed: True
     use_pretrained_word_embed: True
     PARAMETERS:
         num_classes: 2
         vocab_len: 50002
-        dropout: 0.1
-        word_dims: 32
-        sent_dims: 64
+        dims: 128
         embed_dims: 100
+        dropout: 0.2
     CHECKPOINT:
         pretrained: False
-        checkpoint_path: ./saved_model/HAN_w_freeze_w2e-bow_content_category_select/best_model.pt
+        checkpoint_path: ./saved_model/FNDNet_w_freeze_w2e-random_category_select/best_model.pt
 
 TRAIN:
     batch_size: 256

@@ -1,19 +1,15 @@
-EXP_NAME: HAN_w_freeze_w2e
+EXP_NAME: HAN_w_freeze_w2e-random_category_select
 SEED: 223
 
 MODE:
-    do_train: False
-    do_test: True
-    test_list:
-        - train
-        - valid
-        - test
+    do_train: True
+    do_test: False
     
 DATASET:
     name: HAN
     data_path: ../data/direct_exp/Part1 # news article directory
-    data_info_path: ../data/direct_exp/Part1/random_select # splitted csv file director
-    saved_data_path: ../data/one-cycle/Part1/HAN_s16_w64
+    data_info_path: ../data/direct_exp/Part1/random_category_select # splitted csv file director
+    saved_data_path: ../data/direct_exp/Part1/HAN_s16_w64-random_category_select
     PARAMETERS:
         max_sent_len: 16
         max_word_len: 64
@@ -24,7 +20,7 @@ TOKENIZER:
     max_vocab_size: 50000  
 
 MODEL:
-    modelname: han_w_freeze_w2e_task1
+    modelname: han
     freeze_word_embed: True
     use_pretrained_word_embed: True
     PARAMETERS:
@@ -35,16 +31,27 @@ MODEL:
         sent_dims: 64
         embed_dims: 100
     CHECKPOINT:
-        pretrained: True
+        pretrained: False
         checkpoint_path: null
 
 TRAIN:
     batch_size: 256
+    num_training_steps: 30000
+    accumulation_steps: 1
     num_workers: 12
+    use_wandb: True
 
 LOG:
     log_interval: 10
+    eval_interval: 1000
+
+OPTIMIZER:
+    lr: 0.003
+    weight_decay: 0.0005
+
+SCHEDULER:
+    warmup_ratio: 0.1
+    use_scheduler: False
 
 RESULT:
     savedir: './saved_model'
-    result_name: results
