@@ -43,6 +43,9 @@ def make_fake_title(file_list: list, savedir: str, cfg_method: dict) -> None:
     '''
     make fake title using selected method
     '''
+    if cfg_method['name'] in ['ngram_title_category_select', 'ngram_content_category_select']:
+        preload_sim_argmax = json.load(open(f"{cfg_method['matrix_dir']}/sim_argmax.json", 'r'))
+
     for file_path in tqdm(file_list):
         
         # source file name and category
@@ -64,8 +67,7 @@ def make_fake_title(file_list: list, savedir: str, cfg_method: dict) -> None:
                 'category':category_name,
                 'file_list':file_list
             }
-        elif cfg_method['name'] == 'ngram_title_category_select':
-            preload_sim_argmax = json.load(open(f"{cfg_method['sim_argmax_dir']}/sim_argmax.json", 'r'))
+        elif cfg_method['name'] in ['ngram_title_category_select', 'ngram_content_category_select']:
             kwargs = {
                 'file_path':file_path,
                 'sim_argmax':preload_sim_argmax[category_name]
@@ -120,7 +122,7 @@ def preprocess(file_list: list, cfg_method: dict) -> None:
     '''
     preprocess for clickbait direct
     '''
-    if cfg_method['name'] == 'ngram_title_category_select':
+    if cfg_method['name'] in ['ngram_title_category_select', 'ngram_content_category_select']:
         if not os.path.exists(os.path.join(cfg_method['sim_argmax_dir'], 'sim_argmax.json')):
             os.makedirs(cfg_method['sim_argmax_dir'], exist_ok=True)
             kwargs = {

@@ -20,6 +20,20 @@ def ngram_title_category_select(file_path: str, sim_argmax: dict) -> str:
     return fake_title
 
 
+def ngram_content_category_select(file_path: str, sim_argmax: dict) -> str:
+    """
+    select news title among file list using ngram similarity
+    """
+    # select news title
+    similar_newsFile_path = sim_argmax[file_path]['content']
+
+    # target file
+    target_file = json.load(open(similar_newsFile_path, 'r'))
+    fake_title = target_file['sourceDataInfo']['newsTitle']
+
+    return fake_title
+
+
 def sim_preprocess(category_list: list,
                     file_list: list, 
                     morphs_extract_dir: str, 
@@ -86,7 +100,7 @@ def save_sim_argmax(file_list: list,
         sim_argmax[category][file_path]['content'] = newsFile_paths[cs_index]
 
     json.dump(sim_argmax, open(f'{sim_argmax_dir}/sim_argmax.json', 'w'), indent=4)
-    
+
             
 
 def morphs_extract(file_list: list, morphs_extract_path: str, morphs_type: str) -> dict:
@@ -147,7 +161,10 @@ def get_ngram_score(ngram_set1: list, ngram_set2: list) -> float:
 def diff_ngram(ngram1: list, ngram2: list) -> float:
     overlap_ngram = ngram1 & ngram2
 
-    return (2*len(overlap_ngram)) / (len(ngram1)+len(ngram2))
+    try:
+        return (2*len(overlap_ngram)) / (len(ngram1)+len(ngram2))
+    except:
+        return 0
 
 def ngram(text: str, n: int) -> list:
     text_len = len(text) - n + 1
