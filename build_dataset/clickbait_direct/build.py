@@ -64,7 +64,7 @@ def make_fake_title(file_list: list, save_list: list, cfg_method: dict, sim_file
                 'category'  : category_name,
                 'file_list' : file_list
             }
-        elif 'tfidf' in cfg_method['name']:
+        elif cfg_method['name'] in ['tfidf','bow']:
             kwargs = {
                 'sim_filepath' : sim_filepath_dict[category_name][file_path]
             }
