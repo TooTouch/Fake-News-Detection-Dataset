@@ -32,109 +32,55 @@ def update_label_info(file: dict, new_title: str) -> dict:
         'newTitle': new_title,
         'clickbaitClass': 0,
         'referSentenceInfo': [
-            {'sentenceNo':i, 'referSentenceyn': 'N'} for i in range(len(file['sourceDataInfo']['sentenceInfo']))
+            {'sentenceNo':i+1, 'referSentenceyn': 'N'} for i in range(len(file['sourceDataInfo']['sentenceInfo']))
         ]
     }
     
     return file
 
 
-def make_fake_title(file_list: list, savedir: str, cfg_method: dict) -> None:
+def make_fake_title(file_list: list, save_list: list, cfg_method: dict, sim_filepath_dict: dict = None) -> None:
     '''
     make fake title using selected method
     '''
-    if cfg_method['name'] in ['ngram_title_category_select', 'ngram_content_category_select']:
-        preload_sim_argmax = json.load(open(f"{cfg_method['matrix_dir']}/sim_argmax.json", 'r'))
 
-    for file_path in tqdm(file_list):
+    for file_path, save_path in tqdm(zip(file_list, save_list), total=len(file_list)):
 
         # source file name and category
         category_name = os.path.basename(os.path.dirname(file_path))
-        file_name = os.path.basename(file_path)
 
         # load source file
         source_file = json.load(open(file_path, 'r'))
         
         # extract fake title
-        if cfg_method['name'] == 'random_select':
+        if cfg_method['select_name'] == 'random_select':
             kwargs = {
-                'file_path':file_path,
-                'file_list':file_list
+                'file_path' : file_path,
+                'file_list' : file_list
             }
-        elif cfg_method['name'] == 'random_category_select':
+        elif cfg_method['select_name'] == 'random_category_select':
             kwargs = {
-                'file_path':file_path,
-                'category':category_name,
-                'file_list':file_list
+                'file_path' : file_path,
+                'category'  : category_name,
+                'file_list' : file_list
             }
-        elif cfg_method['name'] in ['ngram_title_category_select', 'ngram_content_category_select']:
+        elif 'tfidf' in cfg_method['name']:
             kwargs = {
-                'file_path':file_path,
-                'sim_argmax':preload_sim_argmax[category_name]
+                'sim_filepath' : sim_filepath_dict[category_name][file_path]
             }
 
-        fake_title = __import__('methods').__dict__[cfg_method['name']](**kwargs)
+        fake_title = __import__('methods').__dict__[cfg_method['select_name']](**kwargs)
 
         # update label infomation
         source_file = update_label_info(file=source_file, new_title=fake_title)
         
         # save source file
-        category_name = os.path.basename(os.path.dirname(file_path))
-        file_name = os.path.basename(file_path)
         json.dump(
             obj          = source_file, 
-            fp           = open(os.path.join(savedir, category_name, file_name), 'w', encoding='utf-8'), 
+            fp           = open(save_path, 'w', encoding='utf-8'), 
             indent       = '\t',
             ensure_ascii = False
         )
-
-
-def make_label(file_list: list, savedir: str) -> None:
-    '''
-    make label for NonClickbait_Auto
-    '''
-    for file_path in tqdm(file_list):
-        # source file name and category
-        category_name = os.path.basename(os.path.dirname(file_path))
-        file_name = os.path.basename(file_path)
-
-        # load source file
-        source_file = json.load(open(file_path, 'r'))
-
-        # extract new title
-        new_title = source_file['sourceDataInfo']['newsTitle']
-
-        # update label information
-        source_file = update_label_info(file=source_file, new_title=new_title)
-
-        # save source file
-        category_name = os.path.basename(os.path.dirname(file_path))
-        file_name = os.path.basename(file_path)
-        json.dump(
-            obj          = source_file, 
-            fp           = open(os.path.join(savedir, category_name, file_name), 'w', encoding='utf-8'), 
-            indent       = '\t',
-            ensure_ascii = False
-        )
-
-
-def preprocess(file_list: list, cfg_method: dict) -> None:
-    '''
-    preprocess for clickbait direct
-    '''
-    if cfg_method['name'] in ['ngram_title_category_select', 'ngram_content_category_select']:
-        if not os.path.exists(os.path.join(cfg_method['sim_argmax_dir'], 'sim_argmax.json')):
-            os.makedirs(cfg_method['sim_argmax_dir'], exist_ok=True)
-            kwargs = {
-                'category_list': category_list,
-                'file_list': file_list,
-                'sim_argmax_dir': cfg_method['sim_argmax_dir'],
-                'morphs_extract_dir': cfg_method['morphs_extract_dir'],
-                'morphs_type': cfg_method['morphs_type'],
-            }
-            __import__('methods').__dict__['sim_preprocess'](**kwargs)
-    else:
-        pass
 
 
 if __name__ == '__main__':
@@ -147,29 +93,34 @@ if __name__ == '__main__':
     # set seed
     torch_seed(cfg['SEED'])
 
-    # make directory to save files
-    if cfg['BUILD'].get('METHOD',False):
-        cfg['BUILD']['savedir'] = cfg['BUILD']['savedir'] + '_' + cfg['BUILD']['METHOD']['name']
-    os.makedirs(cfg['BUILD']['savedir'], exist_ok=True)
-
-    category_list = os.listdir(cfg['BUILD']['datadir'])
-    for cat in category_list:
-        os.makedirs(os.path.join(cfg['BUILD']['savedir'], cat), exist_ok=True)    
+    # update save directory
+    cfg['savedir'] = os.path.join(cfg['savedir'], cfg['METHOD']['select_name'])
 
     # load file list
-    file_list = glob(os.path.join(cfg['BUILD']['datadir'], '*/*'))
+    file_list = glob(os.path.join(cfg['datadir'], '[!sample]*/Clickbait_Auto/*/*'))
+    save_list = [p.replace(cfg['datadir'], cfg['savedir']) for p in file_list]
 
-    preprocess(file_list, cfg['BUILD']['METHOD'])
+    # make directory to save files
+    parition_path = glob(os.path.join(cfg['datadir'], '[!sample]*/Clickbait_Auto/*'))
+    parition_path = [p.replace(cfg['datadir'], cfg['savedir']) for p in parition_path]
+    for path in parition_path:
+        os.makedirs(path, exist_ok=True)    
+
+
+    # find article index most similar to article and save indices
+    sim_filepath_dict = None
+    if cfg['METHOD']['name'] != 'random':
+        sim_filepath_dict = __import__(f"methods.{cfg['METHOD']['name']}", fromlist=cfg['METHOD']['name']).__dict__['get_similar_filepath_dict'](
+            file_list     = file_list,
+            category_list = os.listdir(os.path.join(cfg['savedir'],'train/Clickbait_Auto')),
+            target        = cfg['METHOD']['target'],
+            savedir       = cfg['savedir']
+        )
 
     # run
-    if cfg['BUILD'].get('METHOD',False):
-        make_fake_title(
-            file_list  = file_list, 
-            savedir    = cfg['BUILD']['savedir'], 
-            cfg_method = cfg['BUILD']['METHOD']
-        )
-    else:
-        make_label(
-            file_list = file_list,
-            savedir   = cfg['BUILD']['savedir']
-        )
+    make_fake_title(
+        file_list      = file_list, 
+        save_list      = save_list, 
+        cfg_method     = cfg['METHOD'],
+        sim_filepath_dict = sim_filepath_dict
+    )
