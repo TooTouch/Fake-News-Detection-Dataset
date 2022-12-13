@@ -5,5 +5,4 @@ METHOD:
   target: 'title'
   select_name: 'tfidf_title_category_select'
 
-
 SEED: 42
