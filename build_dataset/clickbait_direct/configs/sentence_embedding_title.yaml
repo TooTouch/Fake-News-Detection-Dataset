@@ -1,17 +1,8 @@
-BUILD:
-  datadir: '../../data/origin_fake_news/Clickbait_Auto' 
-  savedir: '../../data/direct_exp/Part1/Clickbait_Auto'
-  METHOD:
-    name: 'sentence_embedding_title'
-    model_name: 'Huffon/sentence-klue-roberta-base'
-    device_num: 1
-
-SPLIT:
-  datadir: '../../data/origin_fake_news'
-  savedir: '../../data/direct_exp/Part1'
-  ratio:
-    - 6 # train ratio
-    - 2 # validation ratio
-    - 2 # test ratio
+datadir: '../../data/labeled_fake_news/Part1' 
+savedir: '../../data/direct_exp/Part1'
+METHOD:
+  name: 'sentence_embedding'
+  target: 'title'
+  select_name: 'sentence_embedding_title_category_select'
 
 SEED: 42
