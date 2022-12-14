@@ -26,25 +26,50 @@ python main.py --yaml_configs ./configs/KoBERTSeg/KoBERTSeg-train.yaml
 
 **model list**
 
-`bts`, `kobertseg` 라고 적힌 모델은 학습된 모델이 아닙니다.
-
 ```python
 from models import list_models
 
 list_models('*')
 
 ['bts',
- 'bts_task2',
- 'kobertseg',
- 'kobertseg_task2']
+ 'kobertseg']
 ```
 
 **load pretrained model**
 
+ex) KoBERTSeg
+
+**koBERTSeg-test.yaml**
+
+```yaml
+...
+
+MODEL:
+    modelname: kobertseg
+    PARAMETERS:
+        window_size: 3
+        finetune_bert: True
+    CHECKPOINT:
+        checkpoint_path: ./saved_model/KoBERTSeg/best_model.pt
+
+...
+
+```
+
+**create model**
+
 ```python
+import yaml
 from models import create_model
 
-model = create_model('kobertseg_task2', pretrained=True)
+cfg = yaml.load(open(yaml_config_path,'r'), Loader=yaml.FullLoader)
+
+model = create_model(
+    modelname  = cfg['MODEL']['modelname'], 
+    hparams    = cfg['MODEL']['PARAMETERS'],
+    pretrained = cfg['MODEL']['CHECKPOINT']['pretrained'], 
+    checkpoint_path = cfg['MODEL']['CHECKPOINT']['checkpoint_path']
+)
 ```
 
 

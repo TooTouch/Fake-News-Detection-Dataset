@@ -17,10 +17,10 @@ description: 제목과 본문 간 일치 여부에 따라 가짜 뉴스를 탐�
 
 ```bash
 # HAN
-python main.py --yaml_configs ./configs/HAN/HAN_w_freeze_w2e-train.yaml
+python main.py --yaml_configs ./configs/HAN/HAN_-train.yaml
 
 # FNDNet
-python main.py --yaml_configs ./configs/FNDNet/FNDNet_w_freeze_w2e-train.yaml
+python main.py --yaml_configs ./configs/FNDNet/FNDNet-train.yaml
 
 # BTS
 python main.py --yaml_configs ./configs/BTS/BTS-train.yaml
@@ -30,7 +30,6 @@ python main.py --yaml_configs ./configs/BTS/BTS-train.yaml
 
 **model list**
 
-`bts`, `fndnet`, `han` 이라고 적힌 모델은 학습된 모델이 아닙니다.
 
 ```python
 from models import list_models
@@ -38,21 +37,65 @@ from models import list_models
 list_models('*')
 
 ['bts',
- 'bts_task1',
  'fndnet',
- 'fndnet_w_freeze_w2e_task1',
- 'fndnet_wo_freeze_w2e_task1',
- 'han',
- 'han_w_freeze_w2e_task1',
- 'han_wo_freeze_w2e_task1']
+ 'han']
 ```
 
 **load pretrained model**
 
+ex) HAN
+
+**HAN-test.yaml**
+
+```yaml
+...
+
+TOKENIZER: 
+    name: mecab
+    vocab_path: ./word-embeddings/glove/glove.txt
+    max_vocab_size: 50000  
+
+MODEL:
+    modelname: han
+    freeze_word_embed: True
+    use_pretrained_word_embed: True
+    PARAMETERS:
+        num_classes: 2
+        vocab_len: 50002
+        dropout: 0.1
+        word_dims: 32
+        sent_dims: 64
+        embed_dims: 100
+    CHECKPOINT:
+        checkpoint_path: ./saved_model/HAN/best_model.pt
+
+...
+
+```
+
+**create model**
+
 ```python
+import yaml
 from models import create_model
 
-model = create_model('bts_task1', pretrained=True)
+cfg = yaml.load(open(yaml_config_path,'r'), Loader=yaml.FullLoader)
+
+tokenizer, word_embed = create_tokenizer(
+    name            = cfg['TOKENIZER']['name'], 
+    vocab_path      = cfg['TOKENIZER'].get('vocab_path', None), 
+    max_vocab_size  = cfg['TOKENIZER'].get('max_vocab_size', None)
+)
+
+model = create_model(
+    modelname                 = cfg['MODEL']['modelname'],
+    hparams                   = cfg['MODEL']['PARAMETERS'],
+    word_embed                = word_embed,
+    tokenizer                 = tokenizer,
+    freeze_word_embed         = cfg['MODEL'].get('freeze_word_embed',False),
+    use_pretrained_word_embed = cfg['MODEL'].get('use_pretrained_word_embed',False),
+    checkpoint_path           = cfg['MODEL']['CHECKPOINT']['checkpoint_path'],
+)
 ```
 
 
