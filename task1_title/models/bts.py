@@ -60,23 +60,3 @@ def bts(hparams, **kwargs):
     )
 
     return model
-
-@register_model
-def bts_task1(pretrained=False, **kwargs):
-    # pretrained weights
-    url = 'https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/weights/BTS_task1.pt'
-    
-    model_config = AutoConfig.from_pretrained('klue/bert-base')
-    model = BTS(
-            pretrained_name = 'klue/bert-base', 
-            config          = model_config,
-            num_classes     = 2
-    )
-
-    if pretrained:
-        weights = download_weights(url)
-        model.load_state_dict(weights)
-        _logger.info('load a trained model weights from {}'.format(url))
-    
-    return model
-
