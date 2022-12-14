@@ -17,7 +17,6 @@ MODEL:
     PARAMETERS:
         finetune_bert: True
     CHECKPOINT:
-        pretrained: False
         checkpoint_path: null
 
 TRAIN:

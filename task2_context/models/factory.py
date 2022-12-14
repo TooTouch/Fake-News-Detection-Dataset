@@ -8,7 +8,6 @@ _logger = logging.getLogger('train')
 def create_model(
         modelname,
         hparams,
-        pretrained = False,
         checkpoint_path = None,
         **kwargs
     ):
@@ -20,7 +19,6 @@ def create_model(
     
     model = create_fn(
         hparams    = hparams,
-        pretrained = pretrained, 
     )
 
     # load checkpoint weights

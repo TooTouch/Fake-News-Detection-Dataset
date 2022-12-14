@@ -47,7 +47,6 @@ def run(cfg):
     model = create_model(
         modelname  = cfg['MODEL']['modelname'], 
         hparams    = cfg['MODEL']['PARAMETERS'],
-        pretrained = cfg['MODEL']['CHECKPOINT']['pretrained'], 
         checkpoint_path = cfg['MODEL']['CHECKPOINT']['checkpoint_path']
     )
     model.to(device)
