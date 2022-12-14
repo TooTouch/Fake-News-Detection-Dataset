@@ -1,17 +1,17 @@
-EXP_NAME: FNDNet_wo_freeze_w2e
+EXP_NAME: HAN
 SEED: 223
 
 MODE:
     do_train: True
     do_test: False
-
+    
 DATASET:
-    name: FNDNet
-    data_path: ../data/direct_exp/Part1 # news article directory
-    data_info_path: ../data/direct_exp/Part1/random_select # splitted csv file director
-    saved_data_path: ../data/one-cycle/Part1/FNDNet_w1000
+    name: HAN
+    data_path: ../data/labeled_fake_news/Part1 # news article directory
+    saved_data_path: ../data/labeled_fake_news/Part1/HAN_s16_w64
     PARAMETERS:
-        max_word_len: 1000
+        max_sent_len: 16
+        max_word_len: 64
 
 TOKENIZER: 
     name: mecab
@@ -19,22 +19,23 @@ TOKENIZER:
     max_vocab_size: 50000  
 
 MODEL:
-    modelname: fndnet
-    freeze_word_embed: False
+    modelname: han
+    freeze_word_embed: True
     use_pretrained_word_embed: True
     PARAMETERS:
         num_classes: 2
         vocab_len: 50002
-        dims: 128
+        dropout: 0.1
+        word_dims: 32
+        sent_dims: 64
         embed_dims: 100
-        dropout: 0.2
     CHECKPOINT:
         pretrained: False
         checkpoint_path: null
 
 TRAIN:
     batch_size: 256
-    num_training_steps: 100000
+    num_training_steps: 30000
     accumulation_steps: 1
     num_workers: 12
     use_wandb: True
@@ -44,12 +45,12 @@ LOG:
     eval_interval: 1000
 
 OPTIMIZER:
-    lr: 0.00003
+    lr: 0.003
     weight_decay: 0.0005
 
 SCHEDULER:
     warmup_ratio: 0.1
-    use_scheduler: True
+    use_scheduler: False
 
 RESULT:
     savedir: './saved_model'

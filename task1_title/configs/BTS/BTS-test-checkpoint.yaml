@@ -1,4 +1,4 @@
-EXP_NAME: BTS-random_category_select
+EXP_NAME: BTS
 SEED: 223
 
 MODE:
@@ -6,14 +6,13 @@ MODE:
     do_test: True
     test_list:
         - train
-        - valid
+        - validation
         - test
 
 DATASET:
     name: BTS
-    data_path: ../data/direct_exp/Part1 # news article directory
-    data_info_path: ../data/direct_exp/Part1/random_category_select # splitted csv file director
-    saved_data_path: ../data/direct_exp/Part1/BTS_w512-random_category_select
+    data_path: ../data/labeled_fake_news/Part1 # news article directory
+    saved_data_path: ../data/labeled_fake_news/Part1/BTS_w512
     PARAMETERS:
         max_word_len: 512
 
@@ -27,7 +26,7 @@ MODEL:
         num_classes: 2
     CHECKPOINT:
         pretrained: False
-        checkpoint_path: ./saved_model/BTS-random_category_select/best_model.pt
+        checkpoint_path: ./saved_model/BTS/best_model.pt
 
 TRAIN:
     batch_size: 64
