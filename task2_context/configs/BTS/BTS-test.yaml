@@ -6,12 +6,12 @@ MODE:
     do_test: True
     test_list:
         - train
-        - valid
+        - validation
         - test
     
 DATASET:
     name: BTS
-    data_path: ../data/LabeledData/Part2/
+    data_path: ../data/labeled_fake_news/Part2
     PARAMETERS:
         max_word_len: 512
         window_size: 1
