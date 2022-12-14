@@ -31,7 +31,7 @@ def ngram_content_category_select(sim_filepath: str) -> str:
 # ========================
 
 
-def ngram_sim_matrix(text: list) -> np.ndarray:
+def ngram_sim_matrix(text: list, **kwargs) -> np.ndarray:
     ngram_set = [make_ngram_set(text, n_list=[2,3]) for text in tqdm(text, total=len(text), desc='N-gram set', leave=False)]
 
     nb_set = len(ngram_set)

@@ -9,7 +9,10 @@ from typing import List
 
 
 
-def get_similar_filepath_dict(make_sim_matrix_func, file_list: list, category_list: list, target: str, savedir: str) -> None:
+def get_similar_filepath_dict(
+    make_sim_matrix_func, extract_text_func, 
+    file_list: list, category_list: list, target: str, savedir: str) -> None:
+
     # define save path
     savepath = os.path.join(savedir, f'sim_index_{target}.json')
 
@@ -33,13 +36,19 @@ def get_similar_filepath_dict(make_sim_matrix_func, file_list: list, category_li
             # extract file path in category
             file_list_cat = [f for f in file_list if category in f]
 
-            # load similarity matrix
+            # mask similarity matrix
+            sim_matrix = make_sim_matrix_func(
+                text   = extract_text_func(file_list=file_list_cat, target=target),
+                target = target
+            )
+            sim_matrix[np.arange(sim_matrix.shape[0]), np.arange(sim_matrix.shape[0])] = -1
+
+            # update similarity matrix
             sim_filepath_dict = extract_sim_filepath(
-                make_sim_matrix_func = make_sim_matrix_func,
-                file_list            = file_list_cat,
-                category             = category,
-                target               = target,
-                sim_filepath_dict    = sim_filepath_dict
+                sim_matrix        = sim_matrix,
+                file_list         = file_list_cat,
+                category          = category,
+                sim_filepath_dict = sim_filepath_dict
             )
 
             # save sim_filepath_dict
@@ -48,18 +57,12 @@ def get_similar_filepath_dict(make_sim_matrix_func, file_list: list, category_li
     return sim_filepath_dict
 
 
-def extract_sim_filepath(make_sim_matrix_func, file_list: list, category: str, target: str, sim_filepath_dict: dict) -> None:
+def extract_sim_filepath(
+    sim_matrix: np.ndarray, file_list: list, category: str, sim_filepath_dict: dict) -> None:
     """
     extract filepath most similar to filepath1 using ngram similarity
     """
-    
-    # extract nouns
-    nouns_list = extract_nouns(file_list=file_list, target=target)
 
-    # make similarity matrix
-    sim_matrix = make_sim_matrix_func(text=nouns_list)
-    sim_matrix[np.arange(sim_matrix.shape[0]), np.arange(sim_matrix.shape[0])] = -1
-    
     # find argmax
     sim_index = sim_matrix.argmax(axis=1)
 
@@ -95,3 +98,25 @@ def extract_nouns(file_list: list, target: str, join: bool = True) -> List[list]
             nouns_list.append(mecab.nouns(text))
 
     return nouns_list
+
+
+def extract_text(file_list: list, target: str) -> List[list]:
+    """
+    extract target text
+    """
+
+    # define list
+    text_list = []
+
+    for file_path in tqdm(file_list, desc=f'Extract Morphs({target})', total=len(file_list), leave=False):
+        # load source file
+        source_file = json.load(open(file_path, "r"))
+
+        if target == 'title':
+            text = source_file['sourceDataInfo']['newsTitle']
+        elif target == 'content':
+            text = source_file['sourceDataInfo']['newsContent']
+        
+        text_list.append(text)
+        
+    return text_list

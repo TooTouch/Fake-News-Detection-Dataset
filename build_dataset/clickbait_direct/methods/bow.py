@@ -34,7 +34,7 @@ def bow_content_category_select(sim_filepath: str) -> str:
 # similarity
 # ========================
 
-def bow_sim_matrix(text: list) -> np.ndarray:
+def bow_sim_matrix(text: list, **kwargs) -> np.ndarray:
     """
     make similarity matrix using bow similarity
     """

@@ -34,7 +34,7 @@ def tfidf_content_category_select(sim_filepath: str) -> str:
 # ========================
 
 
-def tfidf_sim_matrix(text: list) -> np.ndarray:
+def tfidf_sim_matrix(text: list, **kwargs) -> np.ndarray:
     """
     make similarity matrix using tfidf similarity
     """
