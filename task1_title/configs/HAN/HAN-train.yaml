@@ -30,7 +30,6 @@ MODEL:
         sent_dims: 64
         embed_dims: 100
     CHECKPOINT:
-        pretrained: False
         checkpoint_path: null
 
 TRAIN:

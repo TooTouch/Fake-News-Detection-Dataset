@@ -8,7 +8,6 @@ _logger = logging.getLogger('train')
 def create_model(
         modelname,
         hparams,
-        pretrained = False,
         word_embed = None,
         tokenizer = None,
         freeze_word_embed = False,
@@ -23,8 +22,7 @@ def create_model(
     create_fn = model_entrypoint(modelname)
     
     model = create_fn(
-        hparams    = hparams,
-        pretrained = pretrained
+        hparams    = hparams
     )
 
     # word embedding

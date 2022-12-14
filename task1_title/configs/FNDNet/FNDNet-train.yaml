@@ -28,7 +28,6 @@ MODEL:
         embed_dims: 100
         dropout: 0.2
     CHECKPOINT:
-        pretrained: False
         checkpoint_path: null
 
 TRAIN:

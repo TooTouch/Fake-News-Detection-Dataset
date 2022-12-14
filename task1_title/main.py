@@ -44,7 +44,6 @@ def run(cfg):
     model = create_model(
         modelname                 = cfg['MODEL']['modelname'],
         hparams                   = cfg['MODEL']['PARAMETERS'],
-        pretrained                = cfg['MODEL']['CHECKPOINT']['pretrained'],
         word_embed                = word_embed,
         tokenizer                 = tokenizer,
         freeze_word_embed         = cfg['MODEL'].get('freeze_word_embed',False),

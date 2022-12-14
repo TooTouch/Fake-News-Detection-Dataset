@@ -21,7 +21,6 @@ MODEL:
         pretrained_name: 'skt/kobert-base-v1'
         num_classes: 2
     CHECKPOINT:
-        pretrained: False
         checkpoint_path: null
 
 TRAIN:
