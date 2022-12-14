@@ -6,23 +6,15 @@
 
 # Configurations
 
-생성 방법별 arguments 구성
-
-
-- `./configs/random.yaml`
-- `./configs/random_category.yaml`
-
-
-
-
-ex) `./configs/random.yaml`
+ex) `./configs/tfidf_title_category.yaml`
 
 ```yaml
 datadir: '../../data/labeled_fake_news/Part1' 
 savedir: '../../data/direct_exp/Part1'
 METHOD:
-  name: 'random'
-  select_name: 'random_select'
+  name: 'tfidf'
+  target: 'title'
+  select_name: 'tfidf_title_category_select'
 
 SEED: 42
 ```
