@@ -87,19 +87,3 @@ def kobertseg(hparams, **kwargs):
         window_size   = hparams['window_size']
     )
     return model
-
-@register_model
-def kobertseg_task2(pretrained, **kwargs):
-    url = 'https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/weights/KoBERTSeg_task2.pt'
-
-    model = KoBERTSeg(
-        finetune_bert = True, 
-        window_size   = 3
-    )
-
-    if pretrained:
-        weights = download_weights(url)
-        model.load_state_dict(weights)
-        _logger.info('load a trained model weights from {}'.format(url))
-
-    return model

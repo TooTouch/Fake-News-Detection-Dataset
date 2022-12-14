@@ -50,20 +50,3 @@ def bts(hparams, **kwargs):
         finetune_bert = hparams['finetune_bert']
     )
     return model
-
-
-@register_model
-def bts_task2(pretrained, **kwargs):
-    # pretrained weights
-    url = 'https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/weights/BTS_task2.pt'
-
-    model = BTS(
-        finetune_bert = True
-    )
-
-    if pretrained:
-        weights = download_weights(url)
-        model.load_state_dict(weights)
-        _logger.info('load a trained model weights from {}'.format(url))
-
-    return model

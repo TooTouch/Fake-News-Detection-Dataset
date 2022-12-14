@@ -63,21 +63,21 @@ class FakeDataset(Dataset):
         fake_labels = []
         news_ids = []
 
-        for idx in tqdm(range(self.data_info.shape[0])):
+        for file_path in tqdm(self.data_info, total=len(self.data_info), desc='Preprocessing'):
             # extract news contents
-            news_info = self.data[self.data_info[idx]]
+            news_info = self.data[file_path]
             doc = [sent_info['sentenceContent'] for sent_info in news_info['labeledDataInfo']['processSentenceInfo']]
 
             # define fake label
             fake_label = np.zeros(len(doc) + (self.window_size-1)*2)
 
-            if 'NonClickbait_Auto' not in self.data_info[idx]:
+            if 'NonClickbait_Auto' not in file_path:
                 fake_idx = [ 
                     d['sentenceNo'] - 1
                     for d in news_info['labeledDataInfo']['processSentenceInfo'] 
                     if d['subjectConsistencyYn'] == 'N'
                 ]
-                fake_label[eval(fake_idx)[0] + (self.window_size-1):] = 1
+                fake_label[fake_idx[0] + (self.window_size-1):] = 1
 
             # doc to save
             doc_i = ['blank.'] * (self.window_size-1) + doc + ['blank.'] * (self.window_size-1)
@@ -101,7 +101,7 @@ class FakeDataset(Dataset):
             targets.extend(target_i)
             docs.extend(doc_i)
             fake_labels.extend(fake_label_i)
-            news_ids.extend([self.data_info[idx]]*len(dataset_i))
+            news_ids.extend([file_path]*len(dataset_i))
 
         setattr(self, 'datasets', datasets)
         setattr(self, 'targets', targets)

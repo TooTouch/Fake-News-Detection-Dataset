@@ -21,7 +21,6 @@ MODEL:
     PARAMETERS:
         finetune_bert: True
     CHECKPOINT:
-        pretrained: False
         checkpoint_path: ./saved_model/BTS/best_model.pt
 
 TRAIN:

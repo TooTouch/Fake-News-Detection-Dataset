@@ -22,7 +22,6 @@ MODEL:
         window_size: 3
         finetune_bert: True
     CHECKPOINT:
-        pretrained: False
         checkpoint_path: ./saved_model/KoBERTSeg/best_model.pt
 
 TRAIN:
