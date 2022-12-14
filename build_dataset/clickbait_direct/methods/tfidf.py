@@ -1,12 +1,7 @@
 import numpy as np
 import json
-import os
-from konlpy.tag import Mecab
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from tqdm.auto import tqdm
-
-from typing import List
 
 
 

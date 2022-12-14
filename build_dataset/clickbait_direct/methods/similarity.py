@@ -70,7 +70,7 @@ def extract_sim_filepath(make_sim_matrix_func, file_list: list, category: str, t
     return sim_filepath_dict
 
 
-def extract_nouns(file_list: list, target: str) -> List[list]:
+def extract_nouns(file_list: list, target: str, join: bool = True) -> List[list]:
     """
     extract nouns from target text
     """
@@ -89,6 +89,9 @@ def extract_nouns(file_list: list, target: str) -> List[list]:
         elif target == 'content':
             text = source_file['sourceDataInfo']['newsContent']
 
-        nouns_list.append(' '.join(mecab.nouns(text)))
+        if join:
+            nouns_list.append(' '.join(mecab.nouns(text)))
+        else:
+            nouns_list.append(mecab.nouns(text))
 
     return nouns_list
