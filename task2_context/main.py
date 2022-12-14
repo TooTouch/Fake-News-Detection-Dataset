@@ -55,10 +55,7 @@ def run(cfg):
     _logger.info('# of trainable params: {}'.format(np.sum([p.numel() if p.requires_grad else 0 for p in model.parameters()])))
     
     # Objective function
-    if cfg['DATASET']['name'] == 'KoBERTSegSep':
-        criterion = torch.nn.MultiLabelSoftMarginLoss()
-    else:
-        criterion = torch.nn.CrossEntropyLoss()
+    criterion = torch.nn.CrossEntropyLoss()
 
     if cfg['MODE']['do_train']:
         # wandb
@@ -77,7 +74,7 @@ def run(cfg):
         validset = create_dataset(
             name            = cfg['DATASET']['name'],
             data_path       = cfg['DATASET']['data_path'], 
-            split           = 'valid', 
+            split           = 'validation', 
             tokenizer       = tokenizer, 
             vocab           = vocab,
             **cfg['DATASET']['PARAMETERS']
@@ -157,7 +154,9 @@ def run(cfg):
             )
             
             # save exp result
-            pd.concat([dataset.data_info, pd.DataFrame(exp_results)], axis=1).to_csv(os.path.join(savedir, f'exp_results_{split}.csv'), index=False)
+            exp_results = pd.concat([pd.DataFrame({'filename':dataset.data_info}), pd.DataFrame(exp_results)], axis=1)
+            exp_results['label'] = exp_results['filename'].apply(lambda x: 0 if 'NonClickbait' in x else 1)
+            exp_results.to_csv(os.path.join(savedir, f'exp_results_{split}.csv'), index=False)
 
             # save result metrics
             json.dump(metrics, open(os.path.join(savedir, f"{cfg['RESULT']['result_name']}_{split}.json"),'w'), indent=4)

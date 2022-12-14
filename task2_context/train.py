@@ -60,10 +60,7 @@ def training(model, num_training_steps, trainloader, validloader, criterion, opt
 
             # predict
             outputs = model(**inputs)
-            if 'KoBERTSegSep' in str(type(model)):
-                loss = criterion(outputs[..., 1], targets)
-            else:    
-                loss = criterion(outputs, targets)
+            loss = criterion(outputs, targets)
 
             # loss for accumulation steps
             loss /= accumulation_steps        
@@ -81,12 +78,7 @@ def training(model, num_training_steps, trainloader, validloader, criterion, opt
 
                 # accuracy
                 preds = outputs.argmax(dim=-1)
-
-                if 'KoBERTSegSep' in str(type(model)):
-                    correct = targets.eq(preds)
-                    correct = (correct.sum(dim=1) / correct.size(1)).sum().item()
-                else:
-                    correct = targets.eq(preds).sum().item()
+                correct = targets.eq(preds).sum().item()
 
                 acc_m.update(correct/targets.size(0), n=targets.size(0))
                 batch_time_m.update(time.time() - end)
@@ -170,20 +162,13 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_ch
             outputs = model(**inputs)
             
             # loss 
-            if 'KoBERTSegSep' in str(type(model)):
-                loss = criterion(outputs[..., 1], targets)
-            else:    
-                loss = criterion(outputs, targets)
+            loss = criterion(outputs, targets)
             
             # total loss and acc
             total_loss += loss.item()
             preds = outputs.argmax(dim=-1)
 
-            if 'KoBERTSegSep' in str(type(model)):
-                correct_i = targets.eq(preds)
-                correct += (correct_i.sum(dim=1) / correct_i.size(1)).sum().item()
-            else:
-                correct += targets.eq(preds).sum().item()
+            correct += targets.eq(preds).sum().item()
             total += targets.size(0)
 
             # TODO

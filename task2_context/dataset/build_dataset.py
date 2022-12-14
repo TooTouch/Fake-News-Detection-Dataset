@@ -1,9 +1,9 @@
 from torch.utils.data import Dataset
 import json 
-import pandas as pd
 import numpy as np
 import torch
 import os
+from glob import glob
 
 from tqdm.auto import tqdm
 
@@ -22,13 +22,12 @@ class FakeDataset(Dataset):
         self.pad_idx = self.vocab[self.vocab.padding_token]
         self.cls_idx = self.vocab[self.vocab.cls_token]
         
-    def load_dataset(self, datadir, split):
-        # load data and infomation
-        data_info = pd.read_csv(os.path.join(datadir,f'{split}_info.csv'))
+    def load_dataset(self, datadir, split):        
+        data_info = glob(os.path.join(datadir, split, '*/*/*'))
 
         data = {}
-        for filename in data_info.filename:
-            f = json.load(open(os.path.join(datadir,filename),'r'))
+        for filename in data_info:
+            f = json.load(open(filename,'r'))
             data[filename] = f
 
         setattr(self, 'data', data)
@@ -65,19 +64,19 @@ class FakeDataset(Dataset):
         news_ids = []
 
         for idx in tqdm(range(self.data_info.shape[0])):
-            # extract news info
-            news_idx = self.data_info.iloc[idx]
-            news_label = news_idx['label']
-            fake_idx = news_idx['fake_idx']
-
             # extract news contents
-            news_info = self.data[news_idx['filename']]
+            news_info = self.data[self.data_info[idx]]
             doc = [sent_info['sentenceContent'] for sent_info in news_info['labeledDataInfo']['processSentenceInfo']]
 
             # define fake label
             fake_label = np.zeros(len(doc) + (self.window_size-1)*2)
 
-            if news_label == 'fake':
+            if 'NonClickbait_Auto' not in self.data_info[idx]:
+                fake_idx = [ 
+                    d['sentenceNo'] - 1
+                    for d in news_info['labeledDataInfo']['processSentenceInfo'] 
+                    if d['subjectConsistencyYn'] == 'N'
+                ]
                 fake_label[eval(fake_idx)[0] + (self.window_size-1):] = 1
 
             # doc to save
@@ -102,7 +101,7 @@ class FakeDataset(Dataset):
             targets.extend(target_i)
             docs.extend(doc_i)
             fake_labels.extend(fake_label_i)
-            news_ids.extend([news_idx['filename']]*len(dataset_i))
+            news_ids.extend([self.data_info[idx]]*len(dataset_i))
 
         setattr(self, 'datasets', datasets)
         setattr(self, 'targets', targets)
