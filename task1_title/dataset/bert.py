@@ -2,9 +2,9 @@ from .build_dataset import FakeDataset
 import torch 
 from typing import List
 
-class BTSDataset(FakeDataset):
+class BERTDataset(FakeDataset):
     def __init__(self, tokenizer, max_word_len: int):
-        super(BTSDataset, self).__init__(tokenizer=tokenizer)
+        super(BERTDataset, self).__init__(tokenizer=tokenizer)
 
         self.max_word_len = max_word_len
         self.vocab = self.tokenizer.vocab

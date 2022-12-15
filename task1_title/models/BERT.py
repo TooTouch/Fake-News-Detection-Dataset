@@ -6,7 +6,7 @@ from .registry import register_model
 import logging
 _logger = logging.getLogger('train')
 
-class BTS(BertPreTrainedModel):
+class BERT(BertPreTrainedModel):
     def __init__(self, pretrained_name: str, config: dict, num_classes: int):
         super().__init__(config)
 
