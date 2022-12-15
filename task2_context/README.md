@@ -1,6 +1,6 @@
-# Task1 
+# Task2
 
-- **task**: 제목과 내용 일치성
+- **task**: 본문 내 일관성 탐지
 
 # Directory Tree
 
