@@ -102,9 +102,9 @@ if __name__ == '__main__':
     save_list = [p.replace(cfg['datadir'], cfg['savedir']) for p in file_list]
 
     # make directory to save files
-    parition_path = glob(os.path.join(cfg['datadir'], '[!sample]*/Clickbait_Auto/*'))
-    parition_path = [p.replace(cfg['datadir'], cfg['savedir']) for p in parition_path]
-    for path in parition_path:
+    partition_path = glob(os.path.join(cfg['datadir'], '[!sample]*/Clickbait_Auto/*'))
+    partition_path = [p.replace(cfg['datadir'], cfg['savedir']) for p in partition_path]
+    for path in partition_path:
         os.makedirs(path, exist_ok=True)    
 
     # find article index most similar to article and save indices
