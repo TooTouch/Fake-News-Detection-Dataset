@@ -26,7 +26,7 @@ SEED: 42
 - Similarity matrix는 category 별로 수행
 
 Method | Description 
----|---|---
+---|---
 TF-IDF | TF-IDF로 유사도를 계산하여 교체
 BoW | Bag of Words로 유사도를 계산하여 교체
 N-gram | Bi/Tri-gram을 통해 유사도를 계산하여 교체
@@ -53,7 +53,7 @@ Method | Time
 TF-IDF | 4분 21초
 BoW | 4분 23초
 N-gram | 1시간 16분 33초
-Sentence Embedding |
+Sentence Embedding | 40분 49초
 
 **본문 간 비교**
 
