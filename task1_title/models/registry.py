@@ -6,7 +6,6 @@ import sys
 import re
 import fnmatch
 from collections import defaultdict
-from copy import deepcopy
 
 __all__ = ['list_models', 'is_model', 'model_entrypoint', 'list_modules', 'is_model_in_modules',
            'is_pretrained_cfg_key', 'has_pretrained_cfg_key', 'get_pretrained_cfg_value', 'is_model_pretrained']
