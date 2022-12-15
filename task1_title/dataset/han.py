@@ -3,13 +3,13 @@ from .build_dataset import FakeDataset
 import torch
 
 class HANDataset(FakeDataset):
-    def __init__(self, tokenizer, max_word_len, max_sent_len):
+    def __init__(self, tokenizer, max_word_len: int, max_sent_len: int):
         super(HANDataset, self).__init__(tokenizer=tokenizer)
 
         self.max_word_len = max_word_len
         self.max_sent_len = max_sent_len
 
-    def transform(self, title, text):
+    def transform(self, title: str, text: str) -> dict:
         sent_list = [title] + text
 
         sent_list = sent_list[:self.max_sent_len]
@@ -21,7 +21,7 @@ class HANDataset(FakeDataset):
 
         return doc
     
-    def padding(self, doc):
+    def padding(self, doc: list) -> list:
         num_pad_doc = self.max_sent_len - len(doc)
         num_pad_sent = [max(0, self.max_word_len - len(sent)) for sent in doc]
 

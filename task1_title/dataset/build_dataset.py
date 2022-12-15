@@ -6,6 +6,7 @@ import os
 from glob import glob
 
 import logging
+from typing import Union
 
 _logger = logging.getLogger('train')
 
@@ -38,7 +39,7 @@ class FakeDataset(Dataset):
     def padding(self):
         raise NotImplementedError
 
-    def __getitem__(self, i):
+    def __getitem__(self, i: int) -> Union[dict, int]:
         if self.saved_data_path:
             doc = {}
             for k in self.data['doc'].keys():

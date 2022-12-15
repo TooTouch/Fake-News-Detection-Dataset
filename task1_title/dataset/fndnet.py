@@ -3,11 +3,11 @@ from .build_dataset import FakeDataset
 import torch
 
 class FNDNetDataset(FakeDataset):
-    def __init__(self, tokenizer, max_word_len):
+    def __init__(self, tokenizer, max_word_len: int):
         super(FNDNetDataset, self).__init__(tokenizer=tokenizer)
         self.max_word_len = max_word_len
 
-    def transform(self, title, text):
+    def transform(self, title: str, text: str) -> dict:
         sent_list = [title] + text
 
         doc = sum([self.tokenizer.encode(sent) for sent in sent_list], [])[:self.max_word_len]
@@ -18,7 +18,7 @@ class FNDNetDataset(FakeDataset):
 
         return doc 
 
-    def padding(self, doc):
+    def padding(self, doc: list) -> list:
         num_pad_word = max(0, self.max_word_len - len(doc))
         doc = doc + [self.tokenizer.pad_token_id] * num_pad_word
 

@@ -6,18 +6,16 @@ from kobert.pytorch_kobert import get_pytorch_kobert_model
 from log import logging
 from .registry import register_model
 
-from .utils import download_weights
-
 _logger = logging.getLogger('train')
 
 class BTS(nn.Module):
-    def __init__(self, finetune_bert=False):
+    def __init__(self, finetune_bert: bool = False):
         super(BTS, self).__init__()
         self.model, vocab = get_pytorch_kobert_model(cachedir=".cache")
         # add [BOS], [EOS]
         self.model.resize_token_embeddings(len(vocab)) 
 
-        # whether finetune the backbone (bert or bertsum)
+        # whether finetune the backbone
         self.finetune = finetune_bert
         if self.finetune:
             _logger.info(f"Finetuning BERT backbone")

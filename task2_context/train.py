@@ -4,15 +4,14 @@ import os
 import wandb
 import logging
 import numpy as np
-from collections import OrderedDict
 
 import torch
 from utils import convert_device
 from sklearn.metrics import roc_auc_score, f1_score, recall_score, precision_score
-import transformers
+
+from typing import List, Union
 
 _logger = logging.getLogger('train')
-transformers.logging.set_verbosity_error()
 
 class AverageMeter:
     """Computes and stores the average and current value"""
@@ -32,8 +31,8 @@ class AverageMeter:
         self.avg = self.sum / self.count
 
 
-def training(model, num_training_steps, trainloader, validloader, criterion, optimizer, scheduler,
-             log_interval, eval_interval, savedir, use_wandb, accumulation_steps=1, device='cpu'):   
+def training(model, num_training_steps: int, trainloader, validloader, criterion, optimizer, scheduler,
+             log_interval: int, eval_interval: int, savedir: str, use_wandb: bool, accumulation_steps: int = 1, device: str = 'cpu'):   
     batch_time_m = AverageMeter()
     data_time_m = AverageMeter()
     acc_m = AverageMeter()
@@ -143,7 +142,7 @@ def training(model, num_training_steps, trainloader, validloader, criterion, opt
     _logger.info('Best Metric: {0:.3%} (step {1:})'.format(best_f1, state['best_step']))
     
         
-def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_check=False):
+def evaluate(model, dataloader, criterion, log_interval: int, device: str = 'cpu', sample_check: bool = False):
     correct = 0
     total = 0
     total_loss = 0
@@ -218,7 +217,10 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_ch
     else:
         return metrics
         
-def stack_outputs(news_ids, total_score, score, total_preds, preds, total_targets, targets):
+def stack_outputs(
+    news_ids: list, total_score: dict, score: torch.Tensor, 
+    total_preds: dict, preds: torch.Tensor, total_targets: dict, targets: torch.Tensor) -> List[dict]:
+
     for i, news_id in enumerate(news_ids):
         if news_id not in total_score.keys():
             total_score[news_id] = []
@@ -233,7 +235,7 @@ def stack_outputs(news_ids, total_score, score, total_preds, preds, total_target
 
     return total_score, total_preds, total_targets
 
-def calc_acc_per_article(y_true, y_pred):
+def calc_acc_per_article(y_true: dict, y_pred: dict) -> Union[int, list]:
     pred_per_article = []
     for news_id in y_true.keys():
         correct_i = torch.tensor(y_true[news_id]).eq(torch.tensor(y_pred[news_id])).sum().item()
@@ -247,7 +249,7 @@ def calc_acc_per_article(y_true, y_pred):
     acc_per_article = pred_per_article.count(1) / len(y_true.keys())
     return acc_per_article, pred_per_article
 
-def calc_metrics(y_true, y_score, y_pred):
+def calc_metrics(y_true: list, y_score: list, y_pred: list) -> dict:
     auroc = roc_auc_score(y_true, y_score, average='macro')
     f1 = f1_score(y_true, y_pred, average='macro')
     recall = recall_score(y_true, y_pred, average='macro')

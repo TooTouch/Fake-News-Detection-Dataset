@@ -6,9 +6,9 @@ from .registry import is_model, model_entrypoint
 _logger = logging.getLogger('train')
 
 def create_model(
-        modelname,
-        hparams,
-        checkpoint_path = None,
+        modelname: str,
+        hparams: dict,
+        checkpoint_path: str = None,
         **kwargs
     ):
 

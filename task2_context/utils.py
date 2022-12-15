@@ -2,7 +2,6 @@ import os
 import random
 import torch
 import numpy as np
-import re
 import pandas as pd
 
 def torch_seed(random_seed):
@@ -25,7 +24,7 @@ def convert_device(inputs, device):
     return inputs
 
 
-def extract_wrong_ratio(df):
+def extract_wrong_ratio(df: pd.DataFrame) -> pd.DataFrame:
     # extract category: Clickbait_Auto, Clickbait_Direct, NoneClickbait_Auto
     df['category'] = df['filename'].apply(lambda x: x.split('/')[0])
 
@@ -49,7 +48,7 @@ def extract_wrong_ratio(df):
     return cnt_df
 
 
-def select_wrong_case_topN(df, cat, sort_target, n):
+def select_wrong_case_topN(df: pd.DataFrame, cat: str, sort_target: str, n: int):
     assert cat in ['Clickbait_Direct','Clickbait_Auto','NonClickbait_Auto'], "cat should be either 'Clickbait_Direct','Clickbait_Auto','NonClickbait_Auto'"
     assert sort_target in ['cnt_wrong','ratio_wrong','max_wrong_score'], "cat should be either 'cnt_wrong','ratio_wrong','max_wrong_score'"
         

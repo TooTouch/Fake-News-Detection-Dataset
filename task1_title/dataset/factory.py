@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import csv
 
 from konlpy.tag import Mecab
@@ -11,9 +12,9 @@ from kobert.utils import get_tokenizer
 
 from .build_dataset import *
 from .tokenizer import FNDTokenizer
+from typing import Union
 
-
-def extract_word_embedding(vocab_path, max_vocab_size=-1):
+def extract_word_embedding(vocab_path: str, max_vocab_size: int =-1) -> Union[list, np.ndarray]:
     word_embed = pd.read_csv(
         filepath_or_buffer = vocab_path, 
         header             = None, 
@@ -30,7 +31,7 @@ def extract_word_embedding(vocab_path, max_vocab_size=-1):
 
 
 
-def create_tokenizer(name, vocab_path, max_vocab_size):
+def create_tokenizer(name: str, vocab_path: str, max_vocab_size: int):
     if name == 'mecab':
         vocab, word_embed = extract_word_embedding(vocab_path = vocab_path, max_vocab_size = max_vocab_size)
         tokenizer = FNDTokenizer(vocab = vocab, tokenizer = Mecab())
@@ -42,7 +43,7 @@ def create_tokenizer(name, vocab_path, max_vocab_size):
     return tokenizer, word_embed 
 
 
-def create_dataset(name, data_path, split, tokenizer, saved_data_path, **kwargs):
+def create_dataset(name: str, data_path: str, split: str, tokenizer, saved_data_path: str, **kwargs):
     dataset = __import__('dataset').__dict__[f'{name}Dataset'](
         tokenizer = tokenizer,
         **kwargs
@@ -57,7 +58,7 @@ def create_dataset(name, data_path, split, tokenizer, saved_data_path, **kwargs)
     return dataset
 
 
-def create_dataloader(dataset, batch_size, num_workers, shuffle=False):
+def create_dataloader(dataset, batch_size: int, num_workers: int, shuffle: bool = False):
 
     dataloader = DataLoader(
         dataset, 

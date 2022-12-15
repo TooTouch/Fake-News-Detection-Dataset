@@ -2,13 +2,12 @@ from transformers import AutoConfig, BertModel, BertPreTrainedModel
 import torch.nn as nn
 
 from .registry import register_model
-from .utils import download_weights
 
 import logging
 _logger = logging.getLogger('train')
 
 class BTS(BertPreTrainedModel):
-    def __init__(self, pretrained_name, config, num_classes):
+    def __init__(self, pretrained_name: str, config: dict, num_classes: int):
         super().__init__(config)
 
         self.bert = BertModel.from_pretrained(pretrained_name, config=config)
@@ -51,7 +50,7 @@ class BTS(BertPreTrainedModel):
             return logits
 
 @register_model
-def bts(hparams, **kwargs):
+def bts(hparams: dict, **kwargs):
     model_config = AutoConfig.from_pretrained(hparams['pretrained_name'])
     model = BTS(
         pretrained_name = hparams['pretrained_name'], 

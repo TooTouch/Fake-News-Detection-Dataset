@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 import numpy as np
 
-from .utils import download_weights
 from .registry import register_model
 from einops import rearrange
 
@@ -10,8 +9,8 @@ import logging
 _logger = logging.getLogger('train')
 
 class HierAttNet(nn.Module):
-    def __init__(self, word_dims=64, sent_dims=128, dropout=0.1, num_classes=2, 
-                 vocab_len=358043, embed_dims=100):
+    def __init__(self, word_dims: int = 64, sent_dims: int = 128, dropout: float = 0.1, num_classes: int = 2, 
+                 vocab_len: int = 358043, embed_dims: int = 100):
         super(HierAttNet, self).__init__()
 
         # word attention
@@ -32,8 +31,7 @@ class HierAttNet(nn.Module):
         # classifier
         self.fc = nn.Linear(2 * sent_dims, num_classes)
 
-    def init_w2e(self, weights, nb_special_tokens=0):
-        assert isinstance(weights, np.ndarray)
+    def init_w2e(self, weights: np.ndarray, nb_special_tokens: int = 0):
 
         weights = torch.from_numpy(
             np.concatenate([
@@ -46,7 +44,7 @@ class HierAttNet(nn.Module):
     def freeze_w2e(self):
         self.word_attention.w2e.weight.requires_grad = False
 
-    def forward(self, input_ids, output_attentions=False):
+    def forward(self, input_ids, output_attentions: bool = False):
         # word attention
         words_embed, words_attn_score = self.word_attention(input_ids) 
 

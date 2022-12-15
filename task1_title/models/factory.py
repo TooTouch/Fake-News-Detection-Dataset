@@ -6,13 +6,13 @@ from .registry import is_model, model_entrypoint
 _logger = logging.getLogger('train')
 
 def create_model(
-        modelname,
-        hparams,
+        modelname: str,
+        hparams: dict,
         word_embed = None,
         tokenizer = None,
-        freeze_word_embed = False,
-        use_pretrained_word_embed = False,
-        checkpoint_path = None,
+        freeze_word_embed: bool = False,
+        use_pretrained_word_embed: bool = False,
+        checkpoint_path: str = None,
         **kwargs
     ):
  

@@ -3,7 +3,6 @@ import json
 import os 
 import wandb
 import logging
-from collections import OrderedDict
 
 import torch
 import numpy as np
@@ -33,8 +32,8 @@ class AverageMeter:
 
 
 
-def training(model, num_training_steps, trainloader, validloader, criterion, optimizer, scheduler,
-             log_interval, eval_interval, savedir, use_wandb, accumulation_steps=1, device='cpu'):   
+def training(model, num_training_steps: int, trainloader, validloader, criterion, optimizer, scheduler,
+             log_interval: int, eval_interval: int, savedir: str, use_wandb: bool, accumulation_steps: int = 1, device: str = 'cpu'):   
     batch_time_m = AverageMeter()
     data_time_m = AverageMeter()
     acc_m = AverageMeter()
@@ -143,7 +142,7 @@ def training(model, num_training_steps, trainloader, validloader, criterion, opt
     _logger.info('Best Metric: {0:.3%} (step {1:})'.format(best_acc, state['best_step']))
     
         
-def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_check=False):
+def evaluate(model, dataloader, criterion, log_interval: int, device: str = 'cpu', sample_check: bool = False):
     correct = 0
     total = 0
     total_loss = 0
@@ -200,7 +199,7 @@ def evaluate(model, dataloader, criterion, log_interval, device='cpu', sample_ch
         return metrics
 
 
-def calc_metrics(y_true, y_score, y_pred):
+def calc_metrics(y_true: list, y_score: np.ndarray, y_pred: list) -> dict:
     auroc = roc_auc_score(y_true, y_score)
     f1 = f1_score(y_true, y_pred)
     recall = recall_score(y_true, y_pred)

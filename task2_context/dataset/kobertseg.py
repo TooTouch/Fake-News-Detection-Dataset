@@ -1,8 +1,10 @@
 from .build_dataset import FakeDataset
 import torch
 
+from typing import List
+
 class KoBERTSegDataset(FakeDataset):
-    def __init__(self, window_size, tokenizer, vocab, max_word_len=512):
+    def __init__(self, window_size: int, tokenizer, vocab, max_word_len: int = 512):
         super(KoBERTSegDataset, self).__init__(
             tokenizer    = tokenizer, 
             vocab        = vocab, 
@@ -10,7 +12,7 @@ class KoBERTSegDataset(FakeDataset):
             max_word_len = max_word_len
         )
     
-    def single_preprocessor(self, doc):
+    def single_preprocessor(self, doc: list) -> dict:
         datasets = self._single_preprocessor(doc)
 
         inputs = {
@@ -36,7 +38,7 @@ class KoBERTSegDataset(FakeDataset):
         
         return inputs
 
-    def tokenize(self, src):
+    def tokenize(self, src: list) -> List[torch.Tensor]:
         # length
         src = self.length_processing(src)
 
@@ -58,7 +60,7 @@ class KoBERTSegDataset(FakeDataset):
         return src_token_ids, segments_ids, cls_ids, mask_src, mask_cls
 
     
-    def __getitem__(self, i, return_txt=False, return_fake_label=False):
+    def __getitem__(self, i: int, return_txt: bool = False, return_fake_label: bool = False):
         
         doc, target, news_id = self.datasets[i], self.targets[i], self.news_ids[i]
         doc_txt = doc

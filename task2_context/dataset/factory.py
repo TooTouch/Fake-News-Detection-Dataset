@@ -1,6 +1,6 @@
 from torch.utils.data import DataLoader
 
-def create_dataset(name, data_path, split, tokenizer, vocab, **kwargs):
+def create_dataset(name, data_path: str, split: str, tokenizer, vocab, **kwargs):
     dataset = __import__('dataset').__dict__[f'{name}Dataset'](
         tokenizer       = tokenizer,
         vocab           = vocab,
@@ -13,7 +13,7 @@ def create_dataset(name, data_path, split, tokenizer, vocab, **kwargs):
     return dataset
 
 
-def create_dataloader(dataset, batch_size, num_workers, shuffle=False):
+def create_dataloader(dataset, batch_size: int, num_workers: int, shuffle: bool = False):
     dataloader = DataLoader(
         dataset, 
         batch_size  = batch_size, 

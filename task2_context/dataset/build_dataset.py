@@ -6,9 +6,10 @@ import os
 from glob import glob
 
 from tqdm.auto import tqdm
+from typing import List
 
 class FakeDataset(Dataset):
-    def __init__(self, tokenizer, vocab, window_size, max_word_len=512):
+    def __init__(self, tokenizer, vocab, window_size: int, max_word_len: int = 512):
         
         # data parameters
         self.window_size = window_size
@@ -22,7 +23,7 @@ class FakeDataset(Dataset):
         self.pad_idx = self.vocab[self.vocab.padding_token]
         self.cls_idx = self.vocab[self.vocab.cls_token]
         
-    def load_dataset(self, datadir, split):        
+    def load_dataset(self, datadir: str, split: str):        
         data_info = glob(os.path.join(datadir, split, '*/*/*'))
 
         data = {}
@@ -34,7 +35,7 @@ class FakeDataset(Dataset):
         setattr(self, 'data_info', data_info)
 
     
-    def _single_preprocessor(self, doc):
+    def _single_preprocessor(self, doc: list) -> list:
         # tokenizing
         src = [self.tokenizer(d_i) for d_i in doc]
         pad_sents = [[self.vocab.padding_token]] * (self.window_size-1)
@@ -42,7 +43,7 @@ class FakeDataset(Dataset):
 
         return self._split_doc_into_sents(src, self.window_size)
 
-    def _split_doc_into_sents(self, src, window_size):
+    def _split_doc_into_sents(self, src: list, window_size: int) -> list:
         datasets = []
 
         for i in range(0, len(src)-(window_size*2)+1):
@@ -109,7 +110,7 @@ class FakeDataset(Dataset):
         setattr(self, 'fake_labels', fake_labels)
         setattr(self, 'news_ids', news_ids)
 
-    def split_doc_into_sents(self, doc, src, fake_label, window_size):
+    def split_doc_into_sents(self, doc: list, src: list, fake_label: list, window_size: int) -> List[list]:
         datasets = []
         targets = []
         docs = []
@@ -137,10 +138,10 @@ class FakeDataset(Dataset):
             
         return datasets, targets, docs, fake_labels
     
-    def tokenize(self, src):
+    def tokenize(self):
         raise NotImplementedError
     
-    def length_processing(self, src):
+    def length_processing(self, src: list) -> list:
         # 문장별 최대 길이
         # 최대 길이가 512일 경우 각 문장이 window size에 따라 평균 길이를 넘지 않도록 함 (뒤에 잘리지 않도록)
         
@@ -150,11 +151,11 @@ class FakeDataset(Dataset):
         src = [sent[:avg_length] for sent in src]
         return src
 
-    def pad(self, data, pad_idx):
+    def pad(self, data: list, pad_idx: int) -> list:
         data = data + [pad_idx] * max(0, (self.max_word_len - len(data)))
         return data
     
-    def padding_bert(self, src_token_ids, segments_ids, cls_ids):
+    def padding_bert(self, src_token_ids: list, segments_ids: list, cls_ids: list) -> List[torch.Tensor]:
         # padding using bert models (bts, kobertseg)        
         src = torch.tensor(self.pad(src_token_ids, self.pad_idx))
         seg_ids = torch.tensor(self.pad(segments_ids, self.pad_idx))
@@ -165,7 +166,7 @@ class FakeDataset(Dataset):
 
         return src, seg_ids, clss, mask_src, mask_cls
 
-    def get_token_type_ids(self, src_token):
+    def get_token_type_ids(self, src_token: list) -> list:
         # for segment token
         seg = []
         for i, v in enumerate(src_token):
@@ -175,7 +176,7 @@ class FakeDataset(Dataset):
                 seg.append([1] * len(v))
         return seg
 
-    def get_cls_index(self, src_doc):
+    def get_cls_index(self, src_doc: list) -> list:
         # for cls token
         cls_index = [index for index, value in enumerate(src_doc) if value == self.cls_idx]
         return cls_index

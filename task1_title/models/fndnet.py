@@ -3,14 +3,13 @@ import torch.nn as nn
 import numpy as np
 
 from .registry import register_model
-from .utils import download_weights
 
 import logging
 _logger = logging.getLogger('train')
 
 class FNDNet(nn.Module):
-    def __init__(self, dims=128, num_classes=2, dropout=0.2,
-                 vocab_len=58043, embed_dims=100):
+    def __init__(self, dims: int = 128, num_classes: int = 2, dropout: float = 0.2,
+                 vocab_len: int = 58043, embed_dims: int = 100):
         super(FNDNet, self).__init__()
 
         # word to embeding
@@ -39,8 +38,7 @@ class FNDNet(nn.Module):
         self.fc = nn.Linear(dims, num_classes)
 
 
-    def init_w2e(self, weights, nb_special_tokens=0):
-        assert isinstance(weights, np.ndarray)
+    def init_w2e(self, weights: np.ndarray, nb_special_tokens: int = 0):
 
         weights = torch.from_numpy(
             np.concatenate([
@@ -80,7 +78,7 @@ class FNDNet(nn.Module):
 
 
 @register_model
-def fndnet(hparams, **kwargs):
+def fndnet(hparams: dict, **kwargs):
     model = FNDNet(
         dims        = hparams['dims'],
         embed_dims  = hparams['embed_dims'],
