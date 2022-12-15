@@ -15,6 +15,32 @@ bash ./docker/docker_build.sh $image_name
 - 한국어 임베딩 [ [github](https://github.com/ratsgo/embedding) ]
 - word-embeddings [ [download](https://drive.google.com/file/d/1FeGIbSz2E1A63JZP_XIxnGaSRt7AhXFf/view) ]
 
+
+# Directory Tree
+
+```
+Fake-News-Detection-Dataset
+.
+├── data
+│   ├── Part1
+│   └── Part2
+├── docker
+├── docs
+├── LICENSE
+├── part1_title
+├── part2_context
+├── README.md
+└── requirements.txt
+
+```
+
+# Data
+
+`./data`에는 다음과 같은 데이터 폴더 구조로 구성되어 있음
+
+![image](https://user-images.githubusercontent.com/37654013/207876089-16a0e88d-5fba-4aad-9654-521505a9e370.png)
+
+
 # Part 1: 제목 - 본문 일치성 [ [Part1]() ]
 
 ## Baseline Models
