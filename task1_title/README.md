@@ -92,8 +92,6 @@ task1_title
 
 학습 시 전처리 시간을 줄이기 위해 datasets을 사전에 저장하여 사용
 
-yaml에서 data_path 또는 data_info_path를 확인 후 실행
-
 **ex)** `./configs/BERT/BERT_save_dataloader.yaml`
 
 ```yaml
