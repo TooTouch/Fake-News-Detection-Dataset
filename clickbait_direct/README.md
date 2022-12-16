@@ -9,8 +9,8 @@
 ex) `./configs/tfidf_title_category.yaml`
 
 ```yaml
-datadir: '../../data/labeled_fake_news/Part1' 
-savedir: '../../data/direct_exp/Part1'
+datadir: '../data/labeled_fake_news/Part1' 
+savedir: '../data/direct_exp/Part1'
 METHOD:
   name: 'tfidf'
   target: 'title'
