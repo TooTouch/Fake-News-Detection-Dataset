@@ -1,0 +1,7 @@
+datadir: '../data/labeled_fake_news/Part1' 
+savedir: '../data/direct_exp/Part1'
+METHOD: 
+  name: 'random'
+  select_name: 'random_category_select'
+
+SEED: 42

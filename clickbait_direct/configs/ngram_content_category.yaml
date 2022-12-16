@@ -1,5 +1,5 @@
-datadir: '../../data/labeled_fake_news/Part1' 
-savedir: '../../data/direct_exp/Part1'
+datadir: '../data/labeled_fake_news/Part1' 
+savedir: '../data/direct_exp/Part1'
 METHOD:
   name: 'ngram'
   target: 'content'
