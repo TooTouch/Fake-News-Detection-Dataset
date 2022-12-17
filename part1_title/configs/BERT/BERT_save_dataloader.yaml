@@ -1,8 +1,8 @@
-EXP_NAME: BTS
+EXP_NAME: BERT
 SEED: 223
     
 DATASET:
-    name: BTS
+    name: BERT
     data_path: ../data/labeled_fake_news/Part1 # news article directory
     saved_data_path: false
     PARAMETERS:
@@ -17,4 +17,4 @@ TRAIN:
 
 RESULT:
     savedir: ../data/labeled_fake_news/Part1
-    dataname: 'BTS_w512'
+    dataname: 'BERT_w512'

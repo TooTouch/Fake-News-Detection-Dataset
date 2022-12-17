@@ -1,4 +1,4 @@
-EXP_NAME: BTS
+EXP_NAME: BERT
 SEED: 223
 
 MODE:
@@ -6,9 +6,9 @@ MODE:
     do_test: False
     
 DATASET:
-    name: BTS
+    name: bert
     data_path: ../data/labeled_fake_news/Part1 # news article directory
-    saved_data_path: ../data/labeled_fake_news/Part1/BTS_w512
+    saved_data_path: ../data/labeled_fake_news/Part1/BERT_w512
     PARAMETERS:
         max_word_len: 512
 
@@ -16,7 +16,7 @@ TOKENIZER:
     name: bert
     
 MODEL:
-    modelname: bts
+    modelname: bert
     PARAMETERS:
         pretrained_name: 'skt/kobert-base-v1'
         num_classes: 2
