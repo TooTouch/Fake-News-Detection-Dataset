@@ -26,7 +26,7 @@ def convert_device(inputs, device):
 
 def extract_wrong_ratio(df: pd.DataFrame) -> pd.DataFrame:
     # extract category: Clickbait_Auto, Clickbait_Direct, NoneClickbait_Auto
-    df['category'] = df['filename'].apply(lambda x: x.split('/')[0])
+    df['category'] = df['filename'].apply(lambda x: os.path.basename(os.path.abspath(os.path.join(x, '../../'))))
 
     # wonrg case
     df_incorrect = df[df.pred_per_article==0]
@@ -60,7 +60,7 @@ def select_wrong_case_topN(df: pd.DataFrame, cat: str, sort_target: str, n: int)
         return max([y_score[idx][y_pred[idx]] for idx, y_true_i in enumerate(y_true) if y_true_i != y_pred[idx]])
     
     # extract category: Clickbait_Auto, Clickbait_Direct, NoneClickbait_Auto
-    df['category'] = df['filename'].apply(lambda x: x.split('/')[0])
+    df['category'] = df['filename'].apply(lambda x: os.path.basename(os.path.abspath(os.path.join(x, '../../'))))
     
     # wrong case 
     df_incorrect = df[(df.pred_per_article==0) & (df.category==cat)]

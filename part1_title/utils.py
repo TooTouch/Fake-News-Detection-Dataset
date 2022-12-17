@@ -57,7 +57,7 @@ def select_wrong_case_topN(df: pd.DataFrame, cat: str, n: int):
         pred = 1
     
     # extract category: Clickbait_Auto, Clickbait_Direct, NonClickbait_Auto
-    df['category'] = df['filename'].apply(lambda x: x.split('/')[0])
+    df['category'] = df['filename'].apply(lambda x: os.path.basename(os.path.abspath(os.path.join(x, '../../'))))
     
     # wonrg case
     df_incorrect = df[df.targets!=df.preds]

@@ -50,9 +50,9 @@ class BERT(BertPreTrainedModel):
             return logits
 
 @register_model
-def bts(hparams: dict, **kwargs):
+def bert(hparams: dict, **kwargs):
     model_config = AutoConfig.from_pretrained(hparams['pretrained_name'])
-    model = BTS(
+    model = BERT(
         pretrained_name = hparams['pretrained_name'], 
         config          = model_config,
         num_classes     = hparams['num_classes']
