@@ -132,6 +132,25 @@ python save_dataloader.py --yaml_config ${config_file_path}
 ```
 
 
+# Results
+
+**1. Model Performance**
+
+Metrics	| AUROC	| F1	| RECALL	| PRECISION	| ACC
+---|:---:|:---:|:---:|:---:|:---:
+FNDNet	| 0.897	| 0.811	| 0.802	| 0.820	| 0.813
+HAN	| 0.945	| 0.867	| 0.842	| 0.893	| 0.870
+BERT	| 0.998	| 0.978	| 0.977	| 0.978	| 0.978
+
+
+**2. Misclassification Case**
+
+ category	| HAN wrong / total (%)	| BERT wrong / total (%)	| FNDNet wrong / total (%)
+---|---:|---:|---:
+NonClickbait_Auto	| 1841 / 18169 (10.13%)	| 399 / 18169 (2.20%)	| 3203 / 18169 (17.63%)
+Clickbait_Auto	| 2161 / 13251 (16.31%)	| 51 / 13251 (0.38%)	| 2978 / 13251 (22.47%)
+ClickBait_Direct_Part1	| 717 / 5013 (14.30%)	| 368 / 5013 (7.34%)	| 646 / 5013 (12.89%)
+
 # Reference
 
 [^1]: Jeong, H. (2021). Hierarchical Attention Networks for Fake News Detection (Doctoral dissertation, The Florida State University).
