@@ -122,39 +122,39 @@ task2_context
 
 낚시-직접생성(ClickBait_Direct_Part1)
 
-| category   |   count || ratio   |
-|:-----------|--------:||:--------|
-| EC         |    1909 || 13.91%  |
-| ET         |    1762 || 12.84%  |
-| GB         |    2207 || 16.08%  |
-| IS         |    1909 || 13.91%  |
-| LC         |    1328 || 9.68%   |
-| PO         |    1850 || 13.48%  |
-| SO         |    2761 || 20.12%  |
+| category   |   count | ratio   |
+|:-----------|--------:|:--------|
+| EC         |    1909 | 13.91%  |
+| ET         |    1762 | 12.84%  |
+| GB         |    2207 | 16.08%  |
+| IS         |    1909 | 13.91%  |
+| LC         |    1328 | 9.68%   |
+| PO         |    1850 | 13.48%  |
+| SO         |    2761 | 20.12%  |
 
 낚시-자동생성(Clickbait_Auto)
 
-| category   |   count || ratio   |
-|:-----------|--------:||:--------|
-| EC         |     643 || 12.82%  |
-| ET         |     583 || 11.63%  |
-| GB         |     837 || 16.69%  |
-| IS         |     689 || 13.74%  |
-| LC         |     469 || 9.35%   |
-| PO         |     698 || 13.92%  |
-| SO         |    1096 || 21.85%  |
+| category   |   count | ratio   |
+|:-----------|--------:|:--------|
+| EC         |     643 | 12.82%  |
+| ET         |     583 | 11.63%  |
+| GB         |     837 | 16.69%  |
+| IS         |     689 | 13.74%  |
+| LC         |     469 | 9.35%   |
+| PO         |     698 | 13.92%  |
+| SO         |    1096 | 21.85%  |
 
 비낚시-자동생성(NonClickbait_Auto)
 
-| category   |   count || ratio   |
-|:-----------|--------:||:--------|
-| EC         |    2584 || 14.22%  |
-| ET         |    2194 || 12.08%  |
-| GB         |    2673 || 14.71%  |
-| IS         |    2487 || 13.69%  |
-| LC         |    2189 || 12.05%  |
-| PO         |    2507 || 13.80%  |
-| SO         |    3535 || 19.46%  |
+| category   |   count | ratio   |
+|:-----------|--------:|:--------|
+| EC         |    2584 | 14.22%  |
+| ET         |    2194 | 12.08%  |
+| GB         |    2673 | 14.71%  |
+| IS         |    2487 | 13.69%  |
+| LC         |    2189 | 12.05%  |
+| PO         |    2507 | 13.80%  |
+| SO         |    3535 | 19.46%  |
 
 </div>
 </details>
@@ -244,7 +244,7 @@ python main.py --yaml_config ${config_file_path}
 **1. Training History**
 
 <p align='center'>
-    <img width="1208" alt="image" src="https://user-images.githubusercontent.com/37654013/208297613-014e0818-365c-45a2-815e-052950e2f60f.png">
+    <img width="1208" alt="image" src="https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part2_context/assets/figures/part2_history.png?raw=true">
 </p>
 
 **2. Model Performance**

@@ -4,13 +4,21 @@
 
 # Enviroments
 
-1. docker 
+**Computer Resource**
+- **CPU**: i7-7800K
+- **GPU**: RTX 3080
+- **RAM**: 64GB
+- **SSD**: 512GB
+- **OS**: ubuntu 18.04
+
+**1. docker image**
 
 ```bash
 bash ./docker/docker_build.sh $image_name
 ```
 
-2. Korean word-embeddings
+
+**2. Korean word-embeddings**
 
 - 한국어 임베딩 [ [github](https://github.com/ratsgo/embedding) ]
 - word-embeddings [ [download](https://drive.google.com/file/d/1FeGIbSz2E1A63JZP_XIxnGaSRt7AhXFf/view) ]

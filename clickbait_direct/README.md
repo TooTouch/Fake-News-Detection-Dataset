@@ -61,6 +61,6 @@ Method | Time
 ---|---
 TF-IDF | 20분 9초
 BoW | 20분 4초
-N-gram | 
+N-gram | 12시간 33분 03초
 Sentence Embedding |
 

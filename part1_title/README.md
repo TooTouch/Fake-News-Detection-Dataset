@@ -298,7 +298,7 @@ python save_dataloader.py --yaml_config ${config_file_path}
 **1. Training History**
 
 <p align='center'>
-    <img width="1098" alt="image" src="https://user-images.githubusercontent.com/37654013/208297569-02275338-6b59-445a-94a4-90aa8a8acf05.png">
+    <img width="1098" alt="image" src="https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part1_title/assets/figures/part1_history.png?raw=true">
 </p>
 
 **2. Model Performance**
