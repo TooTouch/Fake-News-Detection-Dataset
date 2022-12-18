@@ -10,7 +10,7 @@
 
 # Enviroments
 
-**Computer Resource**
+**Computer Resources**
 - **CPU**: i7-7800K
 - **GPU**: RTX 3080
 - **RAM**: 64GB
