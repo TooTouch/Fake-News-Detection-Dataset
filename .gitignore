@@ -156,3 +156,4 @@ wandb/
 word-embeddings/
 saved_model*/
 *.sh
+!*output.log
