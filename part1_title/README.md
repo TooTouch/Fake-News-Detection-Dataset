@@ -58,6 +58,167 @@ task1_title
 - 한국어 임베딩 [ [github](https://github.com/ratsgo/embedding) ]
 - word-embeddings [ [download](https://drive.google.com/file/d/1FeGIbSz2E1A63JZP_XIxnGaSRt7AhXFf/view) ]
 
+# Datasets
+
+<details>
+<summary><strong>Train dataset (291,466건)</strong></summary>
+<div markdown="1">
+
+**Target**
+
+| target                 |   count |
+|:-----------------------|--------:|
+| ClickBait_Direct_Part1 |   40106 |
+| Clickbait_Auto         |  106014 |
+| NonClickbait_Auto      |  145346 |
+
+**Category**
+
+낚시-직접생성(ClickBait_Direct_Part1)
+
+| category   |   count | ratio   |
+|:-----------|--------:|:--------|
+| EC         |    7007 | 17.47%  |
+| ET         |    5419 | 13.51%  |
+| GB         |    7141 | 17.81%  |
+| IS         |    5502 | 13.72%  |
+| LC         |    3477 | 8.67%   |
+| PO         |    4571 | 11.40%  |
+| SO         |    6989 | 17.43%  |
+
+낚시-자동생성(Clickbait_Auto)
+
+| category   |   count | ratio   |
+|:-----------|--------:|:--------|
+| EC         |   14393 | 13.58%  |
+| ET         |   13101 | 12.36%  |
+| GB         |   16284 | 15.36%  |
+| IS         |   14809 | 13.97%  |
+| LC         |   10814 | 10.20%  |
+| PO         |   14646 | 13.82%  |
+| SO         |   21967 | 20.72%  |
+
+비낚시-자동생성(NonClickbait_Auto)
+
+| category   |   count | ratio   |
+|:-----------|--------:|:--------|
+| EC         |   20664 | 14.22%  |
+| ET         |   17501 | 12.04%  |
+| GB         |   21552 | 14.83%  |
+| IS         |   19982 | 13.75%  |
+| LC         |   17350 | 11.94%  |
+| PO         |   20162 | 13.87%  |
+| SO         |   28135 | 19.36%  |
+
+</div>
+</details>
+
+<details>
+<summary><strong>Validation dataset (36,434건)</strong></summary>
+<div markdown="1">
+
+**Target**
+
+| target                 |   count |
+|:-----------------------|--------:|
+| ClickBait_Direct_Part1 |    5012 |
+| Clickbait_Auto         |   13253 |
+| NonClickbait_Auto      |   18169 |
+
+**Category**
+
+낚시-직접생성(ClickBait_Direct_Part1)
+
+| category   |   count | ratio   |
+|:-----------|--------:|:--------|
+| EC         |     876 | 17.48%  |
+| ET         |     677 | 13.51%  |
+| GB         |     892 | 17.80%  |
+| IS         |     688 | 13.73%  |
+| LC         |     434 | 8.66%   |
+| PO         |     571 | 11.39%  |
+| SO         |     874 | 17.44%  |
+
+낚시-자동생성(Clickbait_Auto)
+
+| category   |   count | ratio   |
+|:-----------|--------:|:--------|
+| EC         |    1799 | 13.57%  |
+| ET         |    1638 | 12.36%  |
+| GB         |    2036 | 15.36%  |
+| IS         |    1851 | 13.97%  |
+| LC         |    1352 | 10.20%  |
+| PO         |    1831 | 13.82%  |
+| SO         |    2746 | 20.72%  |
+
+비낚시-자동생성(NonClickbait_Auto)
+
+| category   |   count | ratio   |
+|:-----------|--------:|:--------|
+| EC         |    2583 | 14.22%  |
+| ET         |    2188 | 12.04%  |
+| GB         |    2694 | 14.83%  |
+| IS         |    2498 | 13.75%  |
+| LC         |    2169 | 11.94%  |
+| PO         |    2520 | 13.87%  |
+| SO         |    3517 | 19.36%  |
+
+</div>
+</details>
+
+
+<details>
+<summary><strong>Test dataset (36,433건)</strong></summary>
+<div markdown="1">
+
+**Target**
+
+| target                 |   count |
+|:-----------------------|--------:|
+| ClickBait_Direct_Part1 |    5013 |
+| Clickbait_Auto         |   13251 |
+| NonClickbait_Auto      |   18169 |
+
+**Category**
+
+낚시-직접생성(ClickBait_Direct_Part1)
+
+| category   |   count | ratio   |
+|:-----------|--------:|:--------|
+| EC         |     876 | 17.47%  |
+| ET         |     677 | 13.50%  |
+| GB         |     893 | 17.81%  |
+| IS         |     688 | 13.72%  |
+| LC         |     434 | 8.66%   |
+| PO         |     571 | 11.39%  |
+| SO         |     874 | 17.43%  |
+
+낚시-자동생성(Clickbait_Auto)
+
+| category   |   count | ratio   |
+|:-----------|--------:|:--------|
+| EC         |    1799 | 13.58%  |
+| ET         |    1637 | 12.35%  |
+| GB         |    2035 | 15.36%  |
+| IS         |    1851 | 13.97%  |
+| LC         |    1352 | 10.20%  |
+| PO         |    1831 | 13.82%  |
+| SO         |    2746 | 20.72%  |
+
+비낚시-자동생성(NonClickbait_Auto)
+
+| category   |   count | ratio   |
+|:-----------|--------:|:--------|
+| EC         |    2583 | 14.22%  |
+| ET         |    2188 | 12.04%  |
+| GB         |    2694 | 14.83%  |
+| IS         |    2498 | 13.75%  |
+| LC         |    2169 | 11.94%  |
+| PO         |    2520 | 13.87%  |
+| SO         |    3517 | 19.36%  |
+
+</div>
+</details>
 
 # Models
 
@@ -134,7 +295,13 @@ python save_dataloader.py --yaml_config ${config_file_path}
 
 # Results
 
-**1. Model Performance**
+**1. Training History**
+
+<p align='center'>
+    <img width="1098" alt="image" src="https://user-images.githubusercontent.com/37654013/208297569-02275338-6b59-445a-94a4-90aa8a8acf05.png">
+</p>
+
+**2. Model Performance**
 
 Metrics	| AUROC	| F1	| RECALL	| PRECISION	| ACC
 ---|:---:|:---:|:---:|:---:|:---:
@@ -143,7 +310,7 @@ HAN	| 0.945	| 0.867	| 0.842	| 0.893	| 0.870
 BERT	| 0.998	| 0.978	| 0.977	| 0.978	| 0.978
 
 
-**2. Misclassification Case**
+**3. Misclassification Case**
 
  category	| HAN wrong / total (%)	| BERT wrong / total (%)	| FNDNet wrong / total (%)
 ---|---:|---:|---:

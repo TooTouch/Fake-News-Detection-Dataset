@@ -51,6 +51,169 @@ task2_context
 
 ```
 
+# Datasets
+
+<details>
+<summary><strong>Train dataset (295,275건)</strong></summary>
+<div markdown="1">
+
+**Target**
+
+| target            |   count |
+|:------------------|--------:|
+| Clickbait_Auto    |  109819 |
+| Clickbait_Direct  |   40109 |
+| NonClickbait_Auto |  145347 |
+
+**Category**
+
+낚시-직접생성(ClickBait_Direct_Part1)
+
+| category   |   count | ratio   |
+|:-----------|--------:|:--------|
+| EC         |   15271 | 13.91%  |
+| ET         |   14098 | 12.84%  |
+| GB         |   17660 | 16.08%  |
+| IS         |   15276 | 13.91%  |
+| LC         |   10627 | 9.68%   |
+| PO         |   14803 | 13.48%  |
+| SO         |   22084 | 20.11%  |
+
+낚시-자동생성(Clickbait_Auto)
+
+| category   |   count | ratio   |
+|:-----------|--------:|:--------|
+| EC         |    5143 | 12.82%  |
+| ET         |    4661 | 11.62%  |
+| GB         |    6697 | 16.70%  |
+| IS         |    5508 | 13.73%  |
+| LC         |    3756 | 9.36%   |
+| PO         |    5580 | 13.91%  |
+| SO         |    8764 | 21.85%  |
+
+비낚시-자동생성(NonClickbait_Auto)
+
+| category   |   count | ratio   |
+|:-----------|--------:|:--------|
+| EC         |   20668 | 14.22%  |
+| ET         |   17548 | 12.07%  |
+| GB         |   21381 | 14.71%  |
+| IS         |   19900 | 13.69%  |
+| LC         |   17508 | 12.05%  |
+| PO         |   20058 | 13.80%  |
+| SO         |   28284 | 19.46%  |
+
+</div>
+</details>
+
+<details>
+<summary><strong>Validation dataset (36,910건)</strong></summary>
+<div markdown="1">
+
+**Target**
+
+| target            |   count |
+|:------------------|--------:|
+| Clickbait_Auto    |   13726 |
+| Clickbait_Direct  |    5015 |
+| NonClickbait_Auto |   18169 |
+
+**Category**
+
+낚시-직접생성(ClickBait_Direct_Part1)
+
+| category   |   count || ratio   |
+|:-----------|--------:||:--------|
+| EC         |    1909 || 13.91%  |
+| ET         |    1762 || 12.84%  |
+| GB         |    2207 || 16.08%  |
+| IS         |    1909 || 13.91%  |
+| LC         |    1328 || 9.68%   |
+| PO         |    1850 || 13.48%  |
+| SO         |    2761 || 20.12%  |
+
+낚시-자동생성(Clickbait_Auto)
+
+| category   |   count || ratio   |
+|:-----------|--------:||:--------|
+| EC         |     643 || 12.82%  |
+| ET         |     583 || 11.63%  |
+| GB         |     837 || 16.69%  |
+| IS         |     689 || 13.74%  |
+| LC         |     469 || 9.35%   |
+| PO         |     698 || 13.92%  |
+| SO         |    1096 || 21.85%  |
+
+비낚시-자동생성(NonClickbait_Auto)
+
+| category   |   count || ratio   |
+|:-----------|--------:||:--------|
+| EC         |    2584 || 14.22%  |
+| ET         |    2194 || 12.08%  |
+| GB         |    2673 || 14.71%  |
+| IS         |    2487 || 13.69%  |
+| LC         |    2189 || 12.05%  |
+| PO         |    2507 || 13.80%  |
+| SO         |    3535 || 19.46%  |
+
+</div>
+</details>
+
+
+<details>
+<summary><strong>Test dataset (36,909건)</strong></summary>
+<div markdown="1">
+
+**Target**
+
+| target            |   count |
+|:------------------|--------:|
+| Clickbait_Auto    |   13726 |
+| Clickbait_Direct  |    5015 |
+| NonClickbait_Auto |   18168 |
+
+**Category**
+
+낚시-직접생성(ClickBait_Direct_Part1)
+
+| category   |   count | ratio   |
+|:-----------|--------:|:--------|
+| EC         |    1909 | 13.91%  |
+| ET         |    1762 | 12.84%  |
+| GB         |    2207 | 16.08%  |
+| IS         |    1909 | 13.91%  |
+| LC         |    1328 | 9.68%   |
+| PO         |    1850 | 13.48%  |
+| SO         |    2761 | 20.12%  |
+
+낚시-자동생성(Clickbait_Auto)
+
+| category   |   count | ratio   |
+|:-----------|--------:|:--------|
+| EC         |     643 | 12.82%  |
+| ET         |     583 | 11.63%  |
+| GB         |     837 | 16.69%  |
+| IS         |     689 | 13.74%  |
+| LC         |     470 | 9.37%   |
+| PO         |     698 | 13.92%  |
+| SO         |    1095 | 21.83%  |
+
+비낚시-자동생성(NonClickbait_Auto)
+
+| category   |   count | ratio   |
+|:-----------|--------:|:--------|
+| EC         |    2583 | 14.22%  |
+| ET         |    2194 | 12.08%  |
+| GB         |    2673 | 14.71%  |
+| IS         |    2487 | 13.69%  |
+| LC         |    2189 | 12.05%  |
+| PO         |    2507 | 13.80%  |
+| SO         |    3535 | 19.46%  |
+
+</div>
+</details>
+
+
 # Models
 
 - BTS[^1] [description]()
@@ -78,7 +241,13 @@ python main.py --yaml_config ${config_file_path}
 
 # Results
 
-**1. Model Performance**
+**1. Training History**
+
+<p align='center'>
+    <img width="1208" alt="image" src="https://user-images.githubusercontent.com/37654013/208297613-014e0818-365c-45a2-815e-052950e2f60f.png">
+</p>
+
+**2. Model Performance**
 
 Metrics	| AUROC	| F1	| RECALL	| PRECISION	| ACC	| ACC_PER_ARTICLE
 ---|:---:|:---:|:---:|:---:|:---:|:---:
@@ -86,7 +255,7 @@ BTS	| 0.989	| 0.908	| 0.899	| 0.917	| 0.986	| 0.839
 KoBERTSeg	| 0.987	| 0.881	| 0.871	| 0.892	| 0.982 | 0.796
 
 
-**2. Misclassification Case**
+**3. Misclassification Case**
 
 category	| KoBERTSeg wrong / total (%)	| BTS wrong / total (%)
 ---|---:|---:
