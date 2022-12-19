@@ -11,8 +11,8 @@ MODE:
 
 DATASET:
     name: BERT
-    data_path: ../data/labeled_fake_news/Part1 # news article directory
-    saved_data_path: ../data/labeled_fake_news/Part1/BERT_w512
+    data_path: ../data/Part1 # news article directory
+    saved_data_path: ../data/Part1/BERT_w512
     PARAMETERS:
         max_word_len: 512
 
@@ -25,7 +25,7 @@ MODEL:
         pretrained_name: 'skt/kobert-base-v1'
         num_classes: 2
     CHECKPOINT:
-        checkpoint_path: ./saved_model/BERT/best_model.pt
+        checkpoint_path: /saved_model/BERT/best_model.pt
 
 TRAIN:
     batch_size: 64
@@ -35,5 +35,5 @@ LOG:
     log_interval: 10
 
 RESULT:
-    savedir: './saved_model'
+    savedir: '/saved_model'
     result_name: results

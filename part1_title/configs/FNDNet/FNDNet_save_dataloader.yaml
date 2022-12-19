@@ -3,14 +3,14 @@ SEED: 223
     
 DATASET:
     name: FNDNet
-    data_path: ../data/labeled_fake_news/Part1 # news article directory
+    data_path: ../data/Part1 # news article directory
     saved_data_path: false
     PARAMETERS:
         max_word_len: 1000
 
 TOKENIZER: 
     name: mecab
-    vocab_path: ./word-embeddings/glove/glove.txt
+    vocab_path: /word-embeddings/glove/glove.txt
     max_vocab_size: 50000  
     
 TRAIN:
@@ -19,5 +19,5 @@ TRAIN:
     use_wandb: True
 
 RESULT:
-    savedir: ../data/labeled_fake_news/Part1
+    savedir: ../data/Part1
     dataname: 'FNDNet_w1000'

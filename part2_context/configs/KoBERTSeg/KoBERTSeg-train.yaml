@@ -7,7 +7,7 @@ MODE:
     
 DATASET:
     name: KoBERTSeg
-    data_path: ../data/labeled_fake_news/Part2
+    data_path: ../data/Part2
     PARAMETERS:
         max_word_len: 512
         window_size: 3
@@ -40,4 +40,4 @@ SCHEDULER:
     use_scheduler: True
 
 RESULT:
-    savedir: './saved_model'
+    savedir: '/saved_model'

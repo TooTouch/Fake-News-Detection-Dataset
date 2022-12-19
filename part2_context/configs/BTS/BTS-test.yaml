@@ -11,7 +11,7 @@ MODE:
     
 DATASET:
     name: BTS
-    data_path: ../data/labeled_fake_news/Part2
+    data_path: ../data/Part2
     PARAMETERS:
         max_word_len: 512
         window_size: 1
@@ -21,7 +21,7 @@ MODEL:
     PARAMETERS:
         finetune_bert: True
     CHECKPOINT:
-        checkpoint_path: ./saved_model/BTS/best_model.pt
+        checkpoint_path: /saved_model/BTS/best_model.pt
 
 TRAIN:
     batch_size: 64
@@ -31,5 +31,5 @@ LOG:
     log_interval: 1
 
 RESULT:
-    savedir: './saved_model'
+    savedir: '/saved_model'
     result_name: results

@@ -7,8 +7,8 @@ MODE:
     
 DATASET:
     name: bert
-    data_path: ../data/labeled_fake_news/Part1 # news article directory
-    saved_data_path: ../data/labeled_fake_news/Part1/BERT_w512
+    data_path: ../data/Part1 # news article directory
+    saved_data_path: ../data/Part1/BERT_w512
     PARAMETERS:
         max_word_len: 512
 
@@ -43,4 +43,4 @@ SCHEDULER:
     use_scheduler: True
 
 RESULT:
-    savedir: './saved_model'
+    savedir: '/saved_model'

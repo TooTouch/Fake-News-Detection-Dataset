@@ -7,14 +7,14 @@ MODE:
     
 DATASET:
     name: FNDNet
-    data_path: ../data/labeled_fake_news/Part1 # news article directory
-    saved_data_path: ../data/labeled_fake_news/Part1/FNDNet_w1000
+    data_path: ../data/Part1 # news article directory
+    saved_data_path: ../data/Part1/FNDNet_w1000
     PARAMETERS:
         max_word_len: 1000
 
 TOKENIZER: 
     name: mecab
-    vocab_path: ./word-embeddings/glove/glove.txt
+    vocab_path: /word-embeddings/glove/glove.txt
     max_vocab_size: 50000  
     
 MODEL:
@@ -50,4 +50,4 @@ SCHEDULER:
     use_scheduler: True
 
 RESULT:
-    savedir: './saved_model'
+    savedir: '/saved_model'

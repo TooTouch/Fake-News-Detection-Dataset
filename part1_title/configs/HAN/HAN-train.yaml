@@ -7,15 +7,15 @@ MODE:
     
 DATASET:
     name: HAN
-    data_path: ../data/labeled_fake_news/Part1 # news article directory
-    saved_data_path: ../data/labeled_fake_news/Part1/HAN_s16_w64
+    data_path: ../data/Part1 # news article directory
+    saved_data_path: ../data/Part1/HAN_s16_w64
     PARAMETERS:
         max_sent_len: 16
         max_word_len: 64
 
 TOKENIZER: 
     name: mecab
-    vocab_path: ./word-embeddings/glove/glove.txt
+    vocab_path: /word-embeddings/glove/glove.txt
     max_vocab_size: 50000  
 
 MODEL:
@@ -52,4 +52,4 @@ SCHEDULER:
     use_scheduler: False
 
 RESULT:
-    savedir: './saved_model'
+    savedir: '/saved_model'

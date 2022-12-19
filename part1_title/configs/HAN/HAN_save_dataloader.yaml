@@ -3,7 +3,7 @@ SEED: 223
     
 DATASET:
     name: HAN
-    data_path: ../data/labeled_fake_news/Part1 # news article directory
+    data_path: ../data/Part1 # news article directory
     saved_data_path: false
     PARAMETERS:  
         max_sent_len: 16
@@ -11,7 +11,7 @@ DATASET:
 
 TOKENIZER: 
     name: mecab
-    vocab_path: ./word-embeddings/glove/glove.txt
+    vocab_path: /word-embeddings/glove/glove.txt
     max_vocab_size: 50000  
 
 TRAIN:
@@ -19,5 +19,5 @@ TRAIN:
     num_workers: 12
 
 RESULT:
-    savedir: ../data/labeled_fake_news/Part1
+    savedir: ../data/Part1
     dataname: 'HAN_s16_w64'
