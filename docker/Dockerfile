@@ -4,13 +4,15 @@ RUN apt update
 RUN apt-get update && apt-get upgrade -y && apt-get install -y vim && apt-get install -y git
 RUN apt-get install -y g++ && apt-get install -y curl
 
+RUN pip install --upgrade pip
+RUN pip install matplotlib seaborn scikit-learn scipy pandas numpy jupyter gluonnlp==0.10.0 wandb==0.12.18 transformers==4.18.0
+RUN pip install git+https://git@github.com/SKTBrain/KoBERT.git@master
+
+# java
 RUN apt install -y software-properties-common
 RUN add-apt-repository ppa:openjdk-r/ppa
 RUN apt update
 RUN apt install -y openjdk-11-jdk
-
-RUN pip install --upgrade pip
-RUN pip install matplotlib seaborn scikit-learn scipy pandas numpy jupyter
 
 # konlpy
 RUN pip install konlpy   
@@ -19,15 +21,28 @@ RUN bash <(curl -s https://raw.githubusercontent.com/konlpy/konlpy/master/script
 RUN apt-get install -y fonts-nanum
 RUN rm -rf ~/.cache/matplotlib/*
 
+# remove workspace
+RUN rm -r /workspace/*
+
+
+# download word-embeddings
 WORKDIR /
-
-RUN pip freeze > requirements.txt
-
-ARG UNAME
-ARG UID
-ARG GID
-RUN groupadd -g $GID -o $UNAME
-RUN useradd -m -u $UID -g $GID -o -s /bin/bash $UNAME
-USER $UNAME
+RUN wget --load-cookies ~/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies ~/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1FeGIbSz2E1A63JZP_XIxnGaSRt7AhXFf' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1FeGIbSz2E1A63JZP_XIxnGaSRt7AhXFf" -O word-embeddings.zip && rm -rf ~/cookies.txt
+RUN unzip word-embeddings.zip
+RUN rm word-embeddings.zip
 
 
+# download part1,2 checkpoints
+RUN mkdir /saved_model \
+    && cd /saved_model \
+    && wget https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part1/HAN.zip \
+    && wget https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part1/FNDNet.zip \
+    && wget https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part1/BERT.zip \
+    && wget https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part2/BTS.zip \
+    && wget https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part2/KoBERTSeg.zip \
+    && unzip HAN.zip -d /saved_model/HAN \
+    && unzip FNDNet.zip -d /saved_model/FNDNet \
+    && unzip BERT.zip -d /saved_model/BERT \
+    && unzip BTS.zip -d /saved_model/BTS \
+    && unzip KoBERTSeg.zip -d /saved_model/KoBERTSeg \
+    && rm *.zip
