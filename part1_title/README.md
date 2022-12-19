@@ -68,13 +68,13 @@ task1_title
 
 | target                 |   count |
 |:-----------------------|--------:|
-| ClickBait_Direct_Part1 |   40106 |
+| Clickbait_Direct       |   40106 |
 | Clickbait_Auto         |  106014 |
 | NonClickbait_Auto      |  145346 |
 
 **Category**
 
-낚시-직접생성(ClickBait_Direct_Part1)
+낚시-직접생성(Clickbait_Direct)
 
 | category   |   count | ratio   |
 |:-----------|--------:|:--------|
@@ -121,13 +121,13 @@ task1_title
 
 | target                 |   count |
 |:-----------------------|--------:|
-| ClickBait_Direct_Part1 |    5012 |
+| Clickbait_Direct |    5012 |
 | Clickbait_Auto         |   13253 |
 | NonClickbait_Auto      |   18169 |
 
 **Category**
 
-낚시-직접생성(ClickBait_Direct_Part1)
+낚시-직접생성(Clickbait_Direct)
 
 | category   |   count | ratio   |
 |:-----------|--------:|:--------|
@@ -175,13 +175,13 @@ task1_title
 
 | target                 |   count |
 |:-----------------------|--------:|
-| ClickBait_Direct_Part1 |    5013 |
+| Clickbait_Direct |    5013 |
 | Clickbait_Auto         |   13251 |
 | NonClickbait_Auto      |   18169 |
 
 **Category**
 
-낚시-직접생성(ClickBait_Direct_Part1)
+낚시-직접생성(Clickbait_Direct)
 
 | category   |   count | ratio   |
 |:-----------|--------:|:--------|
@@ -316,7 +316,7 @@ BERT	| 0.998	| 0.978	| 0.977	| 0.978	| 0.978
 ---|---:|---:|---:
 NonClickbait_Auto	| 1841 / 18169 (10.13%)	| 399 / 18169 (2.20%)	| 3203 / 18169 (17.63%)
 Clickbait_Auto	| 2161 / 13251 (16.31%)	| 51 / 13251 (0.38%)	| 2978 / 13251 (22.47%)
-ClickBait_Direct_Part1	| 717 / 5013 (14.30%)	| 368 / 5013 (7.34%)	| 646 / 5013 (12.89%)
+Clickbait_Direct	| 717 / 5013 (14.30%)	| 368 / 5013 (7.34%)	| 646 / 5013 (12.89%)
 
 # Reference
 

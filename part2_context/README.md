@@ -67,7 +67,7 @@ task2_context
 
 **Category**
 
-낚시-직접생성(ClickBait_Direct_Part1)
+낚시-직접생성(Clickbait_Direct)
 
 | category   |   count | ratio   |
 |:-----------|--------:|:--------|
@@ -120,7 +120,7 @@ task2_context
 
 **Category**
 
-낚시-직접생성(ClickBait_Direct_Part1)
+낚시-직접생성(Clickbait_Direct)
 
 | category   |   count | ratio   |
 |:-----------|--------:|:--------|
@@ -174,7 +174,7 @@ task2_context
 
 **Category**
 
-낚시-직접생성(ClickBait_Direct_Part1)
+낚시-직접생성(Clickbait_Direct)
 
 | category   |   count | ratio   |
 |:-----------|--------:|:--------|

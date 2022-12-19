@@ -49,9 +49,9 @@ def extract_wrong_ratio(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def select_wrong_case_topN(df: pd.DataFrame, cat: str, n: int):
-    assert cat in ['ClickBait_Direct_Part1','Clickbait_Auto','NonClickbait_Auto'], "cat should be either 'ClickBait_Direct_Part1','Clickbait_Auto','NonClickbait_Auto'"
+    assert cat in ['Clickbait_Direct','Clickbait_Auto','NonClickbait_Auto'], "cat should be either 'Clickbait_Direct','Clickbait_Auto','NonClickbait_Auto'"
     # define wrong pred 
-    if cat in ['ClickBait_Direct_Part1','Clickbait_Auto']:
+    if cat in ['Clickbait_Direct','Clickbait_Auto']:
         pred = 0
     elif cat == 'NonClickbait_Auto':
         pred = 1
