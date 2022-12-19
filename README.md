@@ -4,7 +4,7 @@
 
 <div align="center">
 
-[📘Documentation](https://tootouch.github.io/Fake-News-Detection-Dataset/)
+[📘 Documentation](https://tootouch.github.io/Fake-News-Detection-Dataset/)
 
 </div>
 
@@ -19,12 +19,16 @@
 
 **1. docker image**
 
+docker image 생성 시 `word-embedding`와 Part1과 Part2에 대한 `checkpoints` 가 함께 생성
+
 ```bash
 bash ./docker/docker_build.sh $image_name
 ```
 
 
 **2. Korean word-embeddings**
+
+본 프로젝트에서는 한국어 word embedding 모델로 `Mecab`을 사용
 
 - 한국어 임베딩 [ [github](https://github.com/ratsgo/embedding) ]
 - word-embeddings [ [download](https://drive.google.com/file/d/1FeGIbSz2E1A63JZP_XIxnGaSRt7AhXFf/view) ]
@@ -50,9 +54,9 @@ Fake-News-Detection-Dataset
 
 # Data
 
-`./data/Part1`에는 다음과 같은 데이터 폴더 구조로 구성되어 있음
+`./data`에는 다음과 같은 데이터 폴더 구조로 구성되어 있음
 
-![image](https://user-images.githubusercontent.com/37654013/207876089-16a0e88d-5fba-4aad-9654-521505a9e370.png)
+![image](https://user-images.githubusercontent.com/37654013/208360905-da4841f0-27d4-46f5-9e99-2179e9773cb5.png)
 
 
 # Part 1: 제목 - 본문 일치성 [ [Part1]() ]
