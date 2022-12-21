@@ -1,4 +1,4 @@
-# BTS:Bert based Text Segmentation
+# BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding
 
 
 # Model description
