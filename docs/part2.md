@@ -296,6 +296,8 @@ Returns:
 
 > class BTS(*finetune_bert*) [[SOURCE](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/2bf0bfbe0a51fbbe0d41c9ab4ae23c34b106e59b/part2_context/models/bts.py#L11)]
 
+[BTS: 한국어 BERT를 사용한 텍스트 세그멘테이션](https://www.dbpia.co.kr/pdf/pdfView.do?nodeId=NODE09301605&mark=0&useDate=&ipRange=N&accessgl=Y&language=ko_KR&hasTopBanner=true)에서 제안한 BTS 모델 사용. 모델 설명은 [여기]()에서 확인할 수 있습니다.
+
 Parameters:
 
 - **finetung_bert** (*bool*) - BERT 모델을 finetuning 할지에 대한 여부 
