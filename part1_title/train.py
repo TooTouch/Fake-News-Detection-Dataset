@@ -104,7 +104,7 @@ def training(model, num_training_steps: int, trainloader, validloader, criterion
                                 data_time  = data_time_m))
 
 
-                if ((step+1) // accumulation_steps) % eval_interval == 0 and step != 0: 
+                if (((step+1) // accumulation_steps) % eval_interval == 0 and step != 0) or step+1 == num_training_steps: 
                     eval_metrics = evaluate(model, validloader, criterion, log_interval, device)
                     model.train()
 
