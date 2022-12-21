@@ -222,9 +222,9 @@ task1_title
 
 # Models
 
-- HAN[^1] [ [description]() | [checkpoint](https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part1/HAN.zip) ]
-- FNDNet[^2] [ [description]() | [checkpoint](https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part1/FNDNet.zip) ]
-- BERT[^3] [ [description]() | [checkpoint](https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part1/BERT.zip) ]
+- HAN[^1] [ [description](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part1_title/assets/model_description/HAN.md) | [checkpoint](https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part1/HAN.zip) ]
+- FNDNet[^2] [ [description](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part1_title/assets/model_description/FNDNet.md) | [checkpoint](https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part1/FNDNet.zip) ]
+- BERT[^3] [ [description](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part1_title/assets/model_description/BERT.md) | [checkpoint](https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part1/BERT.zip) ]
 
 
 # Configurations

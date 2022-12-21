@@ -216,8 +216,8 @@ task2_context
 
 # Models
 
-- BTS[^1] [ [description]() | [download](https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part2/BTS.zip) ]
-- KoBERTSeg[^2] [ [description]() | [download](https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part2/KoBERTSeg.zip) ]
+- BTS[^1] [ [description](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part2_context/assets/model_description/BTS.md) | [download](https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part2/BTS.zip) ]
+- KoBERTSeg[^2] [ [description](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part2_context/assets/model_description/KoBERTSeg.md) | [download](https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part2/KoBERTSeg.zip) ]
 
 # Configurations
 

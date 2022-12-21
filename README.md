@@ -11,10 +11,10 @@
 # Enviroments
 
 **Computer Resources**
-- **CPU**: i7-7800K
-- **GPU**: RTX 3080
+- **CPU**: i7-9800X
+- **GPU**: RTX 2080Ti
 - **RAM**: 64GB
-- **SSD**: 512GB
+- **SSD**: 2TB x 2
 - **OS**: ubuntu 18.04
 
 **1. docker image**
@@ -59,7 +59,7 @@ Fake-News-Detection-Dataset
 ![image](https://user-images.githubusercontent.com/37654013/208360905-da4841f0-27d4-46f5-9e99-2179e9773cb5.png)
 
 
-# Part 1: 제목 - 본문 일치성 [ [Part1]() ]
+# Part 1: 제목 - 본문 일치성 [ [Part1](https://github.com/TooTouch/Fake-News-Detection-Dataset/tree/0bb478f18ad83cec2104a6ff8eebe3ff9f7b4e7a/part1_title) ]
 
 ## Baseline Models
 
@@ -67,7 +67,7 @@ Fake-News-Detection-Dataset
 - FNDNet[^2]
 - BERT[^3]
 
-# Part 2: 주제 분리 탐지 [ [Part2]() ]
+# Part 2: 주제 분리 탐지 [ [Part2](https://github.com/TooTouch/Fake-News-Detection-Dataset/tree/0bb478f18ad83cec2104a6ff8eebe3ff9f7b4e7a/part2_context) ]
 ## Baseline Models
 
 - BTS[^4]
