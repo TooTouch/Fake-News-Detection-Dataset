@@ -296,7 +296,7 @@ Returns:
 
 > class BTS(*finetune_bert*) [[SOURCE](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part2_context/models/bts.py#L11)]
 
-[BTS: 한국어 BERT를 사용한 텍스트 세그멘테이션](https://www.dbpia.co.kr/pdf/pdfView.do?nodeId=NODE09301605&mark=0&useDate=&ipRange=N&accessgl=Y&language=ko_KR&hasTopBanner=true)에서 제안한 BTS 모델 사용. 모델 설명은 [여기]()에서 확인할 수 있습니다.
+[BTS: 한국어 BERT를 사용한 텍스트 세그멘테이션](https://www.dbpia.co.kr/pdf/pdfView.do?nodeId=NODE09301605&mark=0&useDate=&ipRange=N&accessgl=Y&language=ko_KR&hasTopBanner=true)에서 제안한 BTS 모델 사용. 모델 설명은 [여기](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part2_context/assets/model_description/BTS.md)에서 확인할 수 있습니다.
 
 Parameters:
 
@@ -332,7 +332,7 @@ Returns:
 
 > class KoBERTSeg(*finetune_bert, window_size*) [[SOURCE](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part2_context/models/kobertseg.py#L37)]
 
-[KoBERTSEG: 한국어 BERT를 이용한 Local Context 기반 주제 분리 방법론](https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART002831197)에서 제안한 KoBERTSeg 사용. 모델 설명은 [여기]()에서 확인할 수 있습니다.
+[KoBERTSEG: 한국어 BERT를 이용한 Local Context 기반 주제 분리 방법론](https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART002831197)에서 제안한 KoBERTSeg 사용. 모델 설명은 [여기](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part2_context/assets/model_description/KoBERTSeg.md)에서 확인할 수 있습니다.
 
 Parameters:
 
