@@ -23,7 +23,7 @@ class BTSDataset(FakeDataset):
 
         # tokenizer
         for dataset in datasets:
-            src_subtoken_idxs, segments_ids, _, mask_src, _ = self.tokenize(dataset)
+            src_subtoken_idxs, segments_ids, mask_src = self.tokenize(dataset)
 
             inputs['src'].append(src_subtoken_idxs)
             inputs['segs'].append(segments_ids)
@@ -47,13 +47,13 @@ class BTSDataset(FakeDataset):
         src_token_ids = [x for sublist in src_token_ids for x in sublist]
         cls_ids = self.get_cls_index(src_token_ids)
         
-        src_token_ids, segments_ids, cls_ids, mask_src, mask_cls = self.padding_bert(
+        src_token_ids, segments_ids, _, mask_src, _ = self.padding_bert(
             src_token_ids = src_token_ids,
             segments_ids  = segments_ids,
             cls_ids       = cls_ids
         )
         
-        return src_token_ids, segments_ids, cls_ids, mask_src, mask_cls
+        return src_token_ids, segments_ids, mask_src
 
     
     def __getitem__(self, i: int, return_txt: bool = False, return_fake_label: bool = False):
@@ -61,7 +61,7 @@ class BTSDataset(FakeDataset):
         doc, target, news_id = self.datasets[i], self.targets[i], self.news_ids[i]
         
         # tokenizer
-        src_subtoken_idxs, segments_ids, _, mask_src, _ = self.tokenize(doc)
+        src_subtoken_idxs, segments_ids, mask_src = self.tokenize(doc)
 
         inputs = {
             'src': src_subtoken_idxs,
