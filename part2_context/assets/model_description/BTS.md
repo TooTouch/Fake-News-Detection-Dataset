@@ -29,11 +29,11 @@
 
 # Training Dataset
 
-[`BTSDataset`](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/0bb478f18ad83cec2104a6ff8eebe3ff9f7b4e7a/part2_context/dataset/bts.py#L6)
+[`BTSDataset`](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part2_context/dataset/bts.py#L6)
 
 # Training Setup
 
-[`BTS-train.yaml`](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/0bb478f18ad83cec2104a6ff8eebe3ff9f7b4e7a/part2_context/configs/BTS/BTS-train.yaml)
+[`BTS-train.yaml`](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part2_context/configs/BTS/BTS-train.yaml)
 
 ```yaml
 TRAIN:

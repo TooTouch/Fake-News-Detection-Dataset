@@ -28,11 +28,11 @@
 
 # Training Dataset
 
-[`KoBERTSegDataset`](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/0bb478f18ad83cec2104a6ff8eebe3ff9f7b4e7a/part2_context/dataset/kobertseg.py#L6)
+[`KoBERTSegDataset`](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part2_context/dataset/kobertseg.py#L6)
 
 # Training Setup
 
-[`KoBERTSeg-train.yaml`](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/0bb478f18ad83cec2104a6ff8eebe3ff9f7b4e7a/part2_context/configs/KoBERTSeg/KoBERTSeg-train.yaml)
+[`KoBERTSeg-train.yaml`](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part2_context/configs/KoBERTSeg/KoBERTSeg-train.yaml)
 
 ```yaml
 TRAIN:

@@ -131,7 +131,7 @@ Returns:
 
 ## BTSDataset
 
-> class BTSDataset(*window_size, tokenizer, vocab, max_word_len) [[SOURCE](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/2bf0bfbe0a51fbbe0d41c9ab4ae23c34b106e59b/part2_context/dataset/bts.py#L6)]
+> class BTSDataset(*window_size, tokenizer, vocab, max_word_len) [[SOURCE](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part2_context/dataset/bts.py#L6)]
 
 Parameters:
 
@@ -244,7 +244,7 @@ Returns:
 
 ## factory
 
-> create_dataset(*name, data_path, split, tokenizer, vocab, kwargs*) [[SOURCE](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/2bf0bfbe0a51fbbe0d41c9ab4ae23c34b106e59b/part2_context/dataset/factory.py#L3)]
+> create_dataset(*name, data_path, split, tokenizer, vocab, kwargs*) [[SOURCE](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part2_context/dataset/factory.py#L3)]
 
 Parameters:
 
@@ -261,7 +261,7 @@ Returns:
 `Dataset`
 
 
-> create_dataloader(*dataset, batch_size, num_workers, shuffle*) [[SOURCE](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/2bf0bfbe0a51fbbe0d41c9ab4ae23c34b106e59b/part2_context/dataset/factory.py#L16)]
+> create_dataloader(*dataset, batch_size, num_workers, shuffle*) [[SOURCE](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part2_context/dataset/factory.py#L16)]
 
 Parameters:
 
@@ -294,7 +294,7 @@ Returns:
 
 `BTS`
 
-> class BTS(*finetune_bert*) [[SOURCE](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/2bf0bfbe0a51fbbe0d41c9ab4ae23c34b106e59b/part2_context/models/bts.py#L11)]
+> class BTS(*finetune_bert*) [[SOURCE](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part2_context/models/bts.py#L11)]
 
 [BTS: 한국어 BERT를 사용한 텍스트 세그멘테이션](https://www.dbpia.co.kr/pdf/pdfView.do?nodeId=NODE09301605&mark=0&useDate=&ipRange=N&accessgl=Y&language=ko_KR&hasTopBanner=true)에서 제안한 BTS 모델 사용. 모델 설명은 [여기]()에서 확인할 수 있습니다.
 
@@ -330,7 +330,7 @@ Returns:
 `KoBERTSeg`
 
 
-> class KoBERTSeg(*finetune_bert, window_size*) [[SOURCE](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/2bf0bfbe0a51fbbe0d41c9ab4ae23c34b106e59b/part2_context/models/kobertseg.py#L37)]
+> class KoBERTSeg(*finetune_bert, window_size*) [[SOURCE](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part2_context/models/kobertseg.py#L37)]
 
 [KoBERTSEG: 한국어 BERT를 이용한 Local Context 기반 주제 분리 방법론](https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART002831197)에서 제안한 KoBERTSeg 사용. 모델 설명은 [여기]()에서 확인할 수 있습니다.
 
@@ -360,7 +360,7 @@ Returns:
 
 ## factory
 
-> create_model(*modelname, hparams, checkpoint_path*) [[SOURCE](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/2bf0bfbe0a51fbbe0d41c9ab4ae23c34b106e59b/part2_context/models/factory.py#L8)]
+> create_model(*modelname, hparams, checkpoint_path*) [[SOURCE](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part2_context/models/factory.py#L8)]
 
 모델 생성을 위한 함수
 

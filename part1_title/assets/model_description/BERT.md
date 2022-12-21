@@ -30,11 +30,11 @@
 
 # Training Dataset
 
-[`BERTDataset`](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/0bb478f18ad83cec2104a6ff8eebe3ff9f7b4e7a/part1_title/dataset/bert.py#L5)
+[`BERTDataset`](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part1_title/dataset/bert.py#L5)
 
 # Training Setup
 
-[`BERT-train.yaml`](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/0bb478f18ad83cec2104a6ff8eebe3ff9f7b4e7a/part1_title/configs/BERT/BERT-train.yaml)
+[`BERT-train.yaml`](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part1_title/configs/BERT/BERT-train.yaml)
 
 ```yaml
 TRAIN:

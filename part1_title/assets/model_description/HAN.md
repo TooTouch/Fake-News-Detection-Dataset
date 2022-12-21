@@ -26,11 +26,11 @@ HAN 구조는 크게 단어 level의 hidden representation을 구하는 부분�
 
 # Training Dataset
 
-[`HANDataset`](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/0bb478f18ad83cec2104a6ff8eebe3ff9f7b4e7a/part1_title/dataset/han.py#L5)
+[`HANDataset`](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part1_title/dataset/han.py#L5)
 
 # Training Setup
 
-[`HAN-train.yaml`](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/0bb478f18ad83cec2104a6ff8eebe3ff9f7b4e7a/part1_title/configs/HAN/HAN-train.yaml)
+[`HAN-train.yaml`](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part1_title/configs/HAN/HAN-train.yaml)
 
 ```yaml
 TRAIN:

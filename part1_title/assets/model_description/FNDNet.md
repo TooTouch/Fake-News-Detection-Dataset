@@ -26,11 +26,11 @@
 
 # Training Dataset
 
-[`FNDNetDataset`](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/0bb478f18ad83cec2104a6ff8eebe3ff9f7b4e7a/part1_title/dataset/fndnet.py#L5)
+[`FNDNetDataset`](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part1_title/dataset/fndnet.py#L5)
 
 # Training Setup
 
-[`FNDNet-train.yaml`](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/0bb478f18ad83cec2104a6ff8eebe3ff9f7b4e7a/part1_title/configs/FNDNet/FNDNet-train.yaml)
+[`FNDNet-train.yaml`](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part1_title/configs/FNDNet/FNDNet-train.yaml)
 
 ```yaml
 TRAIN:
