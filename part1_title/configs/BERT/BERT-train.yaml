@@ -6,7 +6,7 @@ MODE:
     do_test: False
     
 DATASET:
-    name: bert
+    name: BERT
     data_path: ../data/Part1 # news article directory
     saved_data_path: ../data/Part1/BERT_w512
     PARAMETERS:
