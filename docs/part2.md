@@ -133,6 +133,8 @@ Returns:
 
 > class BTSDataset(*window_size, tokenizer, vocab, max_word_len) [[SOURCE](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part2_context/dataset/bts.py#L6)]
 
+`BTS` 모델을 위한 데이터셋
+
 Parameters:
 
 - **tokenizer** -  SKT에서 학습한 [tokenizer](https://github.com/SKTBrain/KoBERT/blob/master/kobert/utils/utils.py)를 통해 gluonnlp의 [BERTSPTokenizer](https://nlp.gluon.ai/_modules/gluonnlp/data/transforms.html#BERTSPTokenizer)
@@ -188,6 +190,8 @@ Returns:
 ## KoBERTSegDataset
 
 > class KoBERTSegDataset(*window_size, tokenizer, vocab, max_word_len*) [[SOURCE](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/5856b56f39ca104157550c8108435d2d2cc84f3f/part2_context/dataset/kobertseg.py#L6)]
+
+`KoBERTSeg` 모델을 위한 데이터셋
 
 Parameters:
 
@@ -288,7 +292,7 @@ Returns:
 
 Parameters:
 
-- **hparams**: 모델 학습에 필요한 hyper parameters. [BTS configuration](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part2_context/configs/BTS/BTS-train.yaml) 참고 
+- **hparams** (*dict*) - 모델 학습에 필요한 hyper parameters. [BTS configuration](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part2_context/configs/BTS/BTS-train.yaml) 참고 
 
 Returns:
 
@@ -323,7 +327,7 @@ Returns:
 
 Parameters
 
-- **hparams**: 모델 학습에 필요한 hyper parameters. [KoBERTSeg configuration](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part2_context/configs/KoBERTSeg/KoBERTSeg-train.yaml) 참고 
+- **hparams** (*dict*) - 모델 학습에 필요한 hyper parameters. [KoBERTSeg configuration](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part2_context/configs/KoBERTSeg/KoBERTSeg-train.yaml) 참고 
   
 Returns:
 
