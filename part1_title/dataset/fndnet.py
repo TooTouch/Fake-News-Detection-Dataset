@@ -7,7 +7,7 @@ class FNDNetDataset(FakeDataset):
         super(FNDNetDataset, self).__init__(tokenizer=tokenizer)
         self.max_word_len = max_word_len
 
-    def transform(self, title: str, text: str) -> dict:
+    def transform(self, title: str, text: list) -> dict:
         sent_list = [title] + text
 
         doc = sum([self.tokenizer.encode(sent) for sent in sent_list], [])[:self.max_word_len]

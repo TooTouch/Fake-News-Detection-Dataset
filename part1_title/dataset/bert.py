@@ -13,7 +13,7 @@ class BERTDataset(FakeDataset):
         self.pad_idx = self.vocab[self.vocab.padding_token]
         self.cls_idx = self.vocab[self.vocab.cls_token]
 
-    def transform(self, title: str, text: str) -> dict:
+    def transform(self, title: str, text: list) -> dict:
         sent_list = [title] + text
         src = [self.tokenizer(d_i) for d_i in sent_list]
 

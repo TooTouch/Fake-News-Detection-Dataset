@@ -9,7 +9,7 @@ class HANDataset(FakeDataset):
         self.max_word_len = max_word_len
         self.max_sent_len = max_sent_len
 
-    def transform(self, title: str, text: str) -> dict:
+    def transform(self, title: str, text: list) -> dict:
         sent_list = [title] + text
 
         sent_list = sent_list[:self.max_sent_len]
