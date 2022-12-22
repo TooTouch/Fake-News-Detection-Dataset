@@ -267,7 +267,7 @@ SEED: 223
     
 DATASET:
     name: BERT
-    data_path: ../data/labeled_fake_news/Part1 # news article directory
+    data_path: ../data/Part1 # news article directory
     saved_data_path: false
     PARAMETERS:
         max_word_len: 512
@@ -280,7 +280,7 @@ TRAIN:
     num_workers: 12
 
 RESULT:
-    savedir: ../data/labeled_fake_news/Part1
+    savedir: ../data/Part1
     dataname: 'BERT_w512'
 ```
 
@@ -288,10 +288,31 @@ RESULT:
 **run**
 
 ```bash
-python main.py --yaml_config ${config_file_path}
 python save_dataloader.py --yaml_config ${config_file_path}
+python main.py --yaml_config ${config_file_path}
 ```
 
+**fine-tuning**
+
+Fine-tuning을 수행하는 경우 `configs` 내 모델 yaml 파일에서 `checkpoint_path`에 학습이 완료된 모델 저장 경로를 설정하여 학습 진행
+
+ex) `./configs/HAN/HAN-train.yaml`
+
+```yaml
+MODEL:
+    modelname: han
+    freeze_word_embed: True
+    use_pretrained_word_embed: True
+    PARAMETERS:
+        num_classes: 2
+        vocab_len: 50002
+        dropout: 0.1
+        word_dims: 32
+        sent_dims: 64
+        embed_dims: 100
+    CHECKPOINT:
+        checkpoint_path: './저장된_모델_경로/모델이름.pt'
+```
 
 # Results
 
