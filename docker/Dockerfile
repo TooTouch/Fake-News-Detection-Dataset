@@ -4,10 +4,6 @@ RUN apt update
 RUN apt-get update && apt-get upgrade -y && apt-get install -y vim && apt-get install -y git
 RUN apt-get install -y g++ && apt-get install -y curl
 
-RUN pip install --upgrade pip
-RUN pip install matplotlib seaborn scikit-learn scipy pandas numpy jupyter gluonnlp==0.10.0 wandb==0.12.18 transformers==4.18.0 einops
-RUN pip install git+https://git@github.com/SKTBrain/KoBERT.git@master
-
 # java
 RUN apt install -y software-properties-common
 RUN add-apt-repository ppa:openjdk-r/ppa
@@ -17,6 +13,12 @@ RUN apt install -y openjdk-11-jdk
 # konlpy
 RUN pip install konlpy   
 RUN bash <(curl -s https://raw.githubusercontent.com/konlpy/konlpy/master/scripts/mecab.sh)
+
+# requirements
+RUN pip install --upgrade pip
+RUN pip install matplotlib seaborn scikit-learn scipy pandas numpy jupyter gluonnlp==0.10.0 wandb==0.12.18 transformers==4.18.0 einops
+RUN pip install git+https://git@github.com/SKTBrain/KoBERT.git@master
+
 
 RUN apt-get install -y fonts-nanum
 RUN rm -rf ~/.cache/matplotlib/*
