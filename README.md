@@ -10,6 +10,19 @@
 
 # Enviroments
 
+- python 3.6.10
+
+```
+torch==1.8.0a0+17f8c32
+konlpy==0.6.0
+einops
+gluonnlp==0.10.0
+wandb==0.12.18
+transformers==4.18.0
+git+https://git@github.com/SKTBrain/KoBERT.git@master
+```
+
+
 **Computer Resources**
 - **CPU**: i7-9800X
 - **GPU**: RTX 2080Ti
