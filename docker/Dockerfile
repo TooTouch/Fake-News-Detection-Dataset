@@ -47,3 +47,7 @@ RUN mkdir /saved_model \
     && unzip BTS.zip -d /saved_model \
     && unzip KoBERTSeg.zip -d /saved_model \
     && rm *.zip
+
+# clone fake news github
+WORKDIR /workspace
+RUN git clone https://github.com/TooTouch/Fake-News-Detection-Dataset.git
