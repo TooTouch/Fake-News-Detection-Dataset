@@ -149,7 +149,7 @@ cython_debug/
 # End of https://www.toptal.com/developers/gitignore/api/python
 
 # results
-data
+data*/
 *.ipynb
 !inference.ipynb
 wandb/
@@ -157,3 +157,5 @@ word-embeddings/
 saved_model*/
 *.sh
 !*output.log
+*.tar.gz
+clickbait_direct/
