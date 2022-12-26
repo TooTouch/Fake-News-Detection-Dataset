@@ -1,4 +1,4 @@
-# BTS:Bert based Text Segmentation
+# BTS: BERT for Topic Segmentation
 
 # Model description
 * BTS는 BERT(Devlin et al., 2019)을 이용하여 서로 연속된 두 문장의 연관성을 파악하고 연관성의 유무에 따라 문단을 구분하는 것이 목표인 방법론이다.

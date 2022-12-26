@@ -243,7 +243,7 @@ python main.py --yaml_config ${config_file_path}
 
 Fine-tuning을 수행하는 경우 `configs` 내 모델 yaml 파일에서 `checkpoint_path`에 학습이 완료된 모델 저장 경로를 설정하여 학습 진행
 
-ex) `./configs/HAN/HAN-train.yaml`
+ex) `./configs/BTS/BTS-train.yaml`
 
 ```yaml
 MODEL:

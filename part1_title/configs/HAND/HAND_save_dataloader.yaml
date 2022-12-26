@@ -1,8 +1,8 @@
-EXP_NAME: HAN
+EXP_NAME: HAND
 SEED: 223
     
 DATASET:
-    name: HAN
+    name: HAND
     data_path: ../data/Part1 # news article directory
     saved_data_path: false
     PARAMETERS:  
@@ -20,4 +20,4 @@ TRAIN:
 
 RESULT:
     savedir: ../data/Part1
-    dataname: 'HAN_s16_w64'
+    dataname: 'HAND_s16_w64'

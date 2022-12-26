@@ -1,4 +1,4 @@
-from .han import HierAttNet
+from .hand import HierAttNet
 from .fndnet import FNDNet
 from .bert import BERT
 from .factory import create_model

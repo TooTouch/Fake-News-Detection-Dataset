@@ -133,7 +133,7 @@ class Attention(nn.Module):
 
 
 @register_model
-def han(hparams, **kwargs):
+def hand(hparams, **kwargs):
     model = HierAttNet(
         word_dims   = hparams['word_dims'], 
         sent_dims   = hparams['sent_dims'],

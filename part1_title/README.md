@@ -13,14 +13,14 @@ task1_title
 │   │   ├── BERT-test.yaml
 │   │   └── BERT-train.yaml
 │   ├── FNDNet
-│   └── HAN
+│   └── HAND
 ├── dataset
 │   ├── __init__.py
 │   ├── build_dataset.py
 │   ├── bert.py
 │   ├── factory.py
 │   ├── fndnet.py
-│   ├── han.py
+│   ├── hand.py
 │   └── tokenizer.py
 ├── demo
 │   ├── example.md
@@ -31,7 +31,7 @@ task1_title
 │   ├── bert.py
 │   ├── factory.py
 │   ├── fndnet.py
-│   ├── han.py
+│   ├── hand.py
 │   └── registry.py
 ├── saved_model
 │   ├── BERT
@@ -42,7 +42,7 @@ task1_title
 │   │   ├── exp_results_validation.csv
 │   │   └── latest_model.pt
 │   ├── FNDNet
-│   └── HAN
+│   └── HAND
 ├── log.py
 ├── main.py
 ├── save_dataloader.py
@@ -222,7 +222,7 @@ task1_title
 
 # Models
 
-- HAN[^1] [ [description](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part1_title/assets/model_description/HAN.md) | [checkpoint](https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part1/HAN.zip) ]
+- HAND[^1] [ [description](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part1_title/assets/model_description/HAND.md) | [checkpoint](https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part1/HAND.zip) ]
 - FNDNet[^2] [ [description](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part1_title/assets/model_description/FNDNet.md) | [checkpoint](https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part1/FNDNet.zip) ]
 - BERT[^3] [ [description](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part1_title/assets/model_description/BERT.md) | [checkpoint](https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part1/BERT.zip) ]
 
@@ -245,11 +245,11 @@ task1_title
 - `./configs/FNDNet/FNDNet-test.yaml`
 
 
-**HAN**
+**HAND**
 
-- `./configs/HAN/HAN_save_dataloader.yaml`
-- `./configs/HAN/HAN-train.yaml`
-- `./configs/HAN/HAN-test.yaml`
+- `./configs/HAND/HAND_save_dataloader.yaml`
+- `./configs/HAND/HAND-train.yaml`
+- `./configs/HAND/HAND-test.yaml`
 
 
 
@@ -296,11 +296,11 @@ python main.py --yaml_config ${config_file_path}
 
 Fine-tuning을 수행하는 경우 `configs` 내 모델 yaml 파일에서 `checkpoint_path`에 학습이 완료된 모델 저장 경로를 설정하여 학습 진행
 
-ex) `./configs/HAN/HAN-train.yaml`
+ex) `./configs/HAND/HAND-train.yaml`
 
 ```yaml
 MODEL:
-    modelname: han
+    modelname: hand
     freeze_word_embed: True
     use_pretrained_word_embed: True
     PARAMETERS:
@@ -327,13 +327,13 @@ MODEL:
 Metrics	| AUROC	| F1	| RECALL	| PRECISION	| ACC
 ---|:---:|:---:|:---:|:---:|:---:
 FNDNet	| 0.897	| 0.811	| 0.802	| 0.820	| 0.813
-HAN	| 0.945	| 0.867	| 0.842	| 0.893	| 0.870
+HAND	| 0.945	| 0.867	| 0.842	| 0.893	| 0.870
 BERT	| 0.998	| 0.978	| 0.977	| 0.978	| 0.978
 
 
 **3. Misclassification Case**
 
- category	| HAN wrong / total (%)	| BERT wrong / total (%)	| FNDNet wrong / total (%)
+ category	| HAND wrong / total (%)	| BERT wrong / total (%)	| FNDNet wrong / total (%)
 ---|---:|---:|---:
 NonClickbait_Auto	| 1841 / 18169 (10.13%)	| 399 / 18169 (2.20%)	| 3203 / 18169 (17.63%)
 Clickbait_Auto	| 2161 / 13251 (16.31%)	| 51 / 13251 (0.38%)	| 2978 / 13251 (22.47%)

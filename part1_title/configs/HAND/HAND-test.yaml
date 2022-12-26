@@ -1,4 +1,4 @@
-EXP_NAME: HAN
+EXP_NAME: HAND
 SEED: 223
 
 MODE:
@@ -10,9 +10,9 @@ MODE:
         - test
     
 DATASET:
-    name: HAN
+    name: HAND
     data_path: ../data/Part1 # news article directory
-    saved_data_path: ../data/Part1/HAN_s16_w64
+    saved_data_path: ../data/Part1/HAND_s16_w64
     PARAMETERS:
         max_sent_len: 16
         max_word_len: 64
@@ -23,7 +23,7 @@ TOKENIZER:
     max_vocab_size: 50000  
 
 MODEL:
-    modelname: han
+    modelname: hand
     freeze_word_embed: True
     use_pretrained_word_embed: True
     PARAMETERS:
@@ -34,7 +34,7 @@ MODEL:
         sent_dims: 64
         embed_dims: 100
     CHECKPOINT:
-        checkpoint_path: /saved_model/HAN/best_model.pt
+        checkpoint_path: /saved_model/HAND/best_model.pt
 
 TRAIN:
     batch_size: 256

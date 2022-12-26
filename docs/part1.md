@@ -71,11 +71,11 @@ Returns:
 ---
 
 
-## HANDataset
+## HANDDataset
 
-> class HANDataset(*tokenizer, max_word_len, max_sent_len*) [[SOURCE](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part1_title/dataset/han.py#L5)]
+> class HANDDataset(*tokenizer, max_word_len, max_sent_len*) [[SOURCE](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part1_title/dataset/hand.py#L5)]
 
-`HAN` 모델을 위한 데이터셋
+`HAND` 모델을 위한 데이터셋
 
 Parameters:
 
@@ -449,22 +449,22 @@ Returns:
 
 ---
 
-## HAN
+## HAND
 
-> han(*hparams*)
+> hand(*hparams*)
 
 Parameters:
 
-- **hparams** (*dict*) - 모델 학습에 필요한 hyper-parameters. [HAN configuration](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part1_title/configs/HAN/HAN-train.yaml)
+- **hparams** (*dict*) - 모델 학습에 필요한 hyper-parameters. [HAND configuration](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part1_title/configs/HAND/HAND-train.yaml)
 
 Returns:
 
-`HAN`
+`HAND`
 
 
-> class HierAttNet(*word_dims, sent_dims, dropout, num_classes, vocab_len, embed_dims) [[SOURCE](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part1_title/models/han.py#L11)]
+> class HierAttNet(*word_dims, sent_dims, dropout, num_classes, vocab_len, embed_dims) [[SOURCE](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part1_title/models/hand.py#L11)]
 
-[Hierarchical Attention Networks for Document Classification](https://www.cs.cmu.edu/~hovy/papers/16HLT-hierarchical-attention-networks.pdf)에서 제안한 HAN 모델 사용. 모델 설명은 [여기](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part1_title/assets/model_description/HAN.md)에서 확인할 수 있습니다.
+[Hierarchical Attention Networks for Document Classification](https://www.cs.cmu.edu/~hovy/papers/16HLT-hierarchical-attention-networks.pdf)에서 제안한 HAND 모델 사용. 모델 설명은 [여기](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part1_title/assets/model_description/HAND.md)에서 확인할 수 있습니다.
 
 
 Parameters:
@@ -504,7 +504,7 @@ Returns:
  
 
 
-> class WordAttnNet(*vocab_len, embed_dims, word_dims, dropout*) [[SOURCE](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part1_title/models/han.py#L63)]
+> class WordAttnNet(*vocab_len, embed_dims, word_dims, dropout*) [[SOURCE](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part1_title/models/hand.py#L63)]
 
 
 Parameters:
@@ -527,7 +527,7 @@ Returns:
 - **words_attn_score** (*torch.Tensor*) - 단어 기준 attention score
 
 
-> class SentAttnNet(*word_dims, sent_dims, dropout*) [[SOURCE](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part1_title/models/han.py#L98)]
+> class SentAttnNet(*word_dims, sent_dims, dropout*) [[SOURCE](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part1_title/models/hand.py#L98)]
 
 Parameters:
 
@@ -556,7 +556,7 @@ Returns:
 
 Parameters:
 
-- **modelname** (*str*) - 사용할 모델 이름. ex) `HAN`, `FNDNet`, 또는 `BERT`
+- **modelname** (*str*) - 사용할 모델 이름. ex) `HAND`, `FNDNet`, 또는 `BERT`
 - **hparams** (*dict*) - 모델에 필요한 hyper-parameters
 - **word_embed** (*np.ndarray*) - 사전학습된 word embedding weights
 - **tokenizer** - `FNDTokenizer` 또는 `BERTSPTokenizer`

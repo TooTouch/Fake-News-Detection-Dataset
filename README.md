@@ -84,7 +84,7 @@ Fake-News-Detection-Dataset
 
 ## Baseline Models
 
-- HAN[^1]
+- HAND[^1]
 - FNDNet[^2]
 - BERT[^3]
 
