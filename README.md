@@ -32,6 +32,14 @@ git+https://git@github.com/SKTBrain/KoBERT.git@master
 
 **1. docker image**
 
+1. docker hub를 통해서 docker image pull 하는 방법
+
+```bash
+docker pull dsbalab/fake_news
+```
+
+2. Dockerfile을 통해서 docker image 설치 방법
+
 docker image 생성 시 `word-embedding`와 Part1과 Part2에 대한 `checkpoints` 가 함께 생성
 
 ```bash
