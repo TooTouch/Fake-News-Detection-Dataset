@@ -43,7 +43,8 @@ docker pull dsbalab/fake_news
 docker image 생성 시 `word-embedding`와 Part1과 Part2에 대한 `checkpoints` 가 함께 생성
 
 ```bash
-bash ./docker/docker_build.sh $image_name
+cd ./docker
+docker build -t $image_name .
 ```
 
 

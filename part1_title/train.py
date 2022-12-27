@@ -7,7 +7,7 @@ import logging
 import torch
 import numpy as np
 from utils import convert_device
-from sklearn.metrics import roc_auc_score, f1_score, recall_score, precision_score
+from sklearn.metrics import roc_auc_score, f1_score, recall_score, precision_score, confusion_matrix
 import transformers
 
 _logger = logging.getLogger('train')
@@ -204,6 +204,9 @@ def calc_metrics(y_true: list, y_score: np.ndarray, y_pred: list) -> dict:
     f1 = f1_score(y_true, y_pred)
     recall = recall_score(y_true, y_pred)
     precision = precision_score(y_true, y_pred)
+
+    tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
+    print(f'TN: {tn}, FP: {fp}, FN: {fn}, tp: {tp}')
 
     return {
         'auroc'    : auroc, 

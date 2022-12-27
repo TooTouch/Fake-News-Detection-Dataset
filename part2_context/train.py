@@ -7,7 +7,7 @@ import numpy as np
 
 import torch
 from utils import convert_device
-from sklearn.metrics import roc_auc_score, f1_score, recall_score, precision_score
+from sklearn.metrics import roc_auc_score, f1_score, recall_score, precision_score, confusion_matrix
 
 from typing import List, Union
 
@@ -254,6 +254,9 @@ def calc_metrics(y_true: list, y_score: list, y_pred: list) -> dict:
     f1 = f1_score(y_true, y_pred, average='macro')
     recall = recall_score(y_true, y_pred, average='macro')
     precision = precision_score(y_true, y_pred, average='macro')
+
+    tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
+    print(f'TN: {tn}, FP: {fp}, FN: {fn}, tp: {tp}')
 
     return {
         'auroc'    : auroc, 

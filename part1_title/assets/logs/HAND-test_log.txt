@@ -1,0 +1,31 @@
+Script started on 2022-12-27 04:06:23+0000
+jaehyuk@fake_news:/projects/projects-dsba/Fake-News-Detection-Dataset/part1_title$ python main.py --yaml_config ./configs/HAND/HAND-test.yaml
+Device: cuda:0
+/opt/conda/lib/python3.6/site-packages/torch/nn/modules/rnn.py:61: UserWarning: dropout option adds dropout after all but last recurrent layer, so non-zero dropout expects num_layers greater than 1, but got dropout=0.1 and num_layers=1
+  "num_layers={}".format(dropout, num_layers))
+load pretrained word embedding
+freeze pretrained word embedding
+load a trained model weights from ./saved_model/HAND/best_model.pt
+# of trainable params: 86724
+TEST evaluation
+load saved data
+TEST [11/143]: Loss: 0.415 | Acc: 91.513% [2577/2816]
+TEST [21/143]: Loss: 0.443 | Acc: 88.690% [4768/5376]
+TEST [31/143]: Loss: 0.434 | Acc: 89.844% [7130/7936]
+TEST [41/143]: Loss: 0.437 | Acc: 89.529% [9397/10496]
+TEST [51/143]: Loss: 0.441 | Acc: 89.193% [11645/13056]
+TEST [61/143]: Loss: 0.440 | Acc: 89.338% [13951/15616]
+TEST [71/143]: Loss: 0.434 | Acc: 89.871% [16335/18176]
+TEST [81/143]: Loss: 0.435 | Acc: 89.603% [18580/20736]
+TEST [91/143]: Loss: 0.439 | Acc: 88.955% [20723/23296]
+TEST [101/143]: Loss: 0.440 | Acc: 88.734% [22943/25856]
+TEST [111/143]: Loss: 0.441 | Acc: 88.478% [25142/28416]
+TEST [121/143]: Loss: 0.445 | Acc: 87.913% [27232/30976]
+TEST [131/143]: Loss: 0.451 | Acc: 87.094% [29208/33536]
+TEST [141/143]: Loss: 0.451 | Acc: 87.068% [31428/36096]
+TN: 16328, FP: 1841, FN: 2878, tp: 15386
+TEST: Loss: 0.451 | Acc: 87.047% | AUROC: 94.482% | F1-Score: 86.704% | Recall: 84.242% | Precision: 89.313%
+jaehyuk@fake_news:/projects/projects-dsba/Fake-News-Detection-Dataset/part1_title$ exit
+exit
+
+Script done on 2022-12-27 04:07:05+0000
