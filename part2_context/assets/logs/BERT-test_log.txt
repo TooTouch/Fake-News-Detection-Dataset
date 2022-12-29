@@ -1,5 +1,5 @@
 Script started on 2022-12-27 04:10:05+0000
-jaehyuk@fake_news:/projects/projects-dsba/Fake-News-Detection-Dataset/part2_context$ python main.py --yaml_config ./configs/BTS/BTS-test.yaml
+jaehyuk@fake_news:/projects/projects-dsba/Fake-News-Detection-Dataset/part2_context$ python main.py --yaml_config ./configs/BERT/BERT-test.yaml
 Device: cuda:0
 using cached model. /projects/projects-dsba/Fake-News-Detection-Dataset/part2_context/.cache/kobert_v1.zip
 using cached model. /projects/projects-dsba/Fake-News-Detection-Dataset/part2_context/.cache/kobert_news_wiki_ko_cased-1087f8699e.spiece

@@ -1,7 +1,9 @@
-# BTS: BERT for Topic Segmentation
+# BERT
+
+BERT for Topic Segmentation
 
 # Model description
-* BTS는 BERT(Devlin et al., 2019)을 이용하여 서로 연속된 두 문장의 연관성을 파악하고 연관성의 유무에 따라 문단을 구분하는 것이 목표인 방법론이다.
+* BERT for Topic Segmentation은 BERT(Devlin et al., 2019)을 이용하여 서로 연속된 두 문장의 연관성을 파악하고 연관성의 유무에 따라 문단을 구분하는 것이 목표인 방법론이다.
 
 # Model Architecture
 
@@ -25,7 +27,7 @@
 * Number of classes: 클래스의 개수(default: 2 / 이진 분류 과업)  
 
 # Task
-* 본 과업에서는 BTS를 이용하여 뉴스 기사의 본문의 일관성 여부 파악하는 것을 목표로 한다.
+* 본 과업에서는 BERT를 이용하여 뉴스 기사의 본문의 일관성 여부 파악하는 것을 목표로 한다.
 
 # Training Dataset
 
@@ -33,7 +35,7 @@
 
 # Training Setup
 
-[`BTS-train.yaml`](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part2_context/configs/BTS/BTS-train.yaml)
+[`BERT-train.yaml`](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part2_context/configs/BERT/BERT-train.yaml)
 
 ```yaml
 TRAIN:

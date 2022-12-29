@@ -8,9 +8,9 @@
 task2_context
 .
 ├── configs
-│   ├── BTS
-│   │   ├── BTS-test.yaml
-│   │   └── BTS-train.yaml
+│   ├── BERT
+│   │   ├── BERT-test.yaml
+│   │   └── BERT-train.yaml
 │   └── KoBERTSeg
 ├── dataset
 │   ├── __init__.py
@@ -216,17 +216,17 @@ task2_context
 
 # Models
 
-- BTS[^1] [ [description](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part2_context/assets/model_description/BTS.md) | [download](https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part2/BTS.zip) ]
+- BERT(BTS)[^1] [ [description](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part2_context/assets/model_description/BTS.md) | [download](https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part2/BTS.zip) ]
 - KoBERTSeg[^2] [ [description](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part2_context/assets/model_description/KoBERTSeg.md) | [download](https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part2/KoBERTSeg.zip) ]
 
 # Configurations
 
 학습을 위해 사용되는 arguments 구성
 
-**BTS**
+**BERT(BTS)**
 
-- `./configs/BTS/BTS-train.yaml`
-- `./configs/BTS/BTS-test.yaml`
+- `./configs/BERT/BERT-train.yaml`
+- `./configs/BERT/BERT-test.yaml`
 
 **KoBERTSeg**
 
@@ -243,7 +243,7 @@ python main.py --yaml_config ${config_file_path}
 
 Fine-tuning을 수행하는 경우 `configs` 내 모델 yaml 파일에서 `checkpoint_path`에 학습이 완료된 모델 저장 경로를 설정하여 학습 진행
 
-ex) `./configs/BTS/BTS-train.yaml`
+ex) `./configs/BERT/BERT-train.yaml`
 
 ```yaml
 MODEL:
@@ -266,13 +266,13 @@ MODEL:
 
 Metrics	| AUROC	| F1	| RECALL	| PRECISION	| ACC	| ACC_PER_ARTICLE
 ---|:---:|:---:|:---:|:---:|:---:|:---:
-BTS	| 0.989	| 0.908	| 0.899	| 0.917	| 0.986	| 0.839
+BERT(BTS)	| 0.989	| 0.908	| 0.899	| 0.917	| 0.986	| 0.839
 KoBERTSeg	| 0.987	| 0.881	| 0.871	| 0.892	| 0.982 | 0.796
 
 
 **3. Misclassification Case**
 
-category	| KoBERTSeg wrong / total (%)	| BTS wrong / total (%)
+category	| KoBERTSeg wrong / total (%)	| BERT(BTS) wrong / total (%)
 ---|---:|---:
 NonClickbait_Auto	| 1229 / 18168 (6.76%)	| 1317 / 18168 (7.25%)
 Clickbait_Auto	| 4643 / 13726 (33.83%)	| 3786 / 13726 (27.58%)

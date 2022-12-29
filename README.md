@@ -4,7 +4,7 @@
 
 <div align="center">
 
-[📘 Documentation](https://tootouch.github.io/Fake-News-Detection-Dataset/)
+[📘 Documentation](https://tootouch.github.io/Fake-News-Detection-Dataset/) | [github](https://github.com/TooTouch/Fake-News-Detection-Dataset)
 
 </div>
 
@@ -25,7 +25,7 @@ git+https://git@github.com/SKTBrain/KoBERT.git@master
 
 **Computer Resources**
 - **CPU**: i7-9800X
-- **GPU**: RTX 2080Ti
+- **GPU**: RTX 2080Ti x 2
 - **RAM**: 64GB
 - **SSD**: 2TB x 2
 - **OS**: ubuntu 18.04
@@ -92,7 +92,7 @@ Fake-News-Detection-Dataset
 # Part 2: 주제 분리 탐지 [ [Part2](https://github.com/TooTouch/Fake-News-Detection-Dataset/tree/0bb478f18ad83cec2104a6ff8eebe3ff9f7b4e7a/part2_context) ]
 ## Baseline Models
 
-- BTS[^4]
+- BERT[^4]
 - KoBERTSeg[^5]
 
 

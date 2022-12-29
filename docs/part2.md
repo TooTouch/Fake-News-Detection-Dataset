@@ -286,13 +286,13 @@ Returns:
 # Models
 
 
-## BTS
+## BERT(BERT for Topic Segmentation)
 
 > bts(*hparams*)
 
 Parameters:
 
-- **hparams** (*dict*) - 모델 학습에 필요한 hyper parameters. [BTS configuration](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part2_context/configs/BTS/BTS-train.yaml) 참고 
+- **hparams** (*dict*) - 모델 학습에 필요한 hyper parameters. [BERT configuration](https://github.com/TooTouch/Fake-News-Detection-Dataset/blob/master/part2_context/configs/BERT/BERT-train.yaml) 참고 
 
 Returns:
 

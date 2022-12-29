@@ -9,6 +9,9 @@ from .registry import register_model
 _logger = logging.getLogger('train')
 
 class BTS(nn.Module):
+    """
+    BERT for Topic Segmentation
+    """
     def __init__(self, finetune_bert: bool = False):
         super(BTS, self).__init__()
         self.model, vocab = get_pytorch_kobert_model(cachedir=".cache")
