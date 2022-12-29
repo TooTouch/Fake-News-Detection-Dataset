@@ -7,7 +7,7 @@ using cached model. /projects/projects-dsba/Fake-News-Detection-Dataset/part2_co
 using cached model. /projects/projects-dsba/Fake-News-Detection-Dataset/part2_context/.cache/kobert_v1.zip
 using cached model. /projects/projects-dsba/Fake-News-Detection-Dataset/part2_context/.cache/kobert_news_wiki_ko_cased-1087f8699e.spiece
 Finetuning BERT backbone
-load a trained model weights from ./saved_model/BTS/best_model.pt
+load a trained model weights from ./saved_model/BERT/best_model.pt
 # of trainable params: 92188418
 TEST evaluation
 
