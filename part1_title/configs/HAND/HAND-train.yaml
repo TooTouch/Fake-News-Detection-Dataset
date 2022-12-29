@@ -52,4 +52,4 @@ SCHEDULER:
     use_scheduler: False
 
 RESULT:
-    savedir: '/saved_model'
+    savedir: '/saved_model/Part1'

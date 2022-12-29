@@ -35,5 +35,5 @@ LOG:
     log_interval: 10
 
 RESULT:
-    savedir: '/saved_model'
+    savedir: '/saved_model/Part1'
     result_name: results

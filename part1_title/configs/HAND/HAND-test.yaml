@@ -34,7 +34,7 @@ MODEL:
         sent_dims: 64
         embed_dims: 100
     CHECKPOINT:
-        checkpoint_path: /saved_model/HAND/best_model.pt
+        checkpoint_path: /saved_model/Part1/HAND/best_model.pt
 
 TRAIN:
     batch_size: 256
@@ -44,5 +44,5 @@ LOG:
     log_interval: 10
 
 RESULT:
-    savedir: '/saved_model'
+    savedir: '/saved_model/Part1'
     result_name: results

@@ -32,7 +32,7 @@ MODEL:
         embed_dims: 100
         dropout: 0.2
     CHECKPOINT:
-        checkpoint_path: /saved_model/FNDNet/best_model.pt
+        checkpoint_path: /saved_model/Part1/FNDNet/best_model.pt
 
 TRAIN:
     batch_size: 256
@@ -42,5 +42,5 @@ LOG:
     log_interval: 10
 
 RESULT:
-    savedir: '/saved_model'
+    savedir: '/saved_model/Part1'
     result_name: results

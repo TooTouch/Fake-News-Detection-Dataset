@@ -22,7 +22,7 @@ MODEL:
         window_size: 3
         finetune_bert: True
     CHECKPOINT:
-        checkpoint_path: /saved_model/KoBERTSeg/best_model.pt
+        checkpoint_path: /saved_model/Part2/KoBERTSeg/best_model.pt
 
 TRAIN:
     batch_size: 64
@@ -32,5 +32,5 @@ LOG:
     log_interval: 1
 
 RESULT:
-    savedir: '/saved_model'
+    savedir: '/saved_model/Part2'
     result_name: results
