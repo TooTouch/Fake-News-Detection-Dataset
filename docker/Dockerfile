@@ -39,13 +39,14 @@ RUN mkdir /saved_model \
     && wget https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part1/HAND.zip \
     && wget https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part1/FNDNet.zip \
     && wget https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part1/BERT.zip \
-    && wget https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part2/BTS.zip \
+    && unzip HAND.zip -d /saved_model/Part1 \
+    && unzip FNDNet.zip -d /saved_model/Part1 \
+    && unzip BERT.zip -d /saved_model/Part1 \
+    && rm *.zip \
+    && wget https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part2/BERT.zip \
     && wget https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part2/KoBERTSeg.zip \
-    && unzip HAND.zip -d /saved_model \
-    && unzip FNDNet.zip -d /saved_model \
-    && unzip BERT.zip -d /saved_model \
-    && unzip BTS.zip -d /saved_model \
-    && unzip KoBERTSeg.zip -d /saved_model \
+    && unzip BERT.zip -d /saved_model/Part2 \
+    && unzip KoBERTSeg.zip -d /saved_model/Part2 \
     && rm *.zip
 
 # clone fake news github
