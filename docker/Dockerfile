@@ -36,6 +36,8 @@ RUN rm word-embeddings.zip
 
 # download part1,2 checkpoints
 RUN mkdir /saved_model \
+    && mkdir /saved_model/Part1 \
+    && mkdir /saved_model/Part2 \
     && wget https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part1/HAND.zip \
     && wget https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part1/FNDNet.zip \
     && wget https://github.com/TooTouch/Fake-News-Detection-Dataset/releases/download/part1/BERT.zip \
