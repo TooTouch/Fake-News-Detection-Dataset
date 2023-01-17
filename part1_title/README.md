@@ -288,8 +288,8 @@ RESULT:
 **run**
 
 ```bash
-python save_dataloader.py --yaml_config ${config_file_path}
-python main.py --yaml_config ${config_file_path}
+python save_dataloader.py --yaml_config ./configs/${modelname}/${modelname}_save_dataloader.yaml
+python main.py --yaml_config ./configs/${modelname}/${modelname}-train.yaml
 ```
 
 **fine-tuning**
@@ -312,6 +312,12 @@ MODEL:
         embed_dims: 100
     CHECKPOINT:
         checkpoint_path: './저장된_모델_경로/모델이름.pt'
+```
+
+**test**
+
+```bash
+python main.py --yaml_config ./configs/${modelname}/${modelname}-test.yaml
 ```
 
 # Results

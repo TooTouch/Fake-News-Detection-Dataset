@@ -236,7 +236,7 @@ task2_context
 # Run
 
 ```bash
-python main.py --yaml_config ${config_file_path}
+python main.py --yaml_config ./configs/${modelname}/${modelname}-train.yaml
 ```
 
 **fine-tuning**
@@ -252,6 +252,12 @@ MODEL:
         finetune_bert: True
     CHECKPOINT:
         checkpoint_path: './저장된_모델_경로/모델이름.pt'
+```
+
+**test**
+
+```bash
+python main.py --yaml_config ./configs/${modelname}/${modelname}-test.yaml
 ```
 
 # Results
