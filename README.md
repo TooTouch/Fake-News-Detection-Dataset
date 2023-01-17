@@ -63,7 +63,23 @@ Fake-News-Detection-Dataset
 .
 ├── data
 │   ├── Part1
+│   │   ├── train
+│   │   │   ├── Clickbait_Auto
+│   │   │   │   ├── EC
+│   │   │   │   ├── ET
+│   │   │   │   ├── GB
+│   │   │   │   ├── IS
+│   │   │   │   ├── LC
+│   │   │   │   ├── PO
+│   │   │   │   └── SO
+│   │   │   ├── Clickbait_Direct
+│   │   │   └── NonClickbait_Auto
+│   │   ├── validation
+│   │   └── train
 │   └── Part2
+│   │   ├── train
+│   │   ├── validation
+│   │   └── train
 ├── docker
 ├── docs
 ├── LICENSE
