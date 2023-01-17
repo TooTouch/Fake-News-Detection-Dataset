@@ -2,7 +2,7 @@ EXP_NAME: BERT
 SEED: 223
     
 MODE:
-    test_list:
+    save_list:
         - train
         - validation
         - test
