@@ -45,23 +45,27 @@ if __name__ == '__main__':
         max_vocab_size  = cfg['TOKENIZER'].get('max_vocab_size', None)
     )
 
-    for split in ['train','validation','test']:
-        dataset = create_dataset(
-            name           = cfg['DATASET']['name'], 
-            data_path      = cfg['DATASET']['data_path'], 
-            split          = split, 
-            tokenizer      = tokenizer, 
-            saved_data_path = cfg['DATASET']['saved_data_path'],
-            **cfg['DATASET']['PARAMETERS']
-        )
-        
-        dataloader = create_dataloader(
-            dataset     = dataset, 
-            batch_size  = cfg['TRAIN']['batch_size'], 
-            num_workers = cfg['TRAIN']['num_workers'],
-            shuffle     = False
-        )
-   
-        # save
-        save(split, dataloader, savedir)
+    for split in cfg['MODE']['save_list']:
+        try:
+            dataset = create_dataset(
+                name           = cfg['DATASET']['name'], 
+                data_path      = cfg['DATASET']['data_path'], 
+                direct_path    = cfg['DATASET'].get('direct_path',None),
+                split          = split, 
+                tokenizer      = tokenizer, 
+                saved_data_path = cfg['DATASET']['saved_data_path'],
+                **cfg['DATASET']['PARAMETERS']
+            )
+            
+            dataloader = create_dataloader(
+                dataset     = dataset, 
+                batch_size  = cfg['TRAIN']['batch_size'], 
+                num_workers = cfg['TRAIN']['num_workers'],
+                shuffle     = False
+            )
+    
+            # save
+            save(split, dataloader, savedir)
+        except:
+            print(f'{split} folder does not exist')
         

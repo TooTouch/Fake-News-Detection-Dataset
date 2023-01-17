@@ -15,8 +15,15 @@ class FakeDataset(Dataset):
         # tokenizer
         self.tokenizer = tokenizer
 
-    def load_dataset(self, data_dir, split, saved_data_path=False):
+    def load_dataset(self, data_dir, split, direct_dir: Union[None, str] = None, saved_data_path: bool = False):
+
         data_info = glob(os.path.join(data_dir, split, '*/*/*'))
+        if direct_dir:
+            exclude_info = glob(os.path.join(data_dir, split, 'Clickbait_Auto/*/*'))
+            include_info = glob(os.path.join(direct_dir, split, '*/*/*'))
+            data_info = list(set(data_info) - set(exclude_info))
+            data_info = data_info + include_info
+
         setattr(self, 'saved_data_path', saved_data_path)
 
         if saved_data_path:

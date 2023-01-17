@@ -43,7 +43,7 @@ def create_tokenizer(name: str, vocab_path: str, max_vocab_size: int):
     return tokenizer, word_embed 
 
 
-def create_dataset(name: str, data_path: str, split: str, tokenizer, saved_data_path: str, **kwargs):
+def create_dataset(name: str, data_path: str, direct_path: Union[None, str], split: str, tokenizer, saved_data_path: str, **kwargs):
     dataset = __import__('dataset').__dict__[f'{name}Dataset'](
         tokenizer = tokenizer,
         **kwargs
@@ -52,6 +52,7 @@ def create_dataset(name: str, data_path: str, split: str, tokenizer, saved_data_
     dataset.load_dataset(
         data_dir        = data_path, 
         split           = split, 
+        direct_dir      = direct_path,
         saved_data_path = saved_data_path
     )
 

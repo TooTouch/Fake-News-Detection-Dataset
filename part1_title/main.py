@@ -57,12 +57,13 @@ def run(cfg):
     if cfg['MODE']['do_train']:
         # wandb
         if cfg['TRAIN']['use_wandb']:
-            wandb.init(name=cfg['EXP_NAME'], project='Fake New Detection - Task1', config=cfg)
+            wandb.init(name=cfg['EXP_NAME'], project='Fake-News-Detection-Task1', config=cfg)
 
         # Build datasets
         trainset = create_dataset(
             name           = cfg['DATASET']['name'], 
             data_path      = cfg['DATASET']['data_path'], 
+            direct_path    = cfg['DATASET'].get('direct_path',None),
             split          = 'train', 
             tokenizer      = tokenizer, 
             saved_data_path = cfg['DATASET']['saved_data_path'],
@@ -72,6 +73,7 @@ def run(cfg):
         validset = create_dataset(
             name           = cfg['DATASET']['name'], 
             data_path      = cfg['DATASET']['data_path'], 
+            direct_path    = cfg['DATASET'].get('direct_path',None),
             split          = 'validation', 
             tokenizer      = tokenizer, 
             saved_data_path = cfg['DATASET']['saved_data_path'],
@@ -130,38 +132,42 @@ def run(cfg):
 
         for split in cfg['MODE']['test_list']:
             _logger.info('{} evaluation'.format(split.upper()))
-            dataset = create_dataset(
-                name           = cfg['DATASET']['name'], 
-                data_path      = cfg['DATASET']['data_path'], 
-                split          = split,
-                tokenizer      = tokenizer, 
-                saved_data_path = cfg['DATASET']['saved_data_path'],
-                **cfg['DATASET']['PARAMETERS']
-            )
+            try:
+                dataset = create_dataset(
+                    name           = cfg['DATASET']['name'], 
+                    data_path      = cfg['DATASET']['data_path'], 
+                    direct_path    = cfg['DATASET'].get('direct_path',None),
+                    split          = split,
+                    tokenizer      = tokenizer, 
+                    saved_data_path = cfg['DATASET']['saved_data_path'],
+                    **cfg['DATASET']['PARAMETERS']
+                )
 
-            dataloader = create_dataloader(
-                dataset     = dataset, 
-                batch_size  = cfg['TRAIN']['batch_size'], 
-                num_workers = cfg['TRAIN']['num_workers'],
-                shuffle     = False
-            )
+                dataloader = create_dataloader(
+                    dataset     = dataset, 
+                    batch_size  = cfg['TRAIN']['batch_size'], 
+                    num_workers = cfg['TRAIN']['num_workers'],
+                    shuffle     = False
+                )
 
-            metrics, exp_results = evaluate(
-                model        = model, 
-                dataloader   = dataloader, 
-                criterion    = criterion,
-                log_interval = cfg['LOG']['log_interval'],
-                device       = device,
-                sample_check = True
-            )
-            
-            # save exp result
-            exp_results = pd.concat([pd.DataFrame({'filename':dataset.data_info}), pd.DataFrame(exp_results)], axis=1)
-            exp_results['label'] = exp_results['filename'].apply(lambda x: 0 if 'NonClickbait' in x else 1)
-            exp_results.to_csv(os.path.join(savedir, f'exp_results_{split}.csv'), index=False)
+                metrics, exp_results = evaluate(
+                    model        = model, 
+                    dataloader   = dataloader, 
+                    criterion    = criterion,
+                    log_interval = cfg['LOG']['log_interval'],
+                    device       = device,
+                    sample_check = True
+                )
+                
+                # save exp result
+                exp_results = pd.concat([pd.DataFrame({'filename':dataset.data_info}), pd.DataFrame(exp_results)], axis=1)
+                exp_results['label'] = exp_results['filename'].apply(lambda x: 0 if 'NonClickbait' in x else 1)
+                exp_results.to_csv(os.path.join(savedir, f'exp_results_{split}.csv'), index=False)
 
-            # save result metrics
-            json.dump(metrics, open(os.path.join(savedir, f"{cfg['RESULT']['result_name']}_{split}.json"),'w'), indent='\t')
+                # save result metrics
+                json.dump(metrics, open(os.path.join(savedir, f"{cfg['RESULT']['result_name']}_{split}.json"),'w'), indent='\t')
+            except:
+                print(f'{split} folder does not exist')
 
 
 if __name__=='__main__':
