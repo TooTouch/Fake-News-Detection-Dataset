@@ -1,6 +1,12 @@
 EXP_NAME: BERT
 SEED: 223
     
+MODE:
+    test_list:
+        - train
+        - validation
+        - test
+
 DATASET:
     name: BERT
     data_path: ../data/Part1 # news article directory
@@ -12,8 +18,8 @@ TOKENIZER:
     name: bert
 
 TRAIN:
-    batch_size: 256
-    num_workers: 12
+    batch_size: 32
+    num_workers: 4
 
 RESULT:
     savedir: ../data/Part1
