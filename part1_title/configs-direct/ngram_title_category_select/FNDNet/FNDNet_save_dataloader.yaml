@@ -1,0 +1,20 @@
+EXP_NAME: FNDNet-ngram_title_category_select
+SEED: 223
+DATASET:
+  name: FNDNet
+  data_path: ../data/Part1
+  saved_data_path: false
+  PARAMETERS:
+    max_word_len: 1000
+  direct_path: ../data-direct/ngram_title_category_select
+TOKENIZER:
+  name: mecab
+  vocab_path: ./word-embeddings/glove/glove.txt
+  max_vocab_size: 50000
+TRAIN:
+  batch_size: 256
+  num_workers: 12
+  use_wandb: true
+RESULT:
+  savedir: ../data-direct/ngram_title_category_select
+  dataname: FNDNet_w1000

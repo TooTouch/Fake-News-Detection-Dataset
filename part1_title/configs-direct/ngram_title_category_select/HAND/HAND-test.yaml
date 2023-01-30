@@ -1,0 +1,42 @@
+EXP_NAME: HAND-ngram_title_category_select
+SEED: 223
+MODE:
+  do_train: false
+  do_test: true
+  test_list:
+  - train
+  - validation
+  - test
+DATASET:
+  name: HAND
+  data_path: ../data/Part1
+  saved_data_path: ../data-direct/ngram_title_category_select/HAND_s16_w64
+  PARAMETERS:
+    max_sent_len: 16
+    max_word_len: 64
+  direct_path: ../data-direct/ngram_title_category_select
+TOKENIZER:
+  name: mecab
+  vocab_path: ./word-embeddings/glove/glove.txt
+  max_vocab_size: 50000
+MODEL:
+  modelname: hand
+  freeze_word_embed: true
+  use_pretrained_word_embed: true
+  PARAMETERS:
+    num_classes: 2
+    vocab_len: 50002
+    dropout: 0.1
+    word_dims: 32
+    sent_dims: 64
+    embed_dims: 100
+  CHECKPOINT:
+    checkpoint_path: ./saved_model-direct/ngram_title_category_select/HAND-ngram_title_category_select/best_model.pt
+TRAIN:
+  batch_size: 256
+  num_workers: 12
+LOG:
+  log_interval: 10
+RESULT:
+  savedir: ./saved_model-direct/ngram_title_category_select
+  result_name: results

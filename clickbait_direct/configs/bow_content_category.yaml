@@ -1,0 +1,8 @@
+datadir: '../data/Part1' 
+savedir: '../data-direct'
+METHOD:
+  name: 'bow'
+  target: 'content'
+  select_name: 'bow_content_category_select'
+
+SEED: 42

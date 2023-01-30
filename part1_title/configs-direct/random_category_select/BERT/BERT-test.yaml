@@ -1,0 +1,33 @@
+EXP_NAME: BERT-random_category_select
+SEED: 223
+MODE:
+  do_train: false
+  do_test: true
+  test_list:
+  - train
+  - validation
+  - test
+DATASET:
+  name: BERT
+  data_path: ../data/Part1
+  saved_data_path: ../data-direct/random_category_select/BERT_w512
+  PARAMETERS:
+    max_word_len: 512
+  direct_path: ../data-direct/random_category_select
+TOKENIZER:
+  name: bert
+MODEL:
+  modelname: bert
+  PARAMETERS:
+    pretrained_name: skt/kobert-base-v1
+    num_classes: 2
+  CHECKPOINT:
+    checkpoint_path: ./saved_model-direct/random_category_select/BERT-random_category_select/best_model.pt
+TRAIN:
+  batch_size: 64
+  num_workers: 12
+LOG:
+  log_interval: 10
+RESULT:
+  savedir: ./saved_model-direct/random_category_select
+  result_name: results

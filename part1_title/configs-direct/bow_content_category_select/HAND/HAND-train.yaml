@@ -1,0 +1,47 @@
+EXP_NAME: HAND-bow_content_category_select
+SEED: 223
+MODE:
+  do_train: true
+  do_test: false
+DATASET:
+  name: HAND
+  data_path: ../data/Part1
+  saved_data_path: ../data-direct/bow_content_category_select/HAND_s16_w64
+  PARAMETERS:
+    max_sent_len: 16
+    max_word_len: 64
+  direct_path: ../data-direct/bow_content_category_select
+TOKENIZER:
+  name: mecab
+  vocab_path: ./word-embeddings/glove/glove.txt
+  max_vocab_size: 50000
+MODEL:
+  modelname: hand
+  freeze_word_embed: true
+  use_pretrained_word_embed: true
+  PARAMETERS:
+    num_classes: 2
+    vocab_len: 50002
+    dropout: 0.1
+    word_dims: 32
+    sent_dims: 64
+    embed_dims: 100
+  CHECKPOINT:
+    checkpoint_path: null
+TRAIN:
+  batch_size: 256
+  num_training_steps: 30000
+  accumulation_steps: 1
+  num_workers: 12
+  use_wandb: true
+LOG:
+  log_interval: 10
+  eval_interval: 1000
+OPTIMIZER:
+  lr: 0.003
+  weight_decay: 0.0005
+SCHEDULER:
+  warmup_ratio: 0.1
+  use_scheduler: false
+RESULT:
+  savedir: ./saved_model-direct/bow_content_category_select

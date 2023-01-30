@@ -1,0 +1,8 @@
+datadir: '../data/Part1' 
+savedir: '../data-direct'
+METHOD:
+  name: 'tfidf'
+  target: 'title'
+  select_name: 'tfidf_title_category_select'
+
+SEED: 42

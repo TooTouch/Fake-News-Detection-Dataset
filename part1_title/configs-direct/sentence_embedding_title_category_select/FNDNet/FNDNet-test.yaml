@@ -1,0 +1,40 @@
+EXP_NAME: FNDNet-sentence_embedding_title_category_select
+SEED: 223
+MODE:
+  do_train: false
+  do_test: true
+  test_list:
+  - train
+  - validation
+  - test
+DATASET:
+  name: FNDNet
+  data_path: ../data/Part1
+  saved_data_path: ../data-direct/sentence_embedding_title_category_select/FNDNet_w1000
+  PARAMETERS:
+    max_word_len: 1000
+  direct_path: ../data-direct/sentence_embedding_title_category_select
+TOKENIZER:
+  name: mecab
+  vocab_path: ./word-embeddings/glove/glove.txt
+  max_vocab_size: 50000
+MODEL:
+  modelname: fndnet
+  freeze_word_embed: true
+  use_pretrained_word_embed: true
+  PARAMETERS:
+    num_classes: 2
+    vocab_len: 50002
+    dims: 128
+    embed_dims: 100
+    dropout: 0.2
+  CHECKPOINT:
+    checkpoint_path: ./saved_model-direct/sentence_embedding_title_category_select/FNDNet-sentence_embedding_title_category_select/best_model.pt
+TRAIN:
+  batch_size: 256
+  num_workers: 12
+LOG:
+  log_interval: 10
+RESULT:
+  savedir: ./saved_model-direct/sentence_embedding_title_category_select
+  result_name: results

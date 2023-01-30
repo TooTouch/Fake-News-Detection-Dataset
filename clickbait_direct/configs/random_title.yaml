@@ -1,0 +1,7 @@
+datadir: '../data/Part1' 
+savedir: '../data-direct'
+METHOD:
+  name: 'random'
+  select_name: 'random_select'
+
+SEED: 42
