@@ -4,7 +4,7 @@
 
 <div align="center">
 
-[📘 Documentation](https://tootouch.github.io/Fake-News-Detection-Dataset/) | [github](https://github.com/DSBA-Lab/Fake-News-Detection-Dataset)
+[📘 Documentation](https://tootouch.github.io/Fake-News-Detection-Dataset/) | [github](https://github.com/TooTouch/Fake-News-Detection-Dataset)
 
 </div>
 
